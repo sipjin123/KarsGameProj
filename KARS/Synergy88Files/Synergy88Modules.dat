@@ -1,0 +1,15 @@
+{"Name":"UnityIAP","PathsToRemove":["Assets/Synergy88/Game/Scripts/Utils/UnityIAP.cs","Assets/Plugins/UnityPurchasing"],"PrefabsToUpdate":["Assets/Synergy88/Game/Prefabs/ServicesRoot.prefab:UnityIAP"]}
+{"Name":"UnityAnalytics","PathsToRemove":["Assets/Synergy88/Game/Scripts/Utils/UnityAnalytics.cs"],"PrefabsToUpdate":["Assets/Synergy88/Game/Prefabs/ServicesRoot.prefab:UnityAnalytics"]}
+{"Name":"UnityAds","PathsToRemove":["Assets/Synergy88/Game/Scripts/Utils/UnityAds.cs"],"PrefabsToUpdate":["Assets/Synergy88/Game/Prefabs/ServicesRoot.prefab:UnityAds"]}
+{"Name":"BannerAds","PathsToRemove":["Assets/Synergy88/Game/Scripts/Utils/BannerAds.cs","Assets/Plugins/iOS","Assets/Synergy88/Game/Scripts/Utils/InterstitialAds.cs","Assets/Plugins/Android","Assets/Plugins/Frameworks","Assets/Plugins/GoogleMobileAds","Assets/Plugins/iOS"],"PrefabsToUpdate":["Assets/Synergy88/Game/Prefabs/ServicesRoot.prefab:BannerAds"]}
+{"Name":"ImageDownloader","PathsToRemove":["Assets/Synergy88/Game/Scripts/Utils/ImageDownloader.cs"],"PrefabsToUpdate":["Assets/Synergy88/Game/Prefabs/ServicesRoot.prefab:ImageDownloader"]}
+{"Name":"FacebookLogin","PathsToRemove":["Assets/Synergy88/Game/Scripts/Login/FacebookLogin.cs","Assets/ThirdParty/FacebookSDK"],"PrefabsToUpdate":["Assets/Synergy88/Game/Prefabs/ServicesRoot.prefab:FacebookLogin"]}
+{"Name":"BezierCurves","PathsToRemove":["Assets/ThirdParty/BezierCurves"]}
+{"Name":"iTween","PathsToRemove":["Assets/ThirdParty/iTween"]}
+{"Name":"PDollar","PathsToRemove":["Assets/ThirdParty/PDollar"]}
+{"Name":"SimpleParticlePack","PathsToRemove":["Assets/ThirdParty/SimpleParticlePack"]}
+{"Name":"sky5X","PathsToRemove":["Assets/ThirdParty/sky5X"]}
+{"Name":"SplineTrailRenderer","PathsToRemove":["Assets/ThirdParty/SplineTrailRenderer"]}
+{"Name":"TouchKit","PathsToRemove":["Assets/ThirdParty/TouchKit"]}
+{"Name":"TSF","PathsToRemove":["Assets/ThirdParty/TSF"]}
+{"Name":"UNOShader","PathsToRemove":["Assets/ThirdParty/UNOShader"]}

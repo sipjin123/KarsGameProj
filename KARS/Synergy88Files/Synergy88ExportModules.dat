@@ -1,0 +1,15 @@
+{"Name":"UnityIAP","PathsToInclude":["Assets/Synergy88/Game/Scripts/Utils/UnityIAP.cs","Assets/Plugins/UnityPurchasing"]}
+{"Name":"UnityAnalytics","PathsToInclude":["Assets/Synergy88/Game/Scripts/Utils/UnityAnalytics.cs"]}
+{"Name":"UnityAds","PathsToInclude":["Assets/Synergy88/Game/Scripts/Utils/UnityAds.cs"]}
+{"Name":"BannerAds","PathsToInclude":["Assets/Synergy88/Game/Scripts/Utils/BannerAds.cs","Assets/Plugins/iOS","Assets/Synergy88/Game/Scripts/Utils/InterstitialAds.cs","Assets/Plugins/Android","Assets/Plugins/Frameworks","Assets/Plugins/GoogleMobileAds","Assets/Plugins/iOS"]}
+{"Name":"ImageDownloader","PathsToInclude":["Assets/Synergy88/Game/Scripts/Utils/ImageDownloader.cs"]}
+{"Name":"FacebookLogin","PathsToInclude":["Assets/Synergy88/Game/Scripts/Login/FacebookLogin.cs","Assets/ThirdParty/FacebookSDK"]}
+{"Name":"BezierCurves","PathsToInclude":["Assets/ThirdParty/BezierCurves"]}
+{"Name":"iTween","PathsToInclude":["Assets/ThirdParty/iTween"]}
+{"Name":"PDollar","PathsToInclude":["Assets/ThirdParty/PDollar"]}
+{"Name":"SimpleParticlePack","PathsToInclude":["Assets/ThirdParty/SimpleParticlePack"]}
+{"Name":"sky5X","PathsToInclude":["Assets/ThirdParty/sky5X"]}
+{"Name":"SplineTrailRenderer","PathsToInclude":["Assets/ThirdParty/SplineTrailRenderer"]}
+{"Name":"TouchKit","PathsToInclude":["Assets/ThirdParty/TouchKit"]}
+{"Name":"TSF","PathsToInclude":["Assets/ThirdParty/TSF"]}
+{"Name":"UNOShader","PathsToInclude":["Assets/ThirdParty/UNOShader"]}

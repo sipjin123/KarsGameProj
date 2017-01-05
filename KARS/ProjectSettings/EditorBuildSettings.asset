@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/System.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Cleaner.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Splash.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Back.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Coins.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Currency.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Game.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Home.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Audio.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Services.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Login.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Results.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Settings.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Shop.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Background.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/MoreGames.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Preloader/Preloader.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Preloader/Loading001.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Preloader/Loading002.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Preloader/Loading003.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Preloader/Loading004.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Popup/PopupCollection.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Popup/Popup001.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Popup/Popup002.unity
+  - enabled: 1
+    path: Assets/Synergy88/Game/Scenes/Popup/Popup003.unity

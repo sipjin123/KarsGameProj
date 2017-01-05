@@ -1,0 +1,85 @@
+# ============================ #
+# Framework Unity Project #
+# ============================ #
+KARS/Temp/*
+KARS/Obj/*
+KARS/UnityGenerated/*
+KARS/Library/*
+
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+KARS/ExportedObj/
+KARS/*.svd
+KARS/*.userprefs
+KARS/*.csproj
+KARS/*.pidb
+KARS/*.suo
+KARS/*.sln
+KARS/*.user
+KARS/*.unityproj
+KARS/*.booproj
+KARS/.vs/KARS/v14/.suo
+
+# ================ #
+# Plugin Generated #
+# ================ #
+KARS/Assets/ThirdParty/PanicButton/Editor/reloader.cs
+KARS/Assets/ThirdParty/PanicButton/Editor/reloader.cs.meta
+KARS/Assets/Plugins/Frameworks/iOS/AdSupport.framework.meta
+KARS/Assets/Plugins/Frameworks/iOS/CoreData.framework.meta
+KARS/Assets/Plugins/Android/GoogleMobileAdsPlugin.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GoogleMobileAds.framework/Versions/A/*.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GoogleMobileAds.framework/Versions/A/Headers
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GoogleMobileAds.framework/Versions/A/*.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GoogleMobileAds.framework/Versions/A/Headers
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GADUBanner.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GADUBanner.m.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GADUInterface.m.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GADUInterstitial.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GADUInterstitial.m.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GADUObjectCache.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GADUObjectCache.m.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GADURequest.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GADURequest.m.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GADUTypes.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GAI.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GAIDictionaryBuilder.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GAIEcommerceFields.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GAIEcommerceProduct.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GAIEcommerceProductAction.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GAIEcommercePromotion.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GAIFields.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GAIHandler.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GAIHandler.m.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GAILogger.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GAITrackedViewController.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/GAITracker.h.meta
+KARS/Assets/Plugins/iOS/GoogleMobileAdsPlugin/libGoogleAnalyticsServices.a.meta
+KARS/Assets/ThirdParty/FacebookSDK/Plugins/Android/libs/bolts-android-1.4.0.jar.meta
+KARS/Assets/ThirdParty/FacebookSDK/Plugins/Android/libs/bolts-applinks-1.4.0.jar.meta
+KARS/Assets/ThirdParty/FacebookSDK/Plugins/Android/libs/bolts-tasks-1.4.0.jar.meta
+KARS/Assets/ThirdParty/FacebookSDK/Plugins/Android/libs/cardview-v7-23.2.1.aar.meta
+KARS/Assets/ThirdParty/FacebookSDK/Plugins/Android/libs/facebook-android-sdk-4.11.0.aar.meta
+KARS/Assets/ThirdParty/FacebookSDK/Plugins/iOS/Bolts.framework.meta
+KARS/Assets/ThirdParty/FacebookSDK/Plugins/iOS/FBSDKCoreKit.framework.meta
+KARS/Assets/ThirdParty/FacebookSDK/Plugins/iOS/FBSDKLoginKit.framework.meta
+KARS/Assets/ThirdParty/FacebookSDK/Plugins/iOS/FBSDKShareKit.framework.meta
+
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+thumbs.db
+Builds
+*.csproj
+*.sln
+KARS/Assets/__MACOSX/
+KARS/Assets/__MACOSX.meta

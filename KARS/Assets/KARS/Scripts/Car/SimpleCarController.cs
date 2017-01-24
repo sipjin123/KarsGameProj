@@ -49,6 +49,23 @@ namespace Synergy88
 
         private GameRoot _game;
 
+        //*************************************************************
+        //GAMESPARKS
+        GameSparks_DataSender _GSDataSender;
+
+        void Awake()
+        {
+            try
+            {
+                _GSDataSender = GetComponent<GameSparks_DataSender>();
+                _GSDataSender.ObjToTranslate = gameObject;
+                _GSDataSender.ObjToRotate = carObject.gameObject;
+                _GSDataSender.PlayerCam = carCamera;
+            }
+            catch { }
+        }
+        //*************************************************************
+
         void RegisterDataToDebugMode()
         {
             DebugMode.GetInstance.RegisterDataType(ref maxRespawnTime, "RespawnTime P" + playerID);
@@ -116,6 +133,21 @@ namespace Synergy88
         {
             if (_game.isPlaying)
             {
+                //*************************************************************
+                //GAMESPARKS
+                try
+                {
+                    if (_GSDataSender.HasControllableObject == false)//GAME SPARK INITIALIZATION
+                        return;
+                    if (int.Parse(GameSparksManager.Instance.PeerID) != _GSDataSender.NetworkID)//GAME SPARK ID
+                        return;
+
+                    _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
+                }
+                catch { }
+                //*************************************************************
+
+
                 invis -= Time.deltaTime;
                 if (isAlive)
                 {

@@ -19,7 +19,7 @@ EditorBuildSettings:
     path: Assets/KARS/Scenes/Coins.unity
   - enabled: 0
     path: Assets/KARS/Scenes/Currency.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Game.unity
   - enabled: 0
     path: Assets/KARS/Scenes/Home.unity
@@ -55,7 +55,7 @@ EditorBuildSettings:
     path: Assets/KARS/Scenes/Preloader/Loading004.unity
   - enabled: 0
     path: Assets/KARS/Scenes/Preloader/Preloader.unity
-  - enabled: 1
-    path: Assets/GameWithGameSparks.unity
   - enabled: 0
-    path: Assets/ToIntegrate/Scripts/Kars.unity
+    path: Assets/KARS/Scenes/GameWithGameSparks.unity
+  - enabled: 0
+    path: Assets/KARS/Scripts/GameSparkIntegration/Kars.unity

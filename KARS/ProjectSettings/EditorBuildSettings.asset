@@ -5,57 +5,53 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/System.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Audio.unity
-  - enabled: 0
-    path: Assets/KARS/Scenes/Back.unity
-  - enabled: 0
-    path: Assets/KARS/Scenes/Background.unity
-  - enabled: 0
-    path: Assets/KARS/Scenes/Cleaner.unity
-  - enabled: 0
-    path: Assets/KARS/Scenes/Coins.unity
-  - enabled: 0
-    path: Assets/KARS/Scenes/Currency.unity
   - enabled: 1
     path: Assets/KARS/Scenes/Game.unity
-  - enabled: 0
+  - enabled: 1
+    path: Assets/KARS/Scenes/Back.unity
+  - enabled: 1
+    path: Assets/KARS/Scenes/Background.unity
+  - enabled: 1
+    path: Assets/KARS/Scenes/Cleaner.unity
+  - enabled: 1
+    path: Assets/KARS/Scenes/Coins.unity
+  - enabled: 1
+    path: Assets/KARS/Scenes/Currency.unity
+  - enabled: 1
     path: Assets/KARS/Scenes/Home.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Login.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/MoreGames.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Results.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Services.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Settings.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Shop.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Splash.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Popup/Popup001.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Popup/Popup002.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Popup/Popup003.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Popup/PopupCollection.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Preloader/Loading001.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Preloader/Loading002.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Preloader/Loading003.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Preloader/Loading004.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/KARS/Scenes/Preloader/Preloader.unity
-  - enabled: 0
-    path: Assets/KARS/Scenes/GameWithGameSparks.unity
-  - enabled: 0
-    path: Assets/KARS/Scripts/GameSparkIntegration/Kars.unity

@@ -49,6 +49,10 @@ namespace Synergy88
 
         private GameRoot _game;
 
+        void OnGUI()
+        {
+            GUI.TextArea(new Rect(0, 0, 100, 100), carCamera.transform.localPosition + "");
+        }
 
         void RegisterDataToDebugMode()
         {
@@ -113,66 +117,11 @@ namespace Synergy88
             this.transform.position = spawnAreas[Random.Range(0, spawnAreas.Length)].transform.position;
         }
 
-        //*************************************************************
-        //GAMESPARKS
-        GameSparks_DataSender _GSDataSender;
-
-        void Awake()
-        {
-            try
-            {
-                _GSDataSender = GetComponent<GameSparks_DataSender>();
-                _GSDataSender.ObjToTranslate = gameObject;
-                _GSDataSender.ObjToRotate = carObject.gameObject;
-                _GSDataSender.PlayerCam = carCamera;
-            }
-            catch { }
-        }
-        //*************************************************************
-        //*************************************************************
-        //GAMESPARKS
-        void GameTEsting()
-        {
-            if (Input.GetKey(KeyCode.W))
-            {
-                transform.position += transform.forward * 0.5f;
-            }
-            if (Input.GetKey(KeyCode.S))
-            {
-                transform.position -= transform.forward * 0.5f;
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-                transform.position -= transform.right * 0.5f;
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                transform.position += transform.right * 0.5f;
-            }
-            return;
-        }
-        //*************************************************************
         void Update()
         {
+
             if (_game.isPlaying)
             {
-                //*************************************************************
-                //GAMESPARKS
-                try
-                {
-                    if (_GSDataSender.HasControllableObject == false)//GAME SPARK INITIALIZATION
-                        return;
-                    if (int.Parse(GameSparksManager.Instance.PeerID) != _GSDataSender.NetworkID)//GAME SPARK ID
-                        return;
-
-                    _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
-                }
-                catch { }
-                //*************************************************************
-                //GameTEsting();
-
-
-
                 invis -= Time.deltaTime;
                 if (isAlive)
                 {
@@ -180,14 +129,15 @@ namespace Synergy88
                     {
                         foreach (Touch _touches in Input.touches)
                         {
-                            if ((_touches.rawPosition.x > Screen.height / 2))
+                            if ((_touches.rawPosition.x > Screen.width / 2))
                             {
                                 currentRot += rotSpeed * Time.deltaTime;
-
+                                Debug.LogError("12121");
                             }
                             else
                             {
                                 currentRot -= rotSpeed * Time.deltaTime;
+                                Debug.LogError("546456");
                                 //this.transform.Rotate(Vector3.up * rotSpeed * Time.deltaTime);
 
                             }

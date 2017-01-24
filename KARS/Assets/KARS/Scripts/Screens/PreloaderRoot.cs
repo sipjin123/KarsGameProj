@@ -34,9 +34,6 @@ namespace Synergy88
         Invalid = -1,
 
         Loading001,
-        Loading002,
-        Loading003,
-        Loading004,
 
         Max,
     };

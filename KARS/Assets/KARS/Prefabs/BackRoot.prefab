@@ -186,7 +186,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ButtonType: Back
-  button: 10
 --- !u!114 &11440098
 MonoBehaviour:
   m_ObjectHideFlags: 1

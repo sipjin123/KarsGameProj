@@ -23,7 +23,7 @@ namespace Synergy88
         public const string S88_BUILD = "Build/";
 
         // scenes
-        public const string SYSTEM_SCENE = "Assets/Synergy88/Game/Scenes/System.unity";
+        public const string SYSTEM_SCENE = "Assets/KARS/Scenes/System.unity";
         
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // BUILD

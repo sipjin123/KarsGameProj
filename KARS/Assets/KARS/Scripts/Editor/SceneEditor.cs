@@ -155,7 +155,7 @@ namespace Synergy88
         /// </summary>
         private void GenerateSceneEnum()
         {
-            string path = "Assets/Synergy88/Game/Scripts/Data/SceneTypes.cs";
+            string path = "Assets/KARS/Scripts/Data/SceneTypes.cs";
 
             // delete old class
             if (File.Exists(path))
@@ -196,7 +196,7 @@ namespace Synergy88
         private void GenerateDepthEnum()
         {
             // remove whitespace and minus
-            string path = "Assets/Synergy88/Game/Scripts/Data/SceneDepths.cs";
+            string path = "Assets/KARS/Scripts/Data/SceneDepths.cs";
 
             // delete old class
             if (File.Exists(path))

@@ -312,7 +312,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ButtonType: LoginFacebook
-  button: 2
 --- !u!114 &11447954
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -393,7 +392,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ButtonType: Settings
-  button: 9
 --- !u!114 &11483426
 MonoBehaviour:
   m_ObjectHideFlags: 1

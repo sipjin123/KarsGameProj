@@ -99,7 +99,7 @@ namespace Synergy88
         private void GenerateButtonEnum()
         {
             // remove whitespace and minus
-            string path = "Assets/Synergy88/Game/Scripts/Buttons/EButtonType.cs";
+            string path = "Assets/KARS/Scripts/Buttons/EButtonType.cs";
 
             // delete old class
             if (File.Exists(path))

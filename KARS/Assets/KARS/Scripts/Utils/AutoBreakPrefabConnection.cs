@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
-
+#endif
 // source: http://answers.unity3d.com/answers/323886/view.html
 [ExecuteInEditMode]
 public class AutoBreakPrefabConnection : MonoBehaviour

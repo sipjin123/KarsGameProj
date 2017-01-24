@@ -5,6 +5,7 @@ public class ReCalcCubeTexture : MonoBehaviour
 {
     private Vector3 _currentScale;
 
+    /*
     private void Start()
     {
         Calculate();
@@ -30,7 +31,6 @@ public class ReCalcCubeTexture : MonoBehaviour
             GetComponent<Renderer>().sharedMaterial.mainTexture.wrapMode = TextureWrapMode.Repeat;
         }
     }
-
     private Mesh GetMesh()
     {
         Mesh mesh;
@@ -46,9 +46,8 @@ public class ReCalcCubeTexture : MonoBehaviour
         mesh = GetComponent<MeshFilter>().mesh
 
 #endif
-
         return mesh;
-    }
+    }*/
 
     private Vector2[] SetupUvMap(Vector2[] meshUVs)
     {

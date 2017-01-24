@@ -47,6 +47,26 @@ public class SimpleCarController : MonoBehaviour {
     private float p2Score = 0;
     private int timeLeft = 90;
 
+
+
+
+
+
+    //*************************************************************
+    //GAMESPARKS
+    GameSparks_DataSender _GSDataSender;
+
+    void Awake()
+    {
+        _GSDataSender = GetComponent<GameSparks_DataSender>();
+        _GSDataSender.ObjToTranslate = gameObject;
+        _GSDataSender.ObjToRotate = carObject.gameObject;
+        _GSDataSender.PlayerCam = carCamera;
+    }
+    //*************************************************************
+
+
+
     public void LoseFlag()
     {
         if (hasFlag)
@@ -62,6 +82,7 @@ public class SimpleCarController : MonoBehaviour {
     {
         Objective = GameObject.FindGameObjectWithTag("Flag").transform;
         my_rigid = this.GetComponent<Rigidbody>();
+
 
     }
 
@@ -84,7 +105,15 @@ public class SimpleCarController : MonoBehaviour {
     
     void Update()
     {
+        //*************************************************************
+        //GAMESPARKS
+        if (_GSDataSender.HasControllableObject == false)//GAME SPARK INITIALIZATION
+            return;
+        if (int.Parse(GameSparksManager.Instance.PeerID) != _GSDataSender.NetworkID)//GAME SPARK ID
+            return;
 
+        _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
+        //*************************************************************
         invis -= Time.deltaTime;
         if (Input.touchCount > 0)
         {

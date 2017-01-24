@@ -126,9 +126,9 @@ public class GameSparksManager : MonoBehaviour {
                 }
                 break;
             case 111://UPDATES PLAYER MOVEMENT
-               { 
+                {
                     receivedPlayerToMove = _packet.Data.GetInt(1).Value;
-                    for(int i = 0; i < tankPool.Count; i++)
+                    for (int i = 0; i < tankPool.Count; i++)
                     {
                         GameObject _obj = tankPool[i];
                         GameSparks_DataSender _GameSparks_DataSender = _obj.GetComponent<GameSparks_DataSender>();
@@ -137,6 +137,29 @@ public class GameSparksManager : MonoBehaviour {
                         {
                             _obj.GetComponent<GameSparks_DataSender>().ReceiveBufferState(_packet);
                         }
+                    }
+                }
+                break;
+
+            case 112://UPDATES MISSLE MOVEMENT
+                {
+                    int missleIndex = _packet.Data.GetInt(1).Value;
+                    List<GameObject> _objList = PowerUpManager.Instance.MissleList;
+                    for (int i = 0; i < _objList.Count; i++)
+                    {
+                        if(missleIndex == _objList[i].GetComponent<MissleScript>().Missle_ID)
+                        {
+                            Vector3 temp = new Vector3(_packet.Data.GetFloat(2).Value, _packet.Data.GetFloat(3).Value, _packet.Data.GetFloat(4).Value);
+
+                            if (_packet.Data.GetInt(6).Value == 0)
+                            {
+                                _objList[i].SetActive(false);
+                                return;
+                            }
+
+                            _objList[i].SetActive(true);
+                            _objList[i].GetComponent<MissleScript>().SetSYnc(temp, _packet.Data.GetVector3(5).Value);
+                       }
                     }
                 }
                 break;
@@ -220,7 +243,7 @@ public class GameSparksManager : MonoBehaviour {
     #endregion
     //====================================================================================
     
-    void OnGUI()
+    void teOnGUI()
     {
         try
         {

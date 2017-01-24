@@ -49,22 +49,6 @@ namespace Synergy88
 
         private GameRoot _game;
 
-        //*************************************************************
-        //GAMESPARKS
-        GameSparks_DataSender _GSDataSender;
-
-        void Awake()
-        {
-            try
-            {
-                _GSDataSender = GetComponent<GameSparks_DataSender>();
-                _GSDataSender.ObjToTranslate = gameObject;
-                _GSDataSender.ObjToRotate = carObject.gameObject;
-                _GSDataSender.PlayerCam = carCamera;
-            }
-            catch { }
-        }
-        //*************************************************************
 
         void RegisterDataToDebugMode()
         {
@@ -129,6 +113,45 @@ namespace Synergy88
             this.transform.position = spawnAreas[Random.Range(0, spawnAreas.Length)].transform.position;
         }
 
+        //*************************************************************
+        //GAMESPARKS
+        GameSparks_DataSender _GSDataSender;
+
+        void Awake()
+        {
+            try
+            {
+                _GSDataSender = GetComponent<GameSparks_DataSender>();
+                _GSDataSender.ObjToTranslate = gameObject;
+                _GSDataSender.ObjToRotate = carObject.gameObject;
+                _GSDataSender.PlayerCam = carCamera;
+            }
+            catch { }
+        }
+        //*************************************************************
+        //*************************************************************
+        //GAMESPARKS
+        void GameTEsting()
+        {
+            if (Input.GetKey(KeyCode.W))
+            {
+                transform.position += transform.forward * 0.5f;
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                transform.position -= transform.forward * 0.5f;
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                transform.position -= transform.right * 0.5f;
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                transform.position += transform.right * 0.5f;
+            }
+            return;
+        }
+        //*************************************************************
         void Update()
         {
             if (_game.isPlaying)
@@ -146,6 +169,8 @@ namespace Synergy88
                 }
                 catch { }
                 //*************************************************************
+                //GameTEsting();
+
 
 
                 invis -= Time.deltaTime;

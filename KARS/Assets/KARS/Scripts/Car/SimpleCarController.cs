@@ -18,6 +18,12 @@ namespace Synergy88
         private Transform Car;
         [SerializeField]
         private Camera carCamera;
+
+        internal void activatePowerup(PowerupType pType)
+        {
+            Debug.LogError(pType.ToString());
+        }
+
         [SerializeField]
         private float camDist = 10;
 
@@ -229,6 +235,7 @@ namespace Synergy88
             {
                 //*************************************************************
                 //GAMESPARKS
+                if(false)
                 try
                 {
                     if (_GSDataSender.HasControllableObject == false)//GAME SPARK INITIALIZATION

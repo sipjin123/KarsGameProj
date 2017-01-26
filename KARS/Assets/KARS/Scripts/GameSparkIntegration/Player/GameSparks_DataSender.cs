@@ -55,8 +55,8 @@ public class GameSparks_DataSender : MonoBehaviour
     }
     //-----------------------------------------------------
     [SerializeField]
-    GameObject _shieldObject;
-    bool _shieldSwitch;
+     GameObject _shieldObject;
+    public bool _shieldSwitch;
 
     float rotSpeed = 1;
     #endregion

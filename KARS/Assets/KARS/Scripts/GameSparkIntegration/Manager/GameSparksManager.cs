@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using GameSparks.Core;
 using GameSparks.Api.Responses;
 using System.Collections.Generic;
+using Synergy88;
 
 public class GameSparksManager : MonoBehaviour {
     //=========================================================================================================================================================================
@@ -104,7 +105,6 @@ public class GameSparksManager : MonoBehaviour {
     #region DATA RECEIVE
     private void OnPacketReceived(RTPacket _packet)
     {
-        int receivedPlayerToMove = 0;
         switch (_packet.OpCode)
         {
             case 102://UPDATES GAME TIME EVERY 5 SECONDS
@@ -127,6 +127,7 @@ public class GameSparksManager : MonoBehaviour {
                 break;
             case 111://UPDATES PLAYER MOVEMENT
                 {
+                    int receivedPlayerToMove = 0;
                     receivedPlayerToMove = _packet.Data.GetInt(1).Value;
                     for (int i = 0; i < tankPool.Count; i++)
                     {
@@ -228,6 +229,21 @@ public class GameSparksManager : MonoBehaviour {
                         {
                             PowerUpManager.Instance.ReceiveFromServer(receivedServer_ID, receivedTNT_ID, receivedPosition, ifEnabled);
                             //_objList[i].GetComponent<TnTScript>().DispatchTNTToDestination(receivedServer_ID,receivedPosition,ifEnabled);
+                        }
+                    }
+                }
+                break;
+            case 117://UPDATES MISSLE MOVEMENT
+                {
+                    int receivedPlayerToMove = _packet.Data.GetInt(1).Value;
+                    int receivedPlayerAction = _packet.Data.GetInt(2).Value;
+
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nRECEIVED PLAYER # (" + receivedPlayerToMove;
+                    for (int i = 0; i < tankPool.Count; i++)
+                    {
+                        if(tankPool[i].GetComponent<GameSparks_DataSender>().NetworkID == receivedPlayerToMove)
+                        {
+                            tankPool[i].GetComponent<SimpleCarController>().PlayerExplode();
                         }
                     }
                 }

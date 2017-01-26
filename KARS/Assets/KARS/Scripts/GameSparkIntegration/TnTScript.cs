@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using Synergy88;
 public class TnTScript : MonoBehaviour {
 
     private Transform TnTParent;
@@ -46,5 +46,18 @@ public class TnTScript : MonoBehaviour {
             transform.position = _pos;
             gameObject.SetActive(_enable);
             transform.SetParent(null);
+    }
+
+    void OnTriggerEnter(Collider hit)
+    {
+        if(hit.tag == "Car")
+        {
+            GameSparks_DataSender _dataSender = hit.GetComponent<GameSparks_DataSender>();
+            if (_dataSender.NetworkID != owner_Id)
+            {
+                _dataSender.gameObject.GetComponent<SimpleCarController>().PlayerExplode();
+                ResetTnT();
+            }
+        }
     }
 }

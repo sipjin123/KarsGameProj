@@ -136,7 +136,11 @@ namespace Synergy88
         float flightForceDelplete;
         Rigidbody _rigidbody;
         Rigidbody _carRigidBody;
-
+        IEnumerator DelayCarReset()
+        {
+            yield return new WaitForSeconds(1);
+            PlayerReset();
+        }
         void PlayerReset()
         {
             _rigidbody.isKinematic = true;
@@ -149,6 +153,7 @@ namespace Synergy88
         }
         public void PlayerExplode()
         {
+            if(!isFalling && !isFlyng)
             flightForceDelplete = 100;
             isFlyng = true;
 
@@ -208,6 +213,7 @@ namespace Synergy88
                     _carRigidBody.angularVelocity = Vector3.zero;
                     _rigidbody.useGravity = false;
                     isFalling = false;
+                    StartCoroutine("DelayCarReset");
                 }
             }
 
@@ -233,8 +239,8 @@ namespace Synergy88
                     _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
                 }
                 catch { }
-                //GameTEsting();
-                //return;
+                GameTEsting();
+                return;
                 //*************************************************************
 
 

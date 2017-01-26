@@ -1,4 +1,5 @@
 ﻿using GameSparks.RT;
+using Synergy88;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,18 +25,8 @@ public class MissleScript : MonoBehaviour {
     }
     [SerializeField]
     private GameObject objectToHit;
-    public GameObject ObjectToHit
-    {
-        get { return objectToHit; }
-        set { objectToHit = value; }
-    }
     [SerializeField]
     private bool lockOnObject;
-    public bool LockOnObject
-    {
-        get { return lockOnObject; }
-        set { lockOnObject = value; }
-    }
 
     Transform missleParent;
     float missleSpeed = 0.5f;
@@ -54,7 +45,7 @@ public class MissleScript : MonoBehaviour {
             transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.blue;
             if (lockOnObject)
             {
-                if (Vector3.Distance(transform.position, objectToHit.transform.position) < 3)
+                if (Vector3.Distance(transform.position, objectToHit.transform.position) < 0)
                 {
                     ResetMissle();
                 }
@@ -127,5 +118,35 @@ public class MissleScript : MonoBehaviour {
         objectToHit = null;
         lockOnObject = false;
         gameObject.SetActive(false);
+    }
+
+
+    void OnTriggerEnter(Collider hit)
+    {
+        if (hit.tag == "Car")
+        {
+            try
+            {
+                ResetMissle();
+
+                if (hit.GetComponent<GameSparks_DataSender>()._shieldSwitch)
+                    return;
+
+                GetRTSession = GameSparksManager.Instance.GetRTSession();
+                using (RTData data = RTData.Get())
+                {
+                    data.SetInt(1, hit.GetComponent<GameSparks_DataSender>().NetworkID);
+                    data.SetInt(2,1);
+
+                    GetRTSession.SendData(117, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nServer (" + GameSparksManager.Instance.PeerID + ") Owner (" + playerController_ID + "Missle # " + Missle_ID + " hit " + hit.gameObject.name;
+                }
+            }
+            catch { }
+        }
+        else
+        {
+
+        }
     }
 }

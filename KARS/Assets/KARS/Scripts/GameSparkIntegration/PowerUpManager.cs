@@ -174,4 +174,33 @@ public class PowerUpManager : MonoBehaviour {
             GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
         }
     }
+
+    internal void LaunchMissle()
+    {
+        if (GameSparksManager.Instance.PeerID == "2")
+        {
+            LockOnTarget(2, BLueCar);
+            //ClientSendToServerMissleLock(2,1);
+        }
+        else if (GameSparksManager.Instance.PeerID == "1")
+        {
+            LockOnTarget(1, RedCar);
+            //ClientSendToServerMissleLock(1,2);
+        }
+    }
+
+    internal void DropTNT()
+    {
+        Debug.LogError("Drop TNT");
+
+        if (GameSparksManager.Instance.PeerID == "2")
+        {
+            SetUpTNT(2, RedCar.transform.position, true);
+        }
+        else if (GameSparksManager.Instance.PeerID == "1")
+        {
+            SetUpTNT(1, BLueCar.transform.position, true);
+        }
+    }
+
 }

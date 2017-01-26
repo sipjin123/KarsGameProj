@@ -17,6 +17,7 @@ namespace Synergy88
 
     public class Powerup : MonoBehaviour
     {
+        [SerializeField]
         PowerupType pType;
         [SerializeField]
         private float powerupSpawnTime = 0;

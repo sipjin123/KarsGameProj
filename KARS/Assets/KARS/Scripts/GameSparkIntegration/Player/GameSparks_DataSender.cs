@@ -374,7 +374,14 @@ public class GameSparks_DataSender : MonoBehaviour
     }
     #endregion
     //=====================================================================================================================
-    
+
+    public void ActivateShield(bool _switch)
+    {
+            _shieldSwitch = _switch;
+            _shieldObject.SetActive(_switch);
+            ActivatePowerup();
+    }
+
     void OnGUI()
     {
         if (NetworkID.ToString() == _sparksManager.PeerID)

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 namespace Synergy88
 {
@@ -143,6 +144,7 @@ namespace Synergy88
         //*************************************************************
         //*************************************************************
         //GAMESPARKS
+        #region
         bool isFlyng;
         bool isFalling;
         float flightForceDelplete;
@@ -180,6 +182,8 @@ namespace Synergy88
             _carRigidBody.constraints = RigidbodyConstraints.FreezePosition;
             _carRigidBody.AddTorque(new Vector3(Random.RandomRange(1, 5), Random.RandomRange(1, 5), Random.RandomRange(1, 5)), ForceMode.Impulse);
         }
+        #endregion
+        #region
         void GameTEsting()
         {
             if (Input.GetKey(KeyCode.W))
@@ -234,6 +238,7 @@ namespace Synergy88
                 PlayerReset();
             }
         }
+        #endregion
         //*************************************************************
         void Update()
         {
@@ -241,7 +246,7 @@ namespace Synergy88
             {
                 //*************************************************************
                 //GAMESPARKS
-                if(false)
+                //if(false)
                 try
                 {
                     if (_GSDataSender.HasControllableObject == false)//GAME SPARK INITIALIZATION
@@ -263,6 +268,10 @@ namespace Synergy88
                     {
                         isShielded = false;
                         shield.SetActive(false);
+                        //*************************************************************
+                        //GAMESPARKS
+                        _GSDataSender.ActivateShield(false);
+                        //*************************************************************
                     }
                 }
 
@@ -352,6 +361,10 @@ namespace Synergy88
 
         internal void ActivateShield()
         {
+            //*************************************************************
+            //GAMESPARKS
+            _GSDataSender.ActivateShield(true);
+            //*************************************************************
             isShielded = true;
             shieldDur = maxShieldDur;
             shield.SetActive(true);

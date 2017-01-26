@@ -140,26 +140,95 @@ public class GameSparksManager : MonoBehaviour {
                     }
                 }
                 break;
+            case 113://UPDATES PLAYER POWERUPS
+                {
+                    int playerIndex = _packet.Data.GetInt(1).Value;
+                    bool powerUpSwitch = false;
+                    if (_packet.Data.GetInt(2).Value == 0)
+                        powerUpSwitch = false;
+                    else
+                        powerUpSwitch = true;
 
-            case 112://UPDATES MISSLE MOVEMENT
+                    for (int i = 0; i < tankPool.Count; i++)
+                    {
+                        GameObject _obj = tankPool[i];
+                        GameSparks_DataSender _GameSparks_DataSender = _obj.GetComponent<GameSparks_DataSender>();
+
+                        if (_GameSparks_DataSender.NetworkID == playerIndex)
+                        {
+                            _obj.GetComponent<GameSparks_DataSender>().ReceivePowerUpState(powerUpSwitch);
+                        }
+                    }
+                }
+                break;
+            case 114://UPDATES MISSLE MOVEMENT
+                {
+                    int sender_ID = _packet.Data.GetInt(1).Value;
+                    int receiver_ID = _packet.Data.GetInt(2).Value;
+
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n(" + GameSparksManager.Instance.PeerID + ") received missle on Server";
+
+                    for (int i = 0; i < tankPool.Count; i++)
+                    {
+                        GameObject _obj = tankPool[i];
+                        GameSparks_DataSender _GameSparks_DataSender = _obj.GetComponent<GameSparks_DataSender>();
+
+                        if (_GameSparks_DataSender.NetworkID == receiver_ID)
+                        {
+                            //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n(" + GameSparksManager.Instance.PeerID + ") will send to lock on target parent";
+                            //PowerUpManager.Instance.LockOnTarget(receiver_ID ,_obj);
+                        }
+                    }
+                }
+                break;
+            case 115://UPDATES MISSLE MOVEMENT
                 {
                     int missleIndex = _packet.Data.GetInt(1).Value;
                     List<GameObject> _objList = PowerUpManager.Instance.MissleList;
                     for (int i = 0; i < _objList.Count; i++)
                     {
-                        if(missleIndex == _objList[i].GetComponent<MissleScript>().Missle_ID)
+                        if (missleIndex == _objList[i].GetComponent<MissleScript>().Missle_ID)
                         {
                             Vector3 temp = new Vector3(_packet.Data.GetFloat(2).Value, _packet.Data.GetFloat(3).Value, _packet.Data.GetFloat(4).Value);
 
                             if (_packet.Data.GetInt(6).Value == 0)
                             {
+                                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n" + PeerID + " Will Disable " + _objList[i].gameObject.name;
+                                _objList[i].GetComponent<MissleScript>().SetSYnc(temp, _packet.Data.GetVector3(5).Value);
                                 _objList[i].SetActive(false);
                                 return;
                             }
 
                             _objList[i].SetActive(true);
                             _objList[i].GetComponent<MissleScript>().SetSYnc(temp, _packet.Data.GetVector3(5).Value);
-                       }
+                        }
+                    }
+                }
+                break;
+            case 116://UPDATES MISSLE MOVEMENT
+                {
+                    int receivedServer_ID = _packet.Data.GetInt(1).Value;
+                    int receivedTNT_ID = _packet.Data.GetInt(2).Value;
+                    Vector3 receivedPosition = _packet.Data.GetVector3(3).Value;
+                    bool ifEnabled = false;
+                    if (_packet.Data.GetInt(4).Value == 0)
+                        ifEnabled = false;
+                    else if (_packet.Data.GetInt(4).Value == 1)
+                        ifEnabled = true;
+
+
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nRECEIVED TNT # (" + receivedTNT_ID + ") of (" + receivedServer_ID + ") HAS been dispatched to " + receivedPosition;
+                    PowerUpManager.Instance.ReceiveFromServer(receivedServer_ID, receivedTNT_ID, receivedPosition, ifEnabled);
+                    return;
+
+                    List<GameObject> _objList = PowerUpManager.Instance.TnTList;
+                    for (int i = 0; i < _objList.Count; i++)
+                    {
+                        if (receivedTNT_ID == _objList[i].GetComponent<TnTScript>().TNT_ID)
+                        {
+                            PowerUpManager.Instance.ReceiveFromServer(receivedServer_ID, receivedTNT_ID, receivedPosition, ifEnabled);
+                            //_objList[i].GetComponent<TnTScript>().DispatchTNTToDestination(receivedServer_ID,receivedPosition,ifEnabled);
+                        }
                     }
                 }
                 break;

@@ -39,7 +39,7 @@ public unsafe class DebugMode : MonoBehaviour {
     {
         if (!isDebugOn)
         {
-            if (GUI.Button(new Rect(25, 25, 500, 500), "Open Debug"))
+            if (GUI.Button(new Rect(25, 25, 100, 100), "Open Debug"))
             {
                 isDebugOn = true;
                 scrollRect.gameObject.SetActive(true);
@@ -48,7 +48,7 @@ public unsafe class DebugMode : MonoBehaviour {
         }
         else
         {
-            if (GUI.Button(new Rect(25, 25, 500, 500), "Close Debug"))
+            if (GUI.Button(new Rect(25, 25, 100, 100), "Close Debug"))
             {
                 isDebugOn = false;
                 scrollRect.gameObject.SetActive(false);

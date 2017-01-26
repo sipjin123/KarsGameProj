@@ -49,10 +49,6 @@ namespace Synergy88
 
         private GameRoot _game;
 
-        void OnGUI()
-        {
-            GUI.TextArea(new Rect(0, 0, 100, 100), carCamera.transform.localPosition + "");
-        }
 
         void RegisterDataToDebugMode()
         {
@@ -117,11 +113,132 @@ namespace Synergy88
             this.transform.position = spawnAreas[Random.Range(0, spawnAreas.Length)].transform.position;
         }
 
+        //*************************************************************
+        //GAMESPARKS
+        GameSparks_DataSender _GSDataSender;
+
+        void Awake()
+        {
+            try
+            {
+                _GSDataSender = GetComponent<GameSparks_DataSender>();
+                _GSDataSender.ObjToTranslate = gameObject;
+                _GSDataSender.ObjToRotate = carObject.gameObject;
+                _GSDataSender.PlayerCam = carCamera;
+            }
+            catch { }
+        }
+        //*************************************************************
+        //*************************************************************
+        //GAMESPARKS
+        bool isFlyng;
+        bool isFalling;
+        float flightForceDelplete;
+        Rigidbody _rigidbody;
+        Rigidbody _carRigidBody;
+
+        void PlayerReset()
+        {
+            _rigidbody.isKinematic = true;
+            _rigidbody.useGravity = false;
+            Destroy(carObject.GetComponent<Rigidbody>());
+            Destroy(carObject.GetComponent<BoxCollider>());
+            carObject.transform.localPosition = Vector3.zero;
+            carObject.transform.localEulerAngles = Vector3.zero;
+            _rigidbody.constraints = RigidbodyConstraints.None;
+        }
+        public void PlayerExplode()
+        {
+            flightForceDelplete = 100;
+            isFlyng = true;
+
+            _rigidbody = GetComponent<Rigidbody>();
+            _rigidbody.isKinematic = false;
+            _rigidbody.useGravity = true;
+            _rigidbody.AddForce(transform.up * 500);
+
+            carObject.gameObject.AddComponent<Rigidbody>();
+            _carRigidBody = carObject.GetComponent<Rigidbody>();
+            _carRigidBody.useGravity = false;
+            _carRigidBody.constraints = RigidbodyConstraints.FreezePosition;
+            _carRigidBody.AddTorque(new Vector3(Random.RandomRange(1, 5), Random.RandomRange(1, 5), Random.RandomRange(1, 5)), ForceMode.Impulse);
+        }
+        void GameTEsting()
+        {
+            if (Input.GetKey(KeyCode.W))
+            {
+                transform.position += transform.forward * 0.5f;
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                transform.position -= transform.forward * 0.5f;
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                transform.position -= transform.right * 0.5f;
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                transform.position += transform.right * 0.5f;
+            }
+            if (Input.GetKey(KeyCode.X))
+            {
+                PlayerExplode();
+            }
+            if (isFlyng)
+            {
+                flightForceDelplete--;
+                if (flightForceDelplete <= 0)
+                {
+                    isFlyng = false;
+                    isFalling = true;
+                    _rigidbody.velocity = Vector3.zero;
+
+                    _carRigidBody.useGravity = true;
+                    _carRigidBody.gameObject.AddComponent<BoxCollider>();
+                }
+            }
+            if (isFalling)
+            {
+                if (transform.position.y < 2)
+                {
+                    _rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+                    _carRigidBody.constraints = RigidbodyConstraints.None;
+
+                    _carRigidBody.angularVelocity = Vector3.zero;
+                    _rigidbody.useGravity = false;
+                    isFalling = false;
+                }
+            }
+
+            if (Input.GetKey(KeyCode.Z))
+            {
+                PlayerReset();
+            }
+        }
+        //*************************************************************
         void Update()
         {
-
             if (_game.isPlaying)
             {
+                //*************************************************************
+                //GAMESPARKS
+                try
+                {
+                    if (_GSDataSender.HasControllableObject == false)//GAME SPARK INITIALIZATION
+                        return;
+                    if (int.Parse(GameSparksManager.Instance.PeerID) != _GSDataSender.NetworkID)//GAME SPARK ID
+                        return;
+
+                    _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
+                }
+                catch { }
+                //GameTEsting();
+                //return;
+                //*************************************************************
+
+
+
                 invis -= Time.deltaTime;
                 if (isAlive)
                 {
@@ -129,15 +246,14 @@ namespace Synergy88
                     {
                         foreach (Touch _touches in Input.touches)
                         {
-                            if ((_touches.rawPosition.x > Screen.width / 2))
+                            if ((_touches.rawPosition.x > Screen.height / 2))
                             {
                                 currentRot += rotSpeed * Time.deltaTime;
-                                Debug.LogError("12121");
+
                             }
                             else
                             {
                                 currentRot -= rotSpeed * Time.deltaTime;
-                                Debug.LogError("546456");
                                 //this.transform.Rotate(Vector3.up * rotSpeed * Time.deltaTime);
 
                             }

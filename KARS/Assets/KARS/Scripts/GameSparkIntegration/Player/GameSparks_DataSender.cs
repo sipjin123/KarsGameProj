@@ -13,78 +13,52 @@ public class GameSparks_DataSender : MonoBehaviour
 {
     //=====================================================================================================================
     #region VARIABLES
+    //NETWORK RELATED
+    //-----------------------------------------------------
     [SerializeField]
     private string DisplayName;
 
     private GameSparksManager _sparksManager;
     private GameSparksRTUnity GetRTSession;
 
-    float rotSpeed = 1;
-
-
     [SerializeField]
     private Camera playerCam;
     public Camera PlayerCam
     {
-        get
-        {
-            return playerCam;
-        }
-        set
-        {
-            playerCam = value;
-        }
+        get   {   return playerCam;  }
+        set   {   playerCam = value; }
     }
     private bool hasControllableObject;
     public bool HasControllableObject
     {
-        get
-        {
-            return hasControllableObject;
-        }
-        set
-        {
-            hasControllableObject = value;
-        }
+        get  {  return hasControllableObject;    }
+        set  {  hasControllableObject = value; }
     }
     private GameObject _objToTranslate;
     public GameObject ObjToTranslate
     {
-        get
-        {
-            return _objToTranslate;
-        }
-        set
-        {
-            _objToTranslate = value;
-        }
+        get {   return _objToTranslate;  }
+        set {   _objToTranslate = value; }
     }
     private GameObject _objToRotate;
     public GameObject ObjToRotate
     {
-        get
-        {
-            return _objToRotate;
-        }
-        set
-        {
-            _objToRotate = value;
-        }
+        get {   return _objToRotate;   }
+        set {  _objToRotate = value;   }
     }
-
     [SerializeField]
     private int _networkID;
     public int NetworkID
     {
-        get
-        {
-            return _networkID;
-        }
-        set
-        {
-            _networkID = value;
-        }
+        get {  return _networkID;  }
+        set {  _networkID = value;  }
     }
+    //-----------------------------------------------------
+    [SerializeField]
+    GameObject _shieldObject;
+    bool _shieldSwitch;
+
+    float rotSpeed = 1;
     #endregion
     //=====================================================================================================================
     #region INITIALIZATION
@@ -106,6 +80,15 @@ public class GameSparks_DataSender : MonoBehaviour
         ExtrapoalteObj.transform.transform.localPosition = new Vector3(0, -0.55f, 0.75f);
         ExtrapoalteObj.GetComponent<MeshRenderer>().material.color = Color.blue;
         Destroy(ExtrapoalteObj.GetComponent<SphereCollider>());
+
+
+        _shieldObject = Instantiate(PowerUpManager.Instance.Shield, Vector3.one, Quaternion.identity) as GameObject;
+        _shieldObject.transform.SetParent(transform);
+        _shieldObject.transform.localPosition = Vector3.zero;
+        _shieldObject.transform.localEulerAngles = Vector3.zero;
+
+        _shieldObject.gameObject.name = "Shield";
+        _shieldObject.SetActive(false);
     }
     public void setWhatToControl()
     {
@@ -113,7 +96,9 @@ public class GameSparks_DataSender : MonoBehaviour
         hasControllableObject = true;
 
         if (_sparksManager.PeerID == _networkID.ToString())
+        {
             playerCam.enabled = true;
+        }
         else
         {
             StartCoroutine(Delaycamera());
@@ -131,9 +116,29 @@ public class GameSparks_DataSender : MonoBehaviour
     //===============================================================================================================================================================================================
     void Update()
     {
-         if (!hasControllableObject)
+        if (_sparksManager.PeerID == NetworkID.ToString())
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha0))
+            {
+                _shieldSwitch = true;
+                _shieldObject.SetActive(true);
+                ActivatePowerup();
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha9))
+            {
+                _shieldSwitch = false;
+                _shieldObject.SetActive(false);
+                ActivatePowerup();
+            }
+        }
+        if (!hasControllableObject)
            return;
-        
+
+
+
+
+
+
         if (_sparksManager.PeerID != NetworkID.ToString())
         {
             UpdateFunctInterpolate();
@@ -145,24 +150,45 @@ public class GameSparks_DataSender : MonoBehaviour
     #region SEND DATA
     public void SendTankMovement(int _id ,Vector3 _pos ,Vector3 _rot)
     {
-        GetRTSession = GameSparksManager.Instance.GetRTSession();
+        try
+        {
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, _id);
+                data.SetFloat(2, _pos.x);
+                data.SetFloat(3, _pos.y);
+                data.SetFloat(4, _pos.z);
+                data.SetVector3(5, _rot);
+                data.SetDouble(6, Network.time);
+                data.SetDouble(7, GameSparksManager.Instance.gameTimeInt);
+
+                GetRTSession.SendData(111, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            }
+        }
+        catch
+        {
+            GetRTSession = GameSparksManager.Instance.GetRTSession();
+            SendTankMovement(_id, _pos, _rot);
+        }
+    }
+
+   void ActivatePowerup()
+    {
         using (RTData data = RTData.Get())
         {
-            data.SetInt(1, _id);
-            data.SetFloat(2, _pos.x);
-            data.SetFloat(3, _pos.y);
-            data.SetFloat(4, _pos.z);
-            data.SetVector3(5, _rot);
-            data.SetDouble(6, Network.time);
-            data.SetDouble(7, GameSparksManager.Instance.gameTimeInt);
+            data.SetInt(1, _networkID);
+            if (_shieldSwitch) 
+                data.SetInt(2, 1);
+            else
+                data.SetInt(2,0);
 
-            GetRTSession.SendData(111, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
     #endregion
     //=====================================================================================================================
     //=====================================================================================================================
-    //STATE UPDATER
+    //DATA RECEIVER
     #region STATE_UPDATER
     public struct State
     {
@@ -207,6 +233,12 @@ public class GameSparks_DataSender : MonoBehaviour
         {
             Debug.LogError("CANNOT UPDATE STATE");
         }
+    }
+
+    public void ReceivePowerUpState(bool _switch)
+    {
+        _shieldObject.SetActive(_switch);
+        _shieldSwitch = _switch;
     }
     #endregion
     //=====================================================================================================================
@@ -347,9 +379,9 @@ public class GameSparks_DataSender : MonoBehaviour
     {
         if (NetworkID.ToString() == _sparksManager.PeerID)
         {
-            GUI.Box(new Rect(Screen.width - 200, 0, 100, 30), "Player " + NetworkID.ToString());
+            GUI.Box(new Rect(0, Screen.height-60, 100, 30), "Player: " + NetworkID.ToString());
         }
-        GUI.Box(new Rect(Screen.width - 100, 30, 100, 30), "Player " + _sparksManager.PeerID);
+        GUI.Box(new Rect(0, Screen.height-30, 100, 30), "Network: " + _sparksManager.PeerID);
     }
 
 }

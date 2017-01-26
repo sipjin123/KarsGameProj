@@ -2,8 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MissleScript : MonoBehaviour {
+
+    [SerializeField]
+    private int playerController_ID;
+    public int PlayerController_ID
+    {
+        get { return playerController_ID; }
+        set { playerController_ID = value; }
+    }
+
 
     [SerializeField]
     private int missle_ID;
@@ -38,14 +48,15 @@ public class MissleScript : MonoBehaviour {
 
     void Update()
     {
-        if (GameSparksManager.Instance.PeerID == "1")
+
+        if (GameSparksManager.Instance.PeerID == PlayerController_ID.ToString())
         {
+            transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.blue;
             if (lockOnObject)
             {
                 if (Vector3.Distance(transform.position, objectToHit.transform.position) < 3)
                 {
                     ResetMissle();
-                    return;
                 }
                 else
                 {
@@ -55,8 +66,9 @@ public class MissleScript : MonoBehaviour {
                 }
             }
         }
-        else
+        else if(GameSparksManager.Instance.PeerID != PlayerController_ID.ToString())
         {
+            transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.red;
             transform.position = Vector3.Lerp(transform.position, SyncMovement, 1);
             transform.eulerAngles = Vector3.Slerp(transform.eulerAngles, SyncRot, 1);
         }
@@ -82,7 +94,7 @@ public class MissleScript : MonoBehaviour {
                 data.SetVector3(5, transform.eulerAngles);
                 data.SetInt(6, _var);
 
-                GetRTSession.SendData(112, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                GetRTSession.SendData(115, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
             }
         }
         catch { }
@@ -97,8 +109,9 @@ public class MissleScript : MonoBehaviour {
         gameObject.name += _var;
         gameObject.SetActive(false);
     }
-    public void LockOnToThisObject(GameObject _obj)
+    public void LockOnToThisObject(int senderID,GameObject _obj)
     {
+        playerController_ID = senderID;
         transform.position = missleParent.transform.position;
         objectToHit = _obj;
         transform.SetParent(null);
@@ -107,10 +120,12 @@ public class MissleScript : MonoBehaviour {
     }
     public void ResetMissle()
     {
+        transform.SetParent(missleParent);
+        transform.position = missleParent.transform.position;
         SendMissleData(0);
+        playerController_ID = 0;
         objectToHit = null;
         lockOnObject = false;
-        transform.SetParent(missleParent);
         gameObject.SetActive(false);
     }
 }

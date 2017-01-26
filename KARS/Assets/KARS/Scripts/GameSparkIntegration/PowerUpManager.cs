@@ -60,6 +60,7 @@ public class PowerUpManager : MonoBehaviour {
     }
     #endregion
     //=======================================================================================================================
+    #region TNT SEND AND RECEIVE FROM SERVER
     public void SetUpTNT(int _id, Vector3 _pos, bool _enable)
     {
 
@@ -111,6 +112,7 @@ public class PowerUpManager : MonoBehaviour {
             GetRTSession.SendData(116, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
+    #endregion
     //=======================================================================================================================
     public void LockOnTarget(int senderID,GameObject _obj)
     {
@@ -168,6 +170,32 @@ public class PowerUpManager : MonoBehaviour {
                 SetUpTNT(1, BLueCar.transform.position, true);
             }
         }
+        if(Input.GetKeyDown(KeyCode.M))
+        {
+            if (GameSparksManager.Instance.PeerID == "2")
+            {
+                GetRTSession = GameSparksManager.Instance.GetRTSession();
+                using (RTData data = RTData.Get())
+                {
+                    data.SetInt(1, 1);
+                    data.SetInt(2, 1);
+
+                    GetRTSession.SendData(117, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                }
+            }
+            else if (GameSparksManager.Instance.PeerID == "1")
+            {
+                GetRTSession = GameSparksManager.Instance.GetRTSession();
+                using (RTData data = RTData.Get())
+                {
+                    data.SetInt(1,2);
+                    data.SetInt(2, 1);
+
+                    GetRTSession.SendData(117, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                }
+            }
+        }
+
         if(Input.GetKeyDown(KeyCode.Y))
         {
 

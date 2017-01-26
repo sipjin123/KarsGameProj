@@ -262,6 +262,9 @@ namespace Synergy88
                 GameTEsting();
                 //*************************************************************
 
+                if (isFlyng || isFalling)
+                    return;
+
                 if (isShielded)
                 {
                     shieldDur -= Time.deltaTime;

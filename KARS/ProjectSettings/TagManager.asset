@@ -7,6 +7,8 @@ TagManager:
   - Flag
   - Car
   - Wall
+  - TNT
+  - Missle
   layers:
   - Default
   - TransparentFX

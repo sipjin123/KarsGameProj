@@ -28,7 +28,12 @@ namespace Synergy88 {
 
         [SerializeField]
         private SimpleCarController[] Player;
-
+        [SerializeField]
+        private GameObject[] PowerupButton;
+        
+        [SerializeField]
+        private PowerupType[] currentAcquiredPowerups;
+        private int powerupInventorySize = 4;
 
         private bool _isPlaying = true;
         public bool isPlaying { get { return _isPlaying; } }
@@ -94,15 +99,112 @@ namespace Synergy88 {
 
         }
 
+
         protected override void Start() {
 
             //Remove Background Signal
             RegisterDataToDebugMode();
 
             base.Start();
-		}
 
-		protected override void OnEnable() {
+            this.AddButtonHandler(EButtonType.Powerup1, (ButtonClickedSignal signal) => {
+                OnClickPowerUpButton(1);
+            });
+            this.AddButtonHandler(EButtonType.Powerup2, (ButtonClickedSignal signal) => {
+                OnClickPowerUpButton(2);
+            });
+            this.AddButtonHandler(EButtonType.Powerup3, (ButtonClickedSignal signal) => {
+                OnClickPowerUpButton(3);
+            });
+            this.AddButtonHandler(EButtonType.Powerup4, (ButtonClickedSignal signal) => {
+                OnClickPowerUpButton(4);
+            });
+            currentAcquiredPowerups = new PowerupType[powerupInventorySize];
+        }
+
+        //private Powerup powerupInventory;
+
+
+        internal void AcquirePowerup(PowerupType pType)
+        {
+            Debug.LogError(pType.ToString());
+            for (int x = 0; x < powerupInventorySize; x++)
+            {
+                if (currentAcquiredPowerups[x] == PowerupType.NULL)
+                {
+
+                    switch (pType)
+                    {
+                        case PowerupType.MISSLE:
+                            currentAcquiredPowerups[x] = pType;
+                            break;
+                        case PowerupType.TNT:
+                            currentAcquiredPowerups[x] = pType;
+                            break;
+                        case PowerupType.SHEILD:
+                            currentAcquiredPowerups[x] = pType;
+                            break;
+                    }
+
+                    PowerupButton[x].SetActive(true);
+                    Debug.LogError("Adding " + pType.ToString());
+                    break;
+                }
+            }
+
+
+        }
+
+        internal void OnClickPowerUpButton(int v)
+        {
+            switch (v)
+            {
+
+                case 1:
+                    ActivePowerup(currentAcquiredPowerups[0]);
+                    currentAcquiredPowerups[0] = PowerupType.NULL;
+                    PowerupButton[0].SetActive(false);
+                    break;
+                case 2:
+                    ActivePowerup(currentAcquiredPowerups[1]);
+                    currentAcquiredPowerups[1] = PowerupType.NULL;
+                    PowerupButton[1].SetActive(false);
+                    break;
+                case 3:
+                    ActivePowerup(currentAcquiredPowerups[2]);
+                    currentAcquiredPowerups[2] = PowerupType.NULL;
+                    PowerupButton[2].SetActive(false);
+                    break;
+                case 4:
+                    ActivePowerup(currentAcquiredPowerups[3]);
+                    currentAcquiredPowerups[3] = PowerupType.NULL;
+                    PowerupButton[3].SetActive(false);
+                    break;
+            }
+
+        }
+
+        private void ActivePowerup(PowerupType powerupType)
+        {
+            switch (powerupType)
+            {
+                case PowerupType.MISSLE:
+                    Debug.LogError("Launch Missle");
+                    Player[0].LaunchMissile();
+                    break;
+                case PowerupType.TNT:
+                    Debug.LogError("Drop TNT");
+                    Player[0].DropTNT();
+                    break;
+                case PowerupType.SHEILD:
+                    Debug.LogError("Activate Shield");
+                    Player[0].ActivateShield();
+                    break;
+
+            }
+        }
+
+        protected override void OnEnable() {
 			base.OnEnable();
 		}
 

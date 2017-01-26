@@ -1,13 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Synergy88
 {
     public enum PowerupType {
 
-        SPEED,
-        STAR,
+        NULL,
+
+
+        MISSLE,
+        TNT,
+        SHEILD,
+
 
     }
 
@@ -17,12 +20,18 @@ namespace Synergy88
         PowerupType pType;
         [SerializeField]
         private float powerupSpawnTime = 0;
-        private float powerupMaxSpawnTime = 30;
+        private float powerupMaxSpawnTime = 10;
 
         [SerializeField]
         private bool powerUpActive = true;
+        private GameRoot _game;
 
 
+        void Start()
+        {
+            _game = GameObject.FindObjectOfType<GameRoot>();
+            RandomizePowerup();
+        }
 
         void OnTriggerEnter(Collider col)
         {
@@ -31,7 +40,7 @@ namespace Synergy88
             {
                 if (powerUpActive)
                 {
-                    col.GetComponent<SimpleCarController>().activatePowerup(pType);
+                    _game.AcquirePowerup(pType);
                     DisablePowerup();
                 }
             }
@@ -47,8 +56,15 @@ namespace Synergy88
 
         void SpawnPowerup()
         {
+
+            RandomizePowerup(); 
             this.gameObject.GetComponent<MeshRenderer>().enabled = true;
             powerUpActive = true;
+        }
+
+        private void RandomizePowerup()
+        {
+            pType = (PowerupType) Random.Range(1,4);
         }
 
         void Update()

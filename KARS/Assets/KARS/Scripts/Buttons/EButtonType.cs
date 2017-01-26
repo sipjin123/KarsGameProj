@@ -32,5 +32,9 @@ namespace Synergy88
 		Popup002,
 		Popup003,
 		Close,
+		Powerup1,
+		Powerup2,
+		Powerup3,
+		Powerup4,
 	}
 }

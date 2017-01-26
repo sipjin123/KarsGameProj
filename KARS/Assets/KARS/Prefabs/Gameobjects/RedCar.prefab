@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4747758950088210}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CarGameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ GameObject:
   - component: {fileID: 4261573907416016}
   - component: {fileID: 33316522817225288}
   - component: {fileID: 23810734599137928}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CarFrame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51,7 +51,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4115921686107066}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CameraHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -68,7 +68,7 @@ GameObject:
   - component: {fileID: 4765038134649726}
   - component: {fileID: 33475034667905430}
   - component: {fileID: 23300349567501866}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CarFrame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,13 +85,30 @@ GameObject:
   - component: {fileID: 4867653690519778}
   - component: {fileID: 33911483733765542}
   - component: {fileID: 23560283318671720}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1532917124865076
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4815286129363734}
+  - component: {fileID: 33158293335767506}
+  - component: {fileID: 23243883083122602}
+  m_Layer: 8
+  m_Name: ShieldSphere
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
 --- !u!1 &1623301655724530
 GameObject:
   m_ObjectHideFlags: 0
@@ -104,7 +121,7 @@ GameObject:
   - component: {fileID: 92776975362077346}
   - component: {fileID: 124052760397585870}
   - component: {fileID: 81669739204770132}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CarCam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,7 +136,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4348594591101536}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136,7 +153,7 @@ GameObject:
   - component: {fileID: 4069510683540164}
   - component: {fileID: 33624416444524174}
   - component: {fileID: 23618394092284426}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -155,7 +172,8 @@ GameObject:
   - component: {fileID: 96436205607567158}
   - component: {fileID: 65176343484112938}
   - component: {fileID: 54287074361632532}
-  m_Layer: 0
+  - component: {fileID: 114967589882509980}
+  m_Layer: 8
   m_Name: RedCar
   m_TagString: Car
   m_Icon: {fileID: 0}
@@ -172,7 +190,7 @@ GameObject:
   - component: {fileID: 4358447582584508}
   - component: {fileID: 33503062635735270}
   - component: {fileID: 23999737974881870}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CarFrame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -276,6 +294,7 @@ Transform:
   - {fileID: 4867653690519778}
   - {fileID: 4069510683540164}
   - {fileID: 4358447582584508}
+  - {fileID: 4815286129363734}
   m_Father: {fileID: 4571435019123754}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -291,6 +310,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4747758950088210}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4815286129363734
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1532917124865076}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.697}
+  m_LocalScale: {x: 3.5, y: 3.5, z: 3.5}
+  m_Children: []
+  m_Father: {fileID: 4747758950088210}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4867653690519778
 Transform:
@@ -339,10 +371,10 @@ Camera:
   field of view: 100
   orthographic: 0
   orthographic size: 5
-  m_Depth: -1
+  m_Depth: -2
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 256
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -352,6 +384,37 @@ Camera:
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
   m_StereoMirrorMode: 0
+--- !u!23 &23243883083122602
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1532917124865076}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
 --- !u!23 &23300349567501866
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -507,6 +570,13 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
+--- !u!33 &33158293335767506
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1532917124865076}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!33 &33316522817225288
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -692,16 +762,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb3664a10fc1064498f1c2fc52b67ef5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerID: 1
   Objective: {fileID: 0}
   Car: {fileID: 4348594591101536}
   carCamera: {fileID: 20829738377047110}
   camDist: 10
-  speed: 15
+  speed: 10
   currentRot: 0
   carObject: {fileID: 4747758950088210}
   flagCamParent: {fileID: 4115921686107066}
-  hasFlag: 0
+  _hasFlag: 0
   invis: 0
+  shield: {fileID: 1532917124865076}
+--- !u!114 &114967589882509980
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1846395484865592}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 295905fa3b1ebdb42b1d4fcaec8742ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DisplayName: 
+  playerCam: {fileID: 0}
+  _networkID: 0
+  m_TimestampCount: 0
+  InterpolateObj: {fileID: 0}
+  ExtrapoalteObj: {fileID: 0}
 --- !u!124 &124052760397585870
 Behaviour:
   m_ObjectHideFlags: 1

@@ -58,7 +58,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4181357072235546}
   m_Layer: 8
-  m_Name: Item_01
+  m_Name: Powerup
   m_TagString: Respawn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

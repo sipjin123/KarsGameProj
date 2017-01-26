@@ -1,9 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-
-using UniRx;
+﻿using UnityEngine;
 
 namespace Synergy88
 {
@@ -19,10 +14,6 @@ namespace Synergy88
         [SerializeField]
         private Camera carCamera;
 
-        internal void activatePowerup(PowerupType pType)
-        {
-            Debug.LogError(pType.ToString());
-        }
 
         [SerializeField]
         private float camDist = 10;
@@ -55,6 +46,11 @@ namespace Synergy88
 
         private GameRoot _game;
 
+        [SerializeField]
+        private GameObject shield;
+        private bool isShielded = false;
+        private float shieldDur = 0;
+        private float maxShieldDur = 5;
 
         void RegisterDataToDebugMode()
         {
@@ -81,6 +77,7 @@ namespace Synergy88
             Objective = GameObject.FindGameObjectWithTag("Flag").transform;
             spawnAreas = GameObject.FindGameObjectsWithTag("Respawn");
 
+
             RegisterDataToDebugMode();
         }
 
@@ -96,14 +93,23 @@ namespace Synergy88
                 carCamera.transform.localPosition = new Vector3(0, 2.25f, -3.77f);
                 carCamera.transform.localRotation = Quaternion.Euler(Vector3.zero);
                 invis = maxInvis;
-                
+
             }
-            else if(col.tag == "Wall")
+            else if (col.tag == "Wall")
             {
                 isAlive = false;
                 respawnTimer = maxRespawnTime;
                 carObject.gameObject.SetActive(false);
                 ResetFlag();
+            }
+            else if (col.tag == "TNT" || col.tag == "Missle")
+            {
+                Debug.LogError("BOOM!");
+
+                if (isShielded)
+                {
+                    Debug.LogError("Surivive");
+                }
             }
         }
 
@@ -250,7 +256,15 @@ namespace Synergy88
                 return;
                 //*************************************************************
 
-
+                if (isShielded)
+                {
+                    shieldDur -= Time.deltaTime;
+                    if(shieldDur <= 0)
+                    {
+                        isShielded = false;
+                        shield.SetActive(false);
+                    }
+                }
 
                 invis -= Time.deltaTime;
                 if (isAlive)
@@ -334,7 +348,24 @@ namespace Synergy88
 
                 }
             }
+        }
 
+        internal void ActivateShield()
+        {
+            isShielded = true;
+            shieldDur = maxShieldDur;
+            shield.SetActive(true);
+        }
+
+        internal void DropTNT()
+        {
+            PowerUpManager.Instance.DropTNT();
+
+        }
+
+        internal void LaunchMissile()
+        {
+            PowerUpManager.Instance.LaunchMissle();
         }
 
         private Vector3 CarMovement()

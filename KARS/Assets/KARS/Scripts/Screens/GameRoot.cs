@@ -38,6 +38,8 @@ namespace Synergy88 {
         private bool _isPlaying = true;
         public bool isPlaying { get { return _isPlaying; } }
 
+        private bool gameEnd = false;
+
         void RegisterDataToDebugMode()
         {
             DebugMode.GetInstance.RegisterDataType(ref timePerGame, "Time Per Game");
@@ -62,9 +64,11 @@ namespace Synergy88 {
                     ScoreText_p2.text = "Player 2: " + Mathf.RoundToInt(p2Score);
                 }
 
-                if(timeLeft <= 0)
+                if(timeLeft <= 0 && !gameEnd)
                 {
                     _isPlaying = false;
+                    gameEnd = true;
+                    this.Publish(new GameEndSignal() { Player1Score = Mathf.RoundToInt(p1Score), Player2Score = Mathf.RoundToInt(p2Score) });
                 }
 
             }

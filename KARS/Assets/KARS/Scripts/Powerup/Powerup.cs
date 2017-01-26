@@ -65,7 +65,7 @@ namespace Synergy88
 
         private void RandomizePowerup()
         {
-            pType = (PowerupType) Random.Range(1,4);
+            pType = (PowerupType) Random.Range(1,5);
         }
 
         void Update()

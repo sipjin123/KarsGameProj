@@ -24,7 +24,7 @@ namespace Synergy88 {
                 // home button clicked
                 // load preloader here
                 root.LoadScenePromise<HomeRoot>(EScene.Home);
-                root.LoadSceneAdditivePromise<CurrencyRoot>(EScene.Currency);
+                //root.LoadSceneAdditivePromise<CurrencyRoot>(EScene.Currency);
             });
 
 			this.AddButtonHandler(EButtonType.Ads, (ButtonClickedSignal signal) => {
@@ -43,8 +43,9 @@ namespace Synergy88 {
             });
 
 			this.AddButtonHandler(EButtonType.Refresh, (ButtonClickedSignal signal) => {
-				// refresh button clicked
-			});
+                // refresh button clicked
+                this.Publish(new LoadGameSignal());
+            });
 
 			this.AddButtonHandler(EButtonType.Upload, (ButtonClickedSignal signal) => {
 				// update/share button clicked

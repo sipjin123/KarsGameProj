@@ -132,7 +132,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 174170, guid: ad3b8f492f7d04cb3b9e5aa9d5d4c8cf, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11442462, guid: ad3b8f492f7d04cb3b9e5aa9d5d4c8cf, type: 2}
       propertyPath: m_Sprite
@@ -154,6 +154,18 @@ Prefab:
       propertyPath: m_Color.a
       value: 0.666
       objectReference: {fileID: 0}
+    - target: {fileID: 22425438, guid: ad3b8f492f7d04cb3b9e5aa9d5d4c8cf, type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 4096
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400178, guid: ad3b8f492f7d04cb3b9e5aa9d5d4c8cf, type: 2}
+      propertyPath: backgroundImage
+      value: 
+      objectReference: {fileID: 1600265901}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ad3b8f492f7d04cb3b9e5aa9d5d4c8cf, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1600265901 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 174170, guid: ad3b8f492f7d04cb3b9e5aa9d5d4c8cf, type: 2}
+  m_PrefabInternal: {fileID: 1600265900}

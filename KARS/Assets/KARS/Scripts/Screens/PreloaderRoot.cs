@@ -75,7 +75,7 @@ namespace Synergy88
         public const float OUT_DURATION = 0.5f;
         public const float FIXED_DELTA = 0.01656668f;
 
-        public static readonly Vector2 TARGET_RESOLUTION = new Vector2(1536.0f, 2048.0f);
+        public static readonly Vector2 TARGET_RESOLUTION = new Vector2(5096f, 2048.0f);
 
         /// <summary>
         /// True while the loading screen is being loaded or active.

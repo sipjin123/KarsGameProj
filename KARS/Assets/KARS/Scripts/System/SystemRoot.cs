@@ -141,6 +141,10 @@ namespace Synergy88
             this.Receive<LoadGameSignal>()
                 .Subscribe(_ => OnLoadGame())
                 .AddTo(this);
+            
+            this.Receive<GameEndSignal>()
+                .Subscribe(_ => OnEndGame())
+                .AddTo(this);
 
             // Setup DI Queries
             QuerySystem.RegisterResolver(QueryIds.CurrentScene, delegate (IQueryRequest request, IMutableQueryResult result)
@@ -209,6 +213,7 @@ namespace Synergy88
         private const string LOAD_SHOP = "LOAD_SHOP";
         private const string LOAD_SETTINGS = "LOAD_SETTINGS";
         private const string LOAD_GAME = "LOAD_GAME";
+        private const string END_GAME = "END_GAME";
         private const string FINISHED = "Finished";
 
         private Fsm Fsm;
@@ -228,6 +233,7 @@ namespace Synergy88
             FsmState settings = Fsm.AddState("settings");
             FsmState game = Fsm.AddState("game");
             FsmState done = Fsm.AddState("done");
+            FsmState result = Fsm.AddState("result");
 
             // actions
             idle.AddAction(new FsmDelegateAction(idle, delegate (FsmState owner)
@@ -342,10 +348,24 @@ namespace Synergy88
                     .Then(_ => Preloader.FadeInLoadingScreenPromise())
                     .Then(_ => this.LoadScenePromise<CleanerRoot>(EScene.Cleaner))
                     .Then(_ => this.LoadScenePromise<GameRoot>(EScene.Game))
-                    .Then(_ => this.LoadSceneAdditivePromise<CurrencyRoot>(EScene.Currency))
+                    //.Then(_ => this.LoadSceneAdditivePromise<CurrencyRoot>(EScene.Currency))
                     .Then(_ => Preloader.FadeOutLoadingScreenPromise())
                     .Then(_ => EndFramePromise())
                     .Finally(_ => Debug.LogFormat(LOG + " SystemRoot::SceneFsm State:{0} Settings loaded!\n", owner.GetName()));
+            }));
+
+            result.AddAction(new FsmDelegateAction(result, delegate (FsmState owner)
+            {
+                Debug.LogFormat(LOG + " SystemRoot::SceneFsm State:{0}\n", owner.GetName());
+
+                Promise.AllSequentially(Preloader.LoadLoadingScreenPromise)
+                    .Then(_ => Preloader.FadeInLoadingScreenPromise())
+                    .Then(_ => this.LoadScenePromise<CleanerRoot>(EScene.Cleaner))
+                    .Then(_ => this.LoadScenePromise<ResultsRoot>(EScene.Results))
+                    .Then(_ => Preloader.FadeOutLoadingScreenPromise())
+                    .Then(_ => EndFramePromise())
+                    .Finally(_ => Debug.LogFormat(LOG + " SystemRoot::SceneFsm State:{0} Result loaded!\n", owner.GetName()));
+
             }));
 
             done.AddAction(new FsmDelegateAction(done, delegate (FsmState owner)
@@ -366,6 +386,11 @@ namespace Synergy88
             home.AddTransition(LOAD_SHOP, shop);
             home.AddTransition(LOAD_SETTINGS, settings);
             home.AddTransition(LOAD_GAME, game);
+
+            game.AddTransition(END_GAME, result);
+
+            result.AddTransition(LOAD_GAME, game);
+            result.AddTransition(LOAD_HOME, home);
 
             moreGames.AddTransition(LOAD_HOME, home);
             shop.AddTransition(LOAD_HOME, home);
@@ -447,6 +472,11 @@ namespace Synergy88
             Fsm.SendEvent(LOAD_GAME);
         }
         
+        public void OnEndGame()
+        {
+            Debug.LogFormat("{0} OnEndGame", Time.time);
+            Fsm.SendEvent(END_GAME);
+        }
         #endregion
     }
 

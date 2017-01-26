@@ -186,6 +186,7 @@ namespace Synergy88
         #region
         void GameTEsting()
         {
+            /*
             if (Input.GetKey(KeyCode.W))
             {
                 transform.position += transform.forward * 0.5f;
@@ -206,6 +207,12 @@ namespace Synergy88
             {
                 PlayerExplode();
             }
+
+            if (Input.GetKey(KeyCode.Z))
+            {
+                PlayerReset();
+            }
+            */
             if (isFlyng)
             {
                 flightForceDelplete--;
@@ -232,11 +239,6 @@ namespace Synergy88
                     StartCoroutine("DelayCarReset");
                 }
             }
-
-            if (Input.GetKey(KeyCode.Z))
-            {
-                PlayerReset();
-            }
         }
         #endregion
         //*************************************************************
@@ -258,7 +260,6 @@ namespace Synergy88
                 }
                 catch { }
                 GameTEsting();
-                return;
                 //*************************************************************
 
                 if (isShielded)

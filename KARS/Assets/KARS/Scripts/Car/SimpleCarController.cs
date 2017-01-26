@@ -131,6 +131,9 @@ namespace Synergy88
         //GAMESPARKS
         GameSparks_DataSender _GSDataSender;
 
+        [SerializeField]
+        GameObject CollidersToDisable;
+
         void Awake()
         {
             try
@@ -142,10 +145,58 @@ namespace Synergy88
             }
             catch { }
         }
-        //*************************************************************
-        //*************************************************************
-        //GAMESPARKS
-        #region
+        bool _bumped;
+        public void BumpThisObj()
+        {
+            if (!isFalling && !isFlyng)
+                flightForceDelplete = 100;
+            isFlyng = true;
+
+            _rigidbody = GetComponent<Rigidbody>();
+            _rigidbody.isKinematic = false;
+            _rigidbody.useGravity = true;
+            _rigidbody.AddForce(transform.up * 200);
+            _rigidbody.AddForce(-transform.forward * 250);
+
+
+            carObject.gameObject.AddComponent<Rigidbody>();
+            _carRigidBody = carObject.GetComponent<Rigidbody>();
+            _carRigidBody.useGravity = false;
+            _carRigidBody.constraints = RigidbodyConstraints.FreezePosition;
+
+
+
+            CollidersToDisable.SetActive(false);
+
+            _bumped = true;
+        }
+        public void BumpThisObjWithForce()
+        {
+            if (!isFalling && !isFlyng)
+                flightForceDelplete = 100;
+            isFlyng = true;
+
+            _rigidbody = GetComponent<Rigidbody>();
+            _rigidbody.isKinematic = false;
+            _rigidbody.useGravity = true;
+            _rigidbody.AddForce(transform.up * 500);
+            _rigidbody.AddForce(-transform.forward * 250);
+
+            carObject.gameObject.AddComponent<Rigidbody>();
+            _carRigidBody = carObject.GetComponent<Rigidbody>();
+            _carRigidBody.useGravity = false;
+            _carRigidBody.constraints = RigidbodyConstraints.FreezePosition;
+            _carRigidBody.AddTorque(new Vector3(Random.RandomRange(1, 5), Random.RandomRange(1, 5), Random.RandomRange(1, 5)), ForceMode.Impulse);
+
+
+
+            CollidersToDisable.SetActive(false);
+
+
+            _bumped = true;
+        }
+
+        #region PLAYER EXPLOSION
         bool isFlyng;
         bool isFalling;
         float flightForceDelplete;
@@ -165,6 +216,10 @@ namespace Synergy88
             carObject.transform.localPosition = Vector3.zero;
             carObject.transform.localEulerAngles = Vector3.zero;
             _rigidbody.constraints = RigidbodyConstraints.None;
+
+            CollidersToDisable.SetActive(true);
+            _bumped = false;
+
         }
         public void PlayerExplode()
         {
@@ -184,7 +239,7 @@ namespace Synergy88
             _carRigidBody.AddTorque(new Vector3(Random.RandomRange(1, 5), Random.RandomRange(1, 5), Random.RandomRange(1, 5)), ForceMode.Impulse);
         }
         #endregion
-        #region
+        #region TEST CONTROLS
         void GameTEsting()
         {
             /*
@@ -204,16 +259,18 @@ namespace Synergy88
             {
                 transform.position += transform.right * 0.5f;
             }
+            */
             if (Input.GetKey(KeyCode.X))
             {
-                PlayerExplode();
+                BumpThisObjWithForce();
+                //PlayerExplode();
             }
 
             if (Input.GetKey(KeyCode.Z))
             {
                 PlayerReset();
+                _bumped = false;
             }
-            */
             if (isFlyng)
             {
                 flightForceDelplete--;
@@ -231,11 +288,16 @@ namespace Synergy88
             {
                 if (transform.position.y < 2)
                 {
-                    _rigidbody.constraints = RigidbodyConstraints.FreezeAll;
-                    _carRigidBody.constraints = RigidbodyConstraints.None;
+                    try
+                    {
+                        _rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+                        _carRigidBody.constraints = RigidbodyConstraints.None;
 
-                    _carRigidBody.angularVelocity = Vector3.zero;
-                    _rigidbody.useGravity = false;
+                        _carRigidBody.angularVelocity = Vector3.zero;
+                        _rigidbody.useGravity = false;
+                    }
+                    catch
+                    { }
                     isFalling = false;
                     StartCoroutine("DelayCarReset");
                 }
@@ -245,6 +307,7 @@ namespace Synergy88
         //*************************************************************
         void Update()
         {
+            GameTEsting();
             if (_game.isPlaying)
             {
                 //*************************************************************
@@ -261,10 +324,12 @@ namespace Synergy88
                 }
                 catch { }
                 GameTEsting();
+
+
+                if (isFlyng || isFalling || _bumped)
+                    return;
                 //*************************************************************
 
-                if (isFlyng || isFalling)
-                    return;
 
                 if (isShielded)
                 {

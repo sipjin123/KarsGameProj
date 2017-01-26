@@ -206,7 +206,7 @@ public class GameSparksManager : MonoBehaviour {
                     }
                 }
                 break;
-            case 116://UPDATES MISSLE MOVEMENT
+            case 116://UPDATES TNT SPAWN
                 {
                     int receivedServer_ID = _packet.Data.GetInt(1).Value;
                     int receivedTNT_ID = _packet.Data.GetInt(2).Value;
@@ -220,20 +220,10 @@ public class GameSparksManager : MonoBehaviour {
 
                     GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nRECEIVED TNT # (" + receivedTNT_ID + ") of (" + receivedServer_ID + ") HAS been dispatched to " + receivedPosition;
                     PowerUpManager.Instance.ReceiveFromServer(receivedServer_ID, receivedTNT_ID, receivedPosition, ifEnabled);
-                    return;
 
-                    List<GameObject> _objList = PowerUpManager.Instance.TnTList;
-                    for (int i = 0; i < _objList.Count; i++)
-                    {
-                        if (receivedTNT_ID == _objList[i].GetComponent<TnTScript>().TNT_ID)
-                        {
-                            PowerUpManager.Instance.ReceiveFromServer(receivedServer_ID, receivedTNT_ID, receivedPosition, ifEnabled);
-                            //_objList[i].GetComponent<TnTScript>().DispatchTNTToDestination(receivedServer_ID,receivedPosition,ifEnabled);
-                        }
-                    }
                 }
                 break;
-            case 117://UPDATES MISSLE MOVEMENT
+            case 117://UPDATES PLAYER EXPLOSION
                 {
                     int receivedPlayerToMove = _packet.Data.GetInt(1).Value;
                     int receivedPlayerAction = _packet.Data.GetInt(2).Value;
@@ -241,9 +231,23 @@ public class GameSparksManager : MonoBehaviour {
                     GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nRECEIVED PLAYER # (" + receivedPlayerToMove;
                     for (int i = 0; i < tankPool.Count; i++)
                     {
-                        if(tankPool[i].GetComponent<GameSparks_DataSender>().NetworkID == receivedPlayerToMove)
+                        if (tankPool[i].GetComponent<GameSparks_DataSender>().NetworkID == receivedPlayerToMove)
                         {
                             tankPool[i].GetComponent<SimpleCarController>().PlayerExplode();
+                        }
+                    }
+                }
+                break;
+            case 118://UPDATES PLAYER COLLISION
+                {
+                    int receivedPlayerBump= _packet.Data.GetInt(1).Value;
+                    int receivedPlayerAction = _packet.Data.GetInt(2).Value;
+                    
+                    for (int i = 0; i < tankPool.Count; i++)
+                    {
+                        if (tankPool[i].GetComponent<GameSparks_DataSender>().NetworkID == receivedPlayerBump)
+                        {
+                            tankPool[i].GetComponent<SimpleCarController>().BumpThisObjWithForce();
                         }
                     }
                 }

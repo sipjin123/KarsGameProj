@@ -73,13 +73,15 @@ public class GameSparks_DataSender : MonoBehaviour
         InterpolateObj.transform.transform.localPosition = new Vector3(0, -0.55f, 0.75f);
         InterpolateObj.GetComponent<MeshRenderer>().material.color = Color.red;
         Destroy(InterpolateObj.GetComponent<SphereCollider>());
+        InterpolateObj.gameObject.layer = LayerMask.NameToLayer("3D");
 
         ExtrapoalteObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         ExtrapoalteObj.transform.SetParent(transform);
-        ExtrapoalteObj.transform.localScale = new Vector3(2, 0.1f, 3);
+        ExtrapoalteObj.transform.localScale = new Vector3(5, 0.1f, 2);
         ExtrapoalteObj.transform.transform.localPosition = new Vector3(0, -0.55f, 0.75f);
         ExtrapoalteObj.GetComponent<MeshRenderer>().material.color = Color.blue;
         Destroy(ExtrapoalteObj.GetComponent<SphereCollider>());
+        ExtrapoalteObj.gameObject.layer = LayerMask.NameToLayer("3D");
 
 
         _shieldObject = Instantiate(PowerUpManager.Instance.Shield, Vector3.one, Quaternion.identity) as GameObject;
@@ -257,7 +259,11 @@ public class GameSparks_DataSender : MonoBehaviour
             interpolationTime = 0;
 
             if (!_sparksManager.fixedInterTime)
-                interpolationTime = currentTime - (PlayerPing + _sparksManager.playerPingOffset);
+            {
+                //REFACTOR GAME TIME
+                interpolationTime = currentTime;
+                //interpolationTime = currentTime - (PlayerPing + _sparksManager.playerPingOffset);
+            }
             else
                 interpolationTime = currentTime - 0.4f;
 

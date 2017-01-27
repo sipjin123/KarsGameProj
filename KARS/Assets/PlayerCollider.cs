@@ -18,6 +18,7 @@ public class PlayerCollider : MonoBehaviour {
 
     void OnTriggerEnter(Collider hit)
     {
+        return;
         if (_colliderType == COLLIDER_TYPE.FRONT)
         {
             if (hit.gameObject.name == "BodyBumper")

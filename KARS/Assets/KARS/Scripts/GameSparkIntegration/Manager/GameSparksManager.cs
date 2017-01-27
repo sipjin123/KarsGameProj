@@ -6,6 +6,7 @@ using GameSparks.Core;
 using GameSparks.Api.Responses;
 using System.Collections.Generic;
 using Synergy88;
+using System;
 
 public class GameSparksManager : MonoBehaviour {
     //=========================================================================================================================================================================
@@ -98,17 +99,72 @@ public class GameSparksManager : MonoBehaviour {
         {
             Debug.Log("GSM| RT Session Connected...");
             PeerID = RegistrationSparks.Instance.PeerID;
+            StartCoroutine(SendTimeStamp());
         }
     }
     #endregion
     //====================================================================================
+    
+    //REFACTOR GAME TIME
+    private IEnumerator SendTimeStamp()
+    {
+        
+        using (RTData data = RTData.Get())
+        {
+            data.SetLong(1, (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds); 
+            GetRTSession().SendData(101, GameSparksRT.DeliveryIntent.UNRELIABLE, data, new int[] { 0 });
+        }
+        yield return new WaitForSeconds(0f);
+        StartCoroutine(SendTimeStamp());
+    }
+    DateTime serverClock;
+    private int timeDelta, latency, roundTrip;
+
+    /// <summary>
+    /// Calculates the time-difference between the client and server
+    /// </summary>
+    public void CalculateTimeDelta(RTPacket _packet)
+    {
+        // calculate the time taken from the packet to be sent from the client and then for the server to return it //
+        roundTrip = (int)((long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds - _packet.Data.GetLong(1).Value);
+        latency = roundTrip / 2; // the latency is half the round-trip time
+        // calculate the server-delta from the server time minus the current time
+        int serverDelta = (int)(_packet.Data.GetLong(2).Value - (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds);
+        timeDelta = serverDelta + latency; // the time-delta is the server-delta plus the latency
+    }
+
+    public void SyncClock(RTPacket _packet)
+    {
+        DateTime dateNow = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc); // get the current time
+        serverClock = dateNow.AddMilliseconds(_packet.Data.GetLong(1).Value + timeDelta).ToLocalTime(); // adjust current time to match clock from server
+    }
+
     #region DATA RECEIVE
     private void OnPacketReceived(RTPacket _packet)
     {
         switch (_packet.OpCode)
         {
+            case 121:
+
+                break;
+            case 101:
+
+                CalculateTimeDelta(_packet);
+
+                /*
+                using (RTData data = RTData.Get())
+                {
+                    data.SetLong(1, _packet.Data.GetLong(1).Value);
+                    data.SetLong(2, _packet.Data.GetLong(2).Value);
+
+                    GetRTSession().SendData(121, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                }*/
+                break;
             case 102://UPDATES GAME TIME EVERY 5 SECONDS
                 {
+                    SyncClock(_packet);
+                    //REFACTOR GAME TIME
+                    return;
                     if (gameTimeText == "")
                     {
                         gameTimeText = (_packet.Data.GetLong(1).Value / 1000).ToString();
@@ -119,6 +175,9 @@ public class GameSparksManager : MonoBehaviour {
                     {
                         if (!enableFiveSec)
                             return;
+
+                        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n"+ (float.Parse(gameTimeText) - (_packet.Data.GetLong(1).Value / 1000));
+
                         gameTimeText = (_packet.Data.GetLong(1).Value / 1000).ToString();
                         gameTimeInt = int.Parse(gameTimeText);
                         ActualTime.text = gameTimeText;
@@ -269,11 +328,22 @@ public class GameSparksManager : MonoBehaviour {
     #region GAME TIME
     void FixedUpdate()
     {
+        serverClock = serverClock.AddSeconds(Time.fixedDeltaTime);
+        gameTimeInt = (float)(serverClock.Millisecond);
+        ActualTime.text = serverClock.Minute + " : " + serverClock.Second + " : " + serverClock.Millisecond + "\n" + timeDelta + " " + latency + " " + roundTrip;
+
+        return;
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            StopCoroutine("SendTimeStamp");
+            StartCoroutine("SendTimeStamp");
+        }
         if (gameTimeText != "")
         {
             gameTimeInt += Time.fixedDeltaTime;
                 ActualTime.text = gameTimeInt.ToString();
         }
+        //REFACTOR GAME TIME
     }
 
 
@@ -332,7 +402,7 @@ public class GameSparksManager : MonoBehaviour {
     #endregion
     //====================================================================================
     
-    void teOnGUI()
+    void OnGUI()
     {
         try
         {

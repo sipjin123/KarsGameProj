@@ -258,8 +258,8 @@ namespace Synergy88
             if (Input.GetKey(KeyCode.D))
             {
                 transform.position += transform.right * 0.5f;
-            }
-            */
+            }*/
+            
             if (Input.GetKey(KeyCode.X))
             {
                 BumpThisObjWithForce();
@@ -307,7 +307,7 @@ namespace Synergy88
         //*************************************************************
         void Update()
         {
-            GameTEsting();
+            //GameTEsting();
             if (_game.isPlaying)
             {
                 //*************************************************************
@@ -324,8 +324,6 @@ namespace Synergy88
                 }
                 catch { }
                 GameTEsting();
-
-
                 if (isFlyng || isFalling || _bumped)
                     return;
                 //*************************************************************

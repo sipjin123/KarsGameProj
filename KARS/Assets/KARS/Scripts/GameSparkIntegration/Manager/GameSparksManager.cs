@@ -329,7 +329,8 @@ public class GameSparksManager : MonoBehaviour {
     void FixedUpdate()
     {
         serverClock = serverClock.AddSeconds(Time.fixedDeltaTime);
-        gameTimeInt = (float)(serverClock.Millisecond);
+
+        gameTimeInt = (float)((serverClock.Second * 1000)  + serverClock.Millisecond);
         ActualTime.text = serverClock.Minute + " : " + serverClock.Second + " : " + serverClock.Millisecond + "\n" + timeDelta + " " + latency + " " + roundTrip;
 
         return;
@@ -357,7 +358,7 @@ public class GameSparksManager : MonoBehaviour {
     //====================================================================================
     //GAME TEST
     #region GAME TEST
-    public double playerPingOffset = 0.1f;
+    public double playerPingOffset = 1000f;
     public enum CurrentMethod
     {
         LINEAR,
@@ -402,7 +403,7 @@ public class GameSparksManager : MonoBehaviour {
     #endregion
     //====================================================================================
     
-    void OnGUI()
+    void OdnGUI()
     {
         try
         {
@@ -411,7 +412,7 @@ public class GameSparksManager : MonoBehaviour {
                 GameSparks_DataSender _sparksSender = tankPool[q].GetComponent<GameSparks_DataSender>();
                 for (int i = 0; i < _sparksSender.m_BufferedState.Length; i++)
                 {
-                    GUI.Box(new Rect(q * 200, i * 30, 200, 30), i + " (" + (int)_sparksSender.m_BufferedState[i].pos.x + " : " + (int)_sparksSender.m_BufferedState[i].pos.z + ") "+ (int)_sparksSender.m_BufferedState[i].rot.y);//+ _sparksSender.m_BufferedState[i].timestamp.ToString());
+                    GUI.Box(new Rect(q * 200, i * 30, 200, 30), i + " (" + (int)_sparksSender.m_BufferedState[i].pos.x + " : " + (int)_sparksSender.m_BufferedState[i].pos.z + ") "+ (int)_sparksSender.m_BufferedState[i].timestamp);//+ _sparksSender.m_BufferedState[i].timestamp.ToString());
                 }
             }
         }

@@ -6057,6 +6057,7 @@ MonoBehaviour:
   _hasFlag: 0
   invis: 0
   shield: {fileID: 0}
+  CollidersToDisable: {fileID: 0}
 --- !u!114 &603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7514,6 +7515,7 @@ MonoBehaviour:
   _hasFlag: 0
   invis: 0
   shield: {fileID: 0}
+  CollidersToDisable: {fileID: 0}
 --- !u!114 &647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8554,7 +8556,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.17647058, g: 0.17128026, b: 0.17128026, a: 1}
   m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -8574,7 +8576,11 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 
+  m_Text: 'sadsadsdaddsadadsads
+
+    sadsadsdadasdsadsa
+
+    dadasdsadasdsad'
 --- !u!114 &686
 MonoBehaviour:
   m_ObjectHideFlags: 0

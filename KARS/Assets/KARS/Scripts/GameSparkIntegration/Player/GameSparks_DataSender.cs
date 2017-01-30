@@ -70,7 +70,7 @@ public class GameSparks_DataSender : MonoBehaviour
         InterpolateObj =  GameObject.CreatePrimitive(PrimitiveType.Sphere);
         InterpolateObj.transform.SetParent(transform);
         InterpolateObj.transform.localScale = new Vector3(2,0.1f,3);
-        InterpolateObj.transform.transform.localPosition = new Vector3(0, -0.55f, 0.75f);
+        InterpolateObj.transform.transform.localPosition = new Vector3(0, 0.55f, 0.75f);
         InterpolateObj.GetComponent<MeshRenderer>().material.color = Color.red;
         Destroy(InterpolateObj.GetComponent<SphereCollider>());
         InterpolateObj.gameObject.layer = LayerMask.NameToLayer("3D");
@@ -78,7 +78,7 @@ public class GameSparks_DataSender : MonoBehaviour
         ExtrapoalteObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         ExtrapoalteObj.transform.SetParent(transform);
         ExtrapoalteObj.transform.localScale = new Vector3(5, 0.1f, 2);
-        ExtrapoalteObj.transform.transform.localPosition = new Vector3(0, -0.55f, 0.75f);
+        ExtrapoalteObj.transform.transform.localPosition = new Vector3(0, 0.55f, 0.75f);
         ExtrapoalteObj.GetComponent<MeshRenderer>().material.color = Color.blue;
         Destroy(ExtrapoalteObj.GetComponent<SphereCollider>());
         ExtrapoalteObj.gameObject.layer = LayerMask.NameToLayer("3D");
@@ -205,6 +205,9 @@ public class GameSparks_DataSender : MonoBehaviour
     {
         try
         {
+            if (_packet.Data.GetDouble(7).Value == m_BufferedState[0].timestamp)
+                return;
+
             // Shift buffer contents, oldest data erased, 18 becomes 19, ... , 0 becomes 1
             for (int q = m_BufferedState.Length - 1; q >= 1; q--)
             {
@@ -218,6 +221,21 @@ public class GameSparks_DataSender : MonoBehaviour
             state.rot = _packet.Data.GetVector3(5).Value;
             state.timestamp = _packet.Data.GetDouble(7).Value;
             m_BufferedState[0] = state;
+
+            /*
+
+            GameObject.Find("GameUpdateText2").GetComponent<Text>().text += "\nReceivedPos: (" + state.pos.x.ToString("F2") + " : " + state.pos.z.ToString("F2")+")";
+            GameObject.Find("GameUpdateText2").GetComponent<Text>().text += "\nReceivedTime: (" + state.timestamp+ ") During: "+_sparksManager.gameTimeInt;
+            GameObject.Find("GameUpdateText2").GetComponent<Text>().text += "\nGAP IS: (" + (state.timestamp - _sparksManager.gameTimeInt)+") ABS: (" + Mathf.Abs((int)m_BufferedState[0].timestamp - (int)_sparksManager.gameTimeInt) + "\n";
+
+            */
+
+
+
+
+
+
+
 
             PlayerPing = _sparksManager.gameTimeInt - state.timestamp;
 
@@ -258,6 +276,9 @@ public class GameSparks_DataSender : MonoBehaviour
             double currentTime = _sparksManager.gameTimeInt;
             interpolationTime = 0;
 
+            //REFACTOR GAME TIME
+            interpolationTime = currentTime - 0.2f;
+            /*
             if (!_sparksManager.fixedInterTime)
             {
                 //REFACTOR GAME TIME
@@ -265,12 +286,29 @@ public class GameSparks_DataSender : MonoBehaviour
                 //interpolationTime = currentTime - (PlayerPing + _sparksManager.playerPingOffset);
             }
             else
-                interpolationTime = currentTime - 0.4f;
+                interpolationTime = currentTime - 0.2f;
+            */
 
+
+            Extrapolate();
+            return;
             if (m_BufferedState[0].timestamp > interpolationTime)
             {
+                interpolationTime = currentTime - (PlayerPing + _sparksManager.playerPingOffset);
                 InterpolateObj.SetActive(true);
                 ExtrapoalteObj.SetActive(false);
+
+                /*
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nInterpolate Time: ("+interpolationTime.ToString("F2")+ ") BufferTime[0]: ("+m_BufferedState[0].timestamp.ToString("F2")+")\n"+
+                    //+currentTime+" - "+"(( "+PlayerPing+" + "+1000+" ) = "+(PlayerPing + 1000) + ")\n"; 
+                +currentTime + " - " + "(( " + PlayerPing + " + " + _sparksManager.playerPingOffset.ToString("F2") + " ) = " + (PlayerPing + _sparksManager.playerPingOffset).ToString("F2")+")";
+
+
+                if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
+                {
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
+                }
+                */
                 Interpolate();
             }
             else
@@ -285,7 +323,7 @@ public class GameSparks_DataSender : MonoBehaviour
         }
     }
     void Interpolate()
-    {  
+    {
         for (int i = 0; i < m_TimestampCount; i++)
         {
             if (m_BufferedState[i].timestamp <= interpolationTime || i == m_TimestampCount - 1)
@@ -308,6 +346,16 @@ public class GameSparks_DataSender : MonoBehaviour
                 //Debug.LogWarning("I AM INTERPOLATING TO: " + lhs.pos + " with speed of "+t);
 
                 // if t=0 => lhs is used directly
+                /*
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nTime Used: "+t+"\n";
+
+                if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
+                {
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
+                }
+                */
+
+
 
                 if (_sparksManager._curMethod == GameSparksManager.CurrentMethod.LINEAR)
                 {
@@ -336,20 +384,53 @@ public class GameSparks_DataSender : MonoBehaviour
     void Extrapolate()
     {
         State latest = m_BufferedState[0];
-        float lerpSpeed = 1f;
+        float lerpSpeed = 1;
         if (_sparksManager._curMethod == GameSparksManager.CurrentMethod.LINEAR)
         {
-            double timeDiff = (m_BufferedState[0].timestamp - m_BufferedState[1].timestamp);
+            double timeDiff = 0;
+
+            timeDiff = (m_BufferedState[0].timestamp - m_BufferedState[1].timestamp);
+
             if (timeDiff == 0)
+            {
                 timeDiff += 0.1f;
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nZERO VAL: (" + m_BufferedState[0].pos.x+" : "+ m_BufferedState[0].pos.z + ") " + m_BufferedState[0].timestamp + "\n";
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "ZERO VAL:(" + m_BufferedState[1].pos.x + " : " + m_BufferedState[1].pos.z + ") " + m_BufferedState[1].timestamp + "\n";
+            }
+
+
+
+
+
+
+
+
             Vector3 SPEED = (m_BufferedState[0].pos - m_BufferedState[1].pos) / (float)timeDiff;
             double ELAPSED_TIME = interpolationTime - m_BufferedState[0].timestamp;
+
+
+
             Vector3 NEW_POS = m_BufferedState[0].pos + (SPEED * (float)ELAPSED_TIME);
+            /*
+            //----------------------------------
+            //DEBUG
+            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nNewPos: "+NEW_POS +" [("+ m_BufferedState[0].pos + ")*(" + (SPEED * (float)ELAPSED_TIME)+")]"+"\nSpeed*ElapsTym("+ SPEED+" * "+(float)ELAPSED_TIME+")";
+            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nElapseTime: " + ELAPSED_TIME;
+            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nSpeed: (" + SPEED.x+" : "+SPEED.z+") [("+ (m_BufferedState[0].pos - m_BufferedState[1].pos)+") / ("+(float)timeDiff+")]";
+            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nTimeDiff: " + timeDiff+" = ("+ m_BufferedState[0].timestamp +" - "+ m_BufferedState[1].timestamp + ")\n";
+            
+
+            if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 4000)
+            {
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
+            }
+            //----------------------------------*/
 
             _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, NEW_POS, lerpSpeed);
             _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(latest.rot), lerpSpeed);
             Debug.Log("DOING LINEAR");
         }
+        /*
         else if (_sparksManager._curMethod == GameSparksManager.CurrentMethod.CUBIC)
         {
             Vector3 newposs = CubicInterpolate(m_BufferedState[0].pos, m_BufferedState[1].pos, m_BufferedState[2].pos, m_BufferedState[3].pos, lerpSpeed);
@@ -363,7 +444,7 @@ public class GameSparks_DataSender : MonoBehaviour
             _objToTranslate.transform.position = m_BufferedState[0].pos;
             _objToRotate.transform.rotation = Quaternion.Euler(m_BufferedState[0].rot);
             Debug.Log("DOING INSTANT");
-        }
+        }*/
     }
 
     Vector3 CubicInterpolate(Vector3 y0, Vector3 y1, Vector3 y2, Vector3 y3, float mu)
@@ -393,6 +474,10 @@ public class GameSparks_DataSender : MonoBehaviour
         if (NetworkID.ToString() == _sparksManager.PeerID)
         {
             GUI.Box(new Rect(0, Screen.height-60, 100, 30), "Player: " + NetworkID.ToString());
+        }
+        else
+        {
+            GUI.Box(new Rect(100, Screen.height - 60, 100, 30), "Player: " + PlayerPing);
         }
         GUI.Box(new Rect(0, Screen.height-30, 100, 30), "Network: " + _sparksManager.PeerID);
     }

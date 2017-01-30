@@ -124,7 +124,8 @@ namespace Synergy88
         void Respawn()
         {
             carObject.gameObject.SetActive(true);
-            this.transform.position = spawnAreas[Random.Range(0, spawnAreas.Length)].transform.position;
+            Debug.LogError("respawn position");
+            //this.transform.position = spawnAreas[Random.Range(0, spawnAreas.Length)].transform.position;
         }
 
         //*************************************************************
@@ -286,6 +287,7 @@ namespace Synergy88
             }
             if (isFalling)
             {
+                return;
                 if (transform.position.y < 2)
                 {
                     try
@@ -305,6 +307,16 @@ namespace Synergy88
         }
         #endregion
         //*************************************************************
+        void FixedUpdate()
+        {
+            if (int.Parse(GameSparksManager.Instance.PeerID) == _GSDataSender.NetworkID)
+            {
+                if (Input.GetKey(KeyCode.LeftAlt))
+                    transform.position += carObject.transform.forward * (Time.fixedDeltaTime * 55);
+                else
+                    transform.position += carObject.transform.forward * (Time.fixedDeltaTime * 25);
+            }
+        }
         void Update()
         {
             //GameTEsting();
@@ -323,7 +335,19 @@ namespace Synergy88
                     _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
                 }
                 catch { }
-                GameTEsting();
+                //GameTEsting();
+
+
+                if (Input.GetKey(KeyCode.A))
+                {
+                    currentRot -= rotSpeed * Time.deltaTime;
+                }
+                else if (Input.GetKey(KeyCode.D))
+                {
+                    currentRot += rotSpeed * Time.deltaTime;
+                }
+                carObject.rotation = Quaternion.Euler(0, currentRot, 0);
+                return;
                 if (isFlyng || isFalling || _bumped)
                     return;
                 //*************************************************************

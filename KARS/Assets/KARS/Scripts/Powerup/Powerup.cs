@@ -36,7 +36,7 @@ namespace Synergy88
 
         void OnTriggerEnter(Collider col)
         {
-
+            return;
             if(col.tag == "Car")
             {
                 if (powerUpActive)

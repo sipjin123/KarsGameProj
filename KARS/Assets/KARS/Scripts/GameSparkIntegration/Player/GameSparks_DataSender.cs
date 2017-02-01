@@ -149,6 +149,21 @@ public class GameSparks_DataSender : MonoBehaviour
     //===============================================================================================================================================================================================
     //=====================================================================================================================
     //SEND DATA
+
+    public void SendInteractStatus(int playerId, int isBumped, int isFlying, int isFalling, float forceToDeplete)
+    {
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, NetworkID);
+            data.SetInt(2, isBumped);
+            data.SetInt(3, isFlying);
+            data.SetInt(4, isFalling);
+            data.SetFloat(5, forceToDeplete);
+
+            GetRTSession.SendData(114, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+    }
+
     #region SEND DATA
     public void SendTankMovement(int _id ,Vector3 _pos ,Vector3 _rot)
     {
@@ -169,8 +184,15 @@ public class GameSparks_DataSender : MonoBehaviour
         }
         catch
         {
-            GetRTSession = GameSparksManager.Instance.GetRTSession();
-            SendTankMovement(_id, _pos, _rot);
+            try
+            {
+                GetRTSession = GameSparksManager.Instance.GetRTSession();
+                SendTankMovement(_id, _pos, _rot);
+            }
+            catch
+            {
+
+            }
         }
     }
 
@@ -394,8 +416,8 @@ public class GameSparks_DataSender : MonoBehaviour
             if (timeDiff == 0)
             {
                 timeDiff += 0.1f;
-                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nZERO VAL: (" + m_BufferedState[0].pos.x+" : "+ m_BufferedState[0].pos.z + ") " + m_BufferedState[0].timestamp + "\n";
-                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "ZERO VAL:(" + m_BufferedState[1].pos.x + " : " + m_BufferedState[1].pos.z + ") " + m_BufferedState[1].timestamp + "\n";
+               // GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nZERO VAL: (" + m_BufferedState[0].pos.x+" : "+ m_BufferedState[0].pos.z + ") " + m_BufferedState[0].timestamp + "\n";
+               // GameObject.Find("GameUpdateText").GetComponent<Text>().text += "ZERO VAL:(" + m_BufferedState[1].pos.x + " : " + m_BufferedState[1].pos.z + ") " + m_BufferedState[1].timestamp + "\n";
             }
 
 

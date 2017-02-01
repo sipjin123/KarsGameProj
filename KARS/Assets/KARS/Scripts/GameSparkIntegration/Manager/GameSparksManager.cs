@@ -104,8 +104,10 @@ public class GameSparksManager : MonoBehaviour {
     }
     #endregion
     //====================================================================================
-    
-    //REFACTOR GAME TIME
+
+    bool InitiateNetwork;
+
+    #region CLOCK SYNC
     private IEnumerator SendTimeStamp()
     {
         
@@ -138,15 +140,12 @@ public class GameSparksManager : MonoBehaviour {
         DateTime dateNow = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc); // get the current time
         serverClock = dateNow.AddMilliseconds(_packet.Data.GetLong(1).Value + timeDelta).ToLocalTime(); // adjust current time to match clock from server
     }
-
+    #endregion
     #region DATA RECEIVE
     private void OnPacketReceived(RTPacket _packet)
     {
         switch (_packet.OpCode)
         {
-            case 121:
-
-                break;
             case 101:
 
                 CalculateTimeDelta(_packet);
@@ -162,8 +161,18 @@ public class GameSparksManager : MonoBehaviour {
                 break;
             case 102://UPDATES GAME TIME EVERY 5 SECONDS
                 {
+                    if (!InitiateNetwork)
+                    {
+                        PowerUpManager.Instance.StartNetwork();
+                        for (int i = 0; i < tankPool.Count; i++)
+                        {
+                            tankPool[i].GetComponent<SimpleCarController>().StartNetwork();
+                        }
+                        InitiateNetwork = true;
+                    }
                     SyncClock(_packet);
                     //REFACTOR GAME TIME
+                    /*
                     return;
                     if (gameTimeText == "")
                     {
@@ -176,12 +185,12 @@ public class GameSparksManager : MonoBehaviour {
                         if (!enableFiveSec)
                             return;
 
-                        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n"+ (float.Parse(gameTimeText) - (_packet.Data.GetLong(1).Value / 1000));
+                        //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n"+ (float.Parse(gameTimeText) - (_packet.Data.GetLong(1).Value / 1000));
 
                         gameTimeText = (_packet.Data.GetLong(1).Value / 1000).ToString();
                         gameTimeInt = int.Parse(gameTimeText);
                         ActualTime.text = gameTimeText;
-                    }
+                    }*/
                 }
                 break;
             case 111://UPDATES PLAYER MOVEMENT
@@ -223,10 +232,25 @@ public class GameSparksManager : MonoBehaviour {
                 break;
             case 114://UPDATES MISSLE MOVEMENT
                 {
+                    return;
+                    int receivedPlayerBump = _packet.Data.GetInt(1).Value;
+
+                    for (int i = 0; i < tankPool.Count; i++)
+                    {
+                        if (tankPool[i].GetComponent<GameSparks_DataSender>().NetworkID == receivedPlayerBump)
+                        {
+                            int isBumped = _packet.Data.GetInt(2).Value;
+                            int isFlying = _packet.Data.GetInt(3).Value;
+                            int isFalling = _packet.Data.GetInt(4).Value;
+                            float forceToDeplete = _packet.Data.GetFloat(5).Value;
+                            tankPool[i].GetComponent<SimpleCarController>().SetupInteractionVariables(isBumped, isFlying, isFalling, forceToDeplete);
+                        }
+                    }
+                    /*
                     int sender_ID = _packet.Data.GetInt(1).Value;
                     int receiver_ID = _packet.Data.GetInt(2).Value;
 
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n(" + GameSparksManager.Instance.PeerID + ") received missle on Server";
+                    //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n(" + GameSparksManager.Instance.PeerID + ") received missle on Server";
 
                     for (int i = 0; i < tankPool.Count; i++)
                     {
@@ -238,31 +262,48 @@ public class GameSparksManager : MonoBehaviour {
                             //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n(" + GameSparksManager.Instance.PeerID + ") will send to lock on target parent";
                             //PowerUpManager.Instance.LockOnTarget(receiver_ID ,_obj);
                         }
-                    }
+                    }*/
                 }
                 break;
             case 115://UPDATES MISSLE MOVEMENT
                 {
+                    #region MISSLE DATA RECEIVE
                     int missleIndex = _packet.Data.GetInt(1).Value;
-                    List<GameObject> _objList = PowerUpManager.Instance.MissleList;
-                    for (int i = 0; i < _objList.Count; i++)
+                    int PlayerController = _packet.Data.GetInt(2).Value;
+                    List<GameObject> _objList = new List<GameObject>();
+
+                    if (PeerID == "1")
+                        _objList = PowerUpManager.Instance.MissleList_Player2;
+                    else if (PeerID == "2")
+                        _objList = PowerUpManager.Instance.MissleList_Player1;
+
+                    if (PlayerController.ToString() != PeerID)
                     {
-                        if (missleIndex == _objList[i].GetComponent<MissleScript>().Missle_ID)
+                        for (int i = 0; i < _objList.Count; i++)
                         {
-                            Vector3 temp = new Vector3(_packet.Data.GetFloat(2).Value, _packet.Data.GetFloat(3).Value, _packet.Data.GetFloat(4).Value);
-
-                            if (_packet.Data.GetInt(6).Value == 0)
+                            if (missleIndex == _objList[i].GetComponent<MissleScript>().Missle_ID)
                             {
-                                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n" + PeerID + " Will Disable " + _objList[i].gameObject.name;
-                                _objList[i].GetComponent<MissleScript>().SetSYnc(temp, _packet.Data.GetVector3(5).Value);
-                                _objList[i].SetActive(false);
-                                return;
-                            }
+                                MissleScript _missleScript = _objList[i].GetComponent<MissleScript>();
 
-                            _objList[i].SetActive(true);
-                            _objList[i].GetComponent<MissleScript>().SetSYnc(temp, _packet.Data.GetVector3(5).Value);
+                                Vector3 temp = new Vector3(_packet.Data.GetFloat(3).Value, _packet.Data.GetFloat(4).Value, _packet.Data.GetFloat(5).Value);
+
+                                if (_packet.Data.GetInt(7).Value == 0)
+                                {
+                                    _missleScript.SetSYnc(temp, _packet.Data.GetVector3(6).Value);
+                                    _missleScript.transform.SetParent(_missleScript.missleParent);
+                                    _missleScript.gameObject.SetActive(false);
+                                    return;
+                                }
+                                else
+                                {
+                                    _missleScript.gameObject.SetActive(true);
+                                    _missleScript.transform.SetParent(null);
+                                    _missleScript.SetSYnc(temp, _packet.Data.GetVector3(6).Value);
+                                }
+                            }
                         }
                     }
+                    #endregion
                 }
                 break;
             case 116://UPDATES TNT SPAWN
@@ -277,7 +318,7 @@ public class GameSparksManager : MonoBehaviour {
                         ifEnabled = true;
 
 
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nRECEIVED TNT # (" + receivedTNT_ID + ") of (" + receivedServer_ID + ") HAS been dispatched to " + receivedPosition;
+                    // GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nRECEIVED TNT # (" + receivedTNT_ID + ") of (" + receivedServer_ID + ") HAS been dispatched to " + receivedPosition;
                     PowerUpManager.Instance.ReceiveFromServer(receivedServer_ID, receivedTNT_ID, receivedPosition, ifEnabled);
 
                 }
@@ -287,21 +328,21 @@ public class GameSparksManager : MonoBehaviour {
                     int receivedPlayerToMove = _packet.Data.GetInt(1).Value;
                     int receivedPlayerAction = _packet.Data.GetInt(2).Value;
 
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nRECEIVED PLAYER # (" + receivedPlayerToMove;
                     for (int i = 0; i < tankPool.Count; i++)
                     {
                         if (tankPool[i].GetComponent<GameSparks_DataSender>().NetworkID == receivedPlayerToMove)
                         {
-                            tankPool[i].GetComponent<SimpleCarController>().PlayerExplode();
+                            tankPool[i].GetComponent<SimpleCarController>().BumpThisObjWithForce();
                         }
                     }
                 }
                 break;
             case 118://UPDATES PLAYER COLLISION
                 {
-                    int receivedPlayerBump= _packet.Data.GetInt(1).Value;
+                    return;
+                    int receivedPlayerBump = _packet.Data.GetInt(1).Value;
                     int receivedPlayerAction = _packet.Data.GetInt(2).Value;
-                    
+
                     for (int i = 0; i < tankPool.Count; i++)
                     {
                         if (tankPool[i].GetComponent<GameSparks_DataSender>().NetworkID == receivedPlayerBump)
@@ -309,6 +350,16 @@ public class GameSparksManager : MonoBehaviour {
                             tankPool[i].GetComponent<SimpleCarController>().BumpThisObjWithForce();
                         }
                     }
+                }
+                break;
+            case 119://UPDATES PLAYER COLLISION
+                {
+                    Tower_AI_Network.Instance.Receive_Packet(_packet);
+                }
+                break;
+            case 120://UPDATES PLAYER COLLISION
+                {
+                    Tower_AI_Network.Instance.Receive_Packet(_packet);
                 }
                 break;
         }

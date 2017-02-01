@@ -5,36 +5,44 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class PowerUpManager : MonoBehaviour {
-
+    //=======================================================================================================================
+    //VARIABLES
+    #region VARIABLES
     private static PowerUpManager instance;
     public static PowerUpManager Instance
     {
         get { return instance; }
     }
 
+    int ServerPeerID;
+
     [SerializeField]
-    GameObject BLueCar, RedCar;
+    GameObject Player1, Player2;
     public GameObject Shield;
 
     [SerializeField]
-    Transform MisslePool,TnTPool;
+    Transform MisslePool_Player1, MisslePool_Player2, TnTPool;
 
-    public List<GameObject> MissleList;
+    public List<GameObject> MissleList_Player1;
+    public List<GameObject> MissleList_Player2;
     public List<GameObject> TnTList;
     private GameSparksRTUnity GetRTSession;
+    #endregion
     //=======================================================================================================================
     //INITIALIZATION
     #region INITIALIZATION
     void Awake()
     {
-        MissleList = new List<GameObject>();
-        TnTList = new List<GameObject>();
         instance = this;
+        Player1 = GameObject.Find("BlueCar");
+        Player2 = GameObject.Find("RedCar");
     }
-    void Start()
+
+    public void StartNetwork()
     {
-        BLueCar = GameObject.Find("BlueCar");
-        RedCar = GameObject.Find("RedCar");
+        MissleList_Player1 = new List<GameObject>();
+        MissleList_Player2 = new List<GameObject>();
+        TnTList = new List<GameObject>();
         StartCoroutine(DelayStartup());
     }
 
@@ -43,12 +51,20 @@ public class PowerUpManager : MonoBehaviour {
         yield return new WaitForSeconds(1);
         GameObject temp = null;
         
-        for (int i = 0; i < MisslePool.childCount; i++)
+        for (int i = 0; i < MisslePool_Player1.childCount; i++)
         {
-            temp = MisslePool.GetChild(i).gameObject;
-            MissleList.Add(temp);
+            temp = MisslePool_Player1.GetChild(i).gameObject;
+            MissleList_Player1.Add(temp);
             temp.GetComponent<MissleScript>().Set_MissleID(i);
         }
+        for (int i = 0; i < MisslePool_Player2.childCount; i++)
+        {
+            temp = MisslePool_Player2.GetChild(i).gameObject;
+            MissleList_Player2.Add(temp);
+            temp.GetComponent<MissleScript>().Set_MissleID(i);
+        }
+
+
         yield return new WaitForSeconds(1);
         temp = null;
         for (int i = 0; i < TnTPool.childCount; i++)
@@ -57,9 +73,12 @@ public class PowerUpManager : MonoBehaviour {
             TnTList.Add(temp);
             temp.GetComponent<TnTScript>().InitializeObj(i);
         }
+        Debug.LogError("PEER SETUP");
+        ServerPeerID = int.Parse(GameSparksManager.Instance.PeerID);
     }
     #endregion
     //=======================================================================================================================
+    //TNT SEND AND RECEIVE FROM SERVER
     #region TNT SEND AND RECEIVE FROM SERVER
     public void SetUpTNT(int _id, Vector3 _pos, bool _enable)
     {
@@ -97,7 +116,6 @@ public class PowerUpManager : MonoBehaviour {
 
     public void SendToServer(int _id, int _tntID,Vector3 _pos, bool _enable)
     {
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nSend Server Position "+_pos;
         GetRTSession = GameSparksManager.Instance.GetRTSession();
         using (RTData data = RTData.Get())
         {
@@ -114,22 +132,30 @@ public class PowerUpManager : MonoBehaviour {
     }
     #endregion
     //=======================================================================================================================
+    //MISSLE SEND AND RECEIVE FROM SERVER
+    #region MISSLE SEND AND RECEIVE FROM SERVER
     public void LockOnTarget(int senderID,GameObject _obj)
     {
-        try
+        if(senderID == 1)
         {
-            MisslePool.transform.GetChild(0).GetComponent<MissleScript>().LockOnToThisObject(senderID,_obj);
-        }
-        catch
-        {
-            GameObject temp = MissleList[0];
-            for (int i = 0; i < MissleList.Count-1; i++)
+            MissleList_Player1[0].GetComponent<MissleScript>().LockOnToThisObject(Player1,_obj);
+            GameObject temp = MissleList_Player1[0];
+            for (int i = 0; i < MissleList_Player1.Count - 1; i++)
             {
-                MissleList[i] = MissleList[i + 1];
+                MissleList_Player1[i] = MissleList_Player1[i + 1];
             }
-            MissleList[MissleList.Count - 1] = temp;
-            MissleList[MissleList.Count - 1].GetComponent<MissleScript>().ResetMissle();
-            LockOnTarget(senderID, _obj);
+            MissleList_Player1[MissleList_Player1.Count - 1] = temp;
+        }
+        else if (senderID == 2)
+        {
+            MissleList_Player2[0].GetComponent<MissleScript>().LockOnToThisObject(Player2,_obj);
+
+            GameObject temp = MissleList_Player2[0];
+            for (int i = 0; i < MissleList_Player2.Count - 1; i++)
+            {
+                MissleList_Player2[i] = MissleList_Player2[i + 1];
+            }
+            MissleList_Player2[MissleList_Player2.Count - 1] = temp;
         }
     }
 
@@ -143,33 +169,25 @@ public class PowerUpManager : MonoBehaviour {
             GetRTSession.SendData(114, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
-
+    #endregion
+    //=======================================================================================================================
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (GameSparksManager.Instance.PeerID == "2")
             {
-                LockOnTarget(2, BLueCar);
-                //ClientSendToServerMissleLock(2,1);
+                LockOnTarget(2, Player1);
             }
             else if (GameSparksManager.Instance.PeerID == "1")
             {
-                LockOnTarget(1, RedCar);
-                //ClientSendToServerMissleLock(1,2);
+                LockOnTarget(1, Player2);
             }
         }
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            if (GameSparksManager.Instance.PeerID == "2")
-            {
-                SetUpTNT(2, RedCar.transform.position, true);
-            }
-            else if (GameSparksManager.Instance.PeerID == "1")
-            {
-                SetUpTNT(1, BLueCar.transform.position, true);
-            }
-        }
+
+
+
+        return;
         if(Input.GetKeyDown(KeyCode.M))
         {
             if (GameSparksManager.Instance.PeerID == "2")
@@ -207,13 +225,11 @@ public class PowerUpManager : MonoBehaviour {
     {
         if (GameSparksManager.Instance.PeerID == "2")
         {
-            LockOnTarget(2, BLueCar);
-            //ClientSendToServerMissleLock(2,1);
+            LockOnTarget(2, Player1);
         }
         else if (GameSparksManager.Instance.PeerID == "1")
         {
-            LockOnTarget(1, RedCar);
-            //ClientSendToServerMissleLock(1,2);
+            LockOnTarget(1, Player2);
         }
     }
 
@@ -223,11 +239,11 @@ public class PowerUpManager : MonoBehaviour {
 
         if (GameSparksManager.Instance.PeerID == "2")
         {
-            SetUpTNT(2, RedCar.transform.position, true);
+            SetUpTNT(2, Player2.transform.position, true);
         }
         else if (GameSparksManager.Instance.PeerID == "1")
         {
-            SetUpTNT(1, BLueCar.transform.position, true);
+            SetUpTNT(1, Player1.transform.position, true);
         }
     }
 

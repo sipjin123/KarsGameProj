@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using GameSparks.RT;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Synergy88
 {
@@ -75,14 +77,18 @@ namespace Synergy88
 
         void Start()
         {
-            _game = GameObject.FindObjectOfType<GameRoot>();
-            Objective = GameObject.FindGameObjectWithTag("Flag").transform;
-            spawnAreas = GameObject.FindGameObjectsWithTag("Respawn");
+            try
+            {
+                _game = GameObject.FindObjectOfType<GameRoot>();
+                Objective = GameObject.FindGameObjectWithTag("Flag").transform;
+                spawnAreas = GameObject.FindGameObjectsWithTag("Respawn");
 
 
-            RegisterDataToDebugMode();
+                RegisterDataToDebugMode();
+            }
+            catch
+            { }
         }
-
         void OnTriggerEnter(Collider col)
         {
             if (!_hasFlag && col.tag == "Flag" && invis <= 0)
@@ -130,11 +136,14 @@ namespace Synergy88
 
         //*************************************************************
         //GAMESPARKS
+
         GameSparks_DataSender _GSDataSender;
 
         [SerializeField]
         GameObject CollidersToDisable;
 
+        bool NetworkHasStarted;
+        #region INITIALIZE NETWORK
         void Awake()
         {
             try
@@ -146,111 +155,116 @@ namespace Synergy88
             }
             catch { }
         }
-        bool _bumped;
+
+        public void StartNetwork()
+        {
+            if (_GSDataSender.NetworkID == 1)
+            {
+                transform.position = new Vector3(0, 1.5f, 30);
+            }
+            else
+            {
+                transform.position = new Vector3(0, 1.5f, -30);
+            }
+            _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
+            NetworkHasStarted = true;
+        }
+        #endregion
+
+
+
         public void BumpThisObj()
         {
-            if (!isFalling && !isFlyng)
-                flightForceDelplete = 100;
-            isFlyng = true;
-
-            _rigidbody = GetComponent<Rigidbody>();
-            _rigidbody.isKinematic = false;
-            _rigidbody.useGravity = true;
-            _rigidbody.AddForce(transform.up * 200);
-            _rigidbody.AddForce(-transform.forward * 250);
-
-
-            carObject.gameObject.AddComponent<Rigidbody>();
-            _carRigidBody = carObject.GetComponent<Rigidbody>();
-            _carRigidBody.useGravity = false;
-            _carRigidBody.constraints = RigidbodyConstraints.FreezePosition;
-
-
-
-            CollidersToDisable.SetActive(false);
-
             _bumped = true;
+            flightForceDelplete = 5;
         }
         public void BumpThisObjWithForce()
         {
-            if (!isFalling && !isFlyng)
-                flightForceDelplete = 100;
-            isFlyng = true;
-
-            _rigidbody = GetComponent<Rigidbody>();
-            _rigidbody.isKinematic = false;
-            _rigidbody.useGravity = true;
-            _rigidbody.AddForce(transform.up * 500);
-            _rigidbody.AddForce(-transform.forward * 250);
-
-            carObject.gameObject.AddComponent<Rigidbody>();
-            _carRigidBody = carObject.GetComponent<Rigidbody>();
-            _carRigidBody.useGravity = false;
-            _carRigidBody.constraints = RigidbodyConstraints.FreezePosition;
-            _carRigidBody.AddTorque(new Vector3(Random.RandomRange(1, 5), Random.RandomRange(1, 5), Random.RandomRange(1, 5)), ForceMode.Impulse);
-
-
-
-            CollidersToDisable.SetActive(false);
-
-
             _bumped = true;
-        }
-
-        #region PLAYER EXPLOSION
-        bool isFlyng;
-        bool isFalling;
-        float flightForceDelplete;
-        Rigidbody _rigidbody;
-        Rigidbody _carRigidBody;
-        IEnumerator DelayCarReset()
-        {
-            yield return new WaitForSeconds(1);
-            PlayerReset();
-        }
-        void PlayerReset()
-        {
-            _rigidbody.isKinematic = true;
-            _rigidbody.useGravity = false;
-            Destroy(carObject.GetComponent<Rigidbody>());
-            Destroy(carObject.GetComponent<BoxCollider>());
-            carObject.transform.localPosition = Vector3.zero;
-            carObject.transform.localEulerAngles = Vector3.zero;
-            _rigidbody.constraints = RigidbodyConstraints.None;
-
-            CollidersToDisable.SetActive(true);
-            _bumped = false;
-
+            flightForceDelplete = 10;
         }
         public void PlayerExplode()
         {
-            if(!isFalling && !isFlyng)
-            flightForceDelplete = 100;
             isFlyng = true;
-
-            _rigidbody = GetComponent<Rigidbody>();
-            _rigidbody.isKinematic = false;
-            _rigidbody.useGravity = true;
-            _rigidbody.AddForce(transform.up * 500);
-
-            carObject.gameObject.AddComponent<Rigidbody>();
-            _carRigidBody = carObject.GetComponent<Rigidbody>();
-            _carRigidBody.useGravity = false;
-            _carRigidBody.constraints = RigidbodyConstraints.FreezePosition;
-            _carRigidBody.AddTorque(new Vector3(Random.RandomRange(1, 5), Random.RandomRange(1, 5), Random.RandomRange(1, 5)), ForceMode.Impulse);
+            flightForceDelplete = 10;
         }
+        public void SetupInteractionVariables(int _isBumped,int _isFlying, int _isFalling,float _force)
+        {
+            //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nPlayer "+_GSDataSender.NetworkID+" received stuff";
+            //if (_GSDataSender.NetworkID.ToString() != GameSparksManager.Instance.PeerID)
+            {
+                if (_isBumped == 1)
+                    _bumped = true;
+                else
+                    _bumped = false;
+
+                if (_isFlying == 1)
+                    isFlyng = true;
+                else
+                    isFlyng = false;
+
+                if (_isFalling == 1)
+                    isFalling = true;
+                else
+                    isFalling = false;
+                flightForceDelplete = _force;
+            }
+        }
+
+        #region PLAYER EXPLOSION
+        public bool _bumped;
+        public bool isFlyng;
+        public bool isFalling;
+        float flightForceDelplete;
+        Rigidbody _rigidbody;
+        Rigidbody _carRigidBody;
         #endregion
         #region TEST CONTROLS
         void GameTEsting()
         {
-            /*
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                if (GameSparksManager.Instance.PeerID == "1")
+                {
+                    BumpThisObjWithForce();
+
+                    GameSparksRTUnity GetRTSession;
+                    GetRTSession = GameSparksManager.Instance.GetRTSession();
+                    using (RTData data = RTData.Get())
+                    {
+                        data.SetInt(1, 2);
+                        data.SetInt(2, 1);
+                        GetRTSession.SendData(117, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                    }
+                }
+                else if (GameSparksManager.Instance.PeerID == "2")
+                {
+                    BumpThisObjWithForce();
+
+                    GameSparksRTUnity GetRTSession;
+                    GetRTSession = GameSparksManager.Instance.GetRTSession();
+                    using (RTData data = RTData.Get())
+                    {
+                        data.SetInt(1, 1);
+                        data.SetInt(2, 1);
+                        GetRTSession.SendData(117, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                    }
+                }
+            }
+
+
+            return;
+            transform.position += transform.forward * 0.05f;
+            
             if (Input.GetKey(KeyCode.W))
             {
                 transform.position += transform.forward * 0.5f;
+                _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
             }
             if (Input.GetKey(KeyCode.S))
             {
                 transform.position -= transform.forward * 0.5f;
+                _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
             }
             if (Input.GetKey(KeyCode.A))
             {
@@ -259,99 +273,111 @@ namespace Synergy88
             if (Input.GetKey(KeyCode.D))
             {
                 transform.position += transform.right * 0.5f;
-            }*/
-            
-            if (Input.GetKey(KeyCode.X))
-            {
-                BumpThisObjWithForce();
-                //PlayerExplode();
             }
 
-            if (Input.GetKey(KeyCode.Z))
-            {
-                PlayerReset();
-                _bumped = false;
-            }
-            if (isFlyng)
-            {
-                flightForceDelplete--;
-                if (flightForceDelplete <= 0)
-                {
-                    isFlyng = false;
-                    isFalling = true;
-                    _rigidbody.velocity = Vector3.zero;
-
-                    _carRigidBody.useGravity = true;
-                    _carRigidBody.gameObject.AddComponent<BoxCollider>();
-                }
-            }
-            if (isFalling)
-            {
-                return;
-                if (transform.position.y < 2)
-                {
-                    try
-                    {
-                        _rigidbody.constraints = RigidbodyConstraints.FreezeAll;
-                        _carRigidBody.constraints = RigidbodyConstraints.None;
-
-                        _carRigidBody.angularVelocity = Vector3.zero;
-                        _rigidbody.useGravity = false;
-                    }
-                    catch
-                    { }
-                    isFalling = false;
-                    StartCoroutine("DelayCarReset");
-                }
-            }
+            _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
         }
         #endregion
         //*************************************************************
         void FixedUpdate()
         {
-            if (int.Parse(GameSparksManager.Instance.PeerID) == _GSDataSender.NetworkID)
+            GameTEsting();
+
+    
+
+
+            try
             {
-                if (Input.GetKey(KeyCode.LeftAlt))
-                    transform.position += carObject.transform.forward * (Time.fixedDeltaTime * 55);
-                else
-                    transform.position += carObject.transform.forward * (Time.fixedDeltaTime * 25);
+                if (NetworkHasStarted)
+                {
+                    if (int.Parse(GameSparksManager.Instance.PeerID) == _GSDataSender.NetworkID)
+                    {
+                        _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
+                        _GSDataSender.SendInteractStatus(_GSDataSender.NetworkID, _bumped == true ? 1 : 0, isFlyng == true ? 1 : 0, isFalling == true ? 1 : 0, flightForceDelplete);
+                        if (_bumped)
+                        {
+                            flightForceDelplete--;
+                            transform.position += -carObject.transform.forward * 5;
+                            transform.position += carObject.transform.up * 2;
+                            if (flightForceDelplete <= 0)
+                            {
+                                _bumped = false;
+                                isFalling = true;
+                            }
+                            return;
+                        }
+                        if (isFlyng)
+                        {
+                            flightForceDelplete--;
+                            transform.position += carObject.transform.up * 5;
+                            if (flightForceDelplete <= 0)
+                            {
+                                _bumped = false;
+                                isFalling = true;
+                            }
+                            return;
+                        }
+                        if (isFalling)
+                        {
+                            if (transform.position.y > 1)
+                            {
+                                transform.position += -transform.up;
+                            }
+                            else
+                            {
+                                isFalling = false;
+                                transform.position = new Vector3(transform.position.x, 1.5f, transform.position.z);
+                            }
+                            return;
+                        }
+
+
+
+
+                        if (Input.GetKey(KeyCode.LeftAlt))
+                            transform.position += carObject.transform.forward * (Time.fixedDeltaTime * 55);
+                        transform.position += carObject.transform.forward * (Time.fixedDeltaTime * 1);
+                        if (Input.GetKey(KeyCode.A))
+                        {
+                            currentRot -= rotSpeed * Time.deltaTime;
+                        }
+                        else if (Input.GetKey(KeyCode.D))
+                        {
+                            currentRot += rotSpeed * Time.deltaTime;
+                        }
+                        carObject.rotation = Quaternion.Euler(0, currentRot, 0);
+
+                    }
+                }
             }
+            catch
+            { }
         }
         void Update()
         {
-            //GameTEsting();
+            //*************************************************************
+            //GAMESPARKS
+            //if(false)
+            try
+            {
+                if (_GSDataSender.HasControllableObject == false)//GAME SPARK INITIALIZATION
+                    return;
+                if (int.Parse(GameSparksManager.Instance.PeerID) != _GSDataSender.NetworkID)//GAME SPARK ID
+                    return;
+
+            }
+            catch { }
+
+            return;
+            if (isFlyng || isFalling || _bumped)
+                return;
+            //*************************************************************
+
+
+
+
             if (_game.isPlaying)
             {
-                //*************************************************************
-                //GAMESPARKS
-                //if(false)
-                try
-                {
-                    if (_GSDataSender.HasControllableObject == false)//GAME SPARK INITIALIZATION
-                        return;
-                    if (int.Parse(GameSparksManager.Instance.PeerID) != _GSDataSender.NetworkID)//GAME SPARK ID
-                        return;
-
-                    _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
-                }
-                catch { }
-                //GameTEsting();
-
-
-                if (Input.GetKey(KeyCode.A))
-                {
-                    currentRot -= rotSpeed * Time.deltaTime;
-                }
-                else if (Input.GetKey(KeyCode.D))
-                {
-                    currentRot += rotSpeed * Time.deltaTime;
-                }
-                carObject.rotation = Quaternion.Euler(0, currentRot, 0);
-                return;
-                if (isFlyng || isFalling || _bumped)
-                    return;
-                //*************************************************************
-
 
                 if (isShielded)
                 {

@@ -6,15 +6,15 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class MissleScript : MonoBehaviour {
-
+    //================================================================================================================================
+    #region VARIABLES
     [SerializeField]
-    private int playerController_ID;
+    private int _playerController_ID;
     public int PlayerController_ID
     {
-        get { return playerController_ID; }
-        set { playerController_ID = value; }
+        get { return _playerController_ID; }
+        set { _playerController_ID = value; }
     }
-
 
     [SerializeField]
     private int missle_ID;
@@ -23,29 +23,33 @@ public class MissleScript : MonoBehaviour {
         get { return missle_ID; }
         set { missle_ID = value; }
     }
+
+
     [SerializeField]
     private GameObject objectToHit;
+
     [SerializeField]
     private bool lockOnObject;
 
-    Transform missleParent;
+    public Transform missleParent;
     float missleSpeed = 0.5f;
 
     private GameSparksRTUnity GetRTSession;
 
     public Vector3 SyncMovement;
     public Vector3 SyncRot;
-
-
+    #endregion
+    //================================================================================================================================
+    #region UPDATE AND SYNC
     void Update()
     {
-
-        if (GameSparksManager.Instance.PeerID == PlayerController_ID.ToString())
+        if (_playerController_ID.ToString() == GameSparksManager.Instance.PeerID)
         {
+            Debug.LogError("missle is controlling");
             transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.blue;
             if (lockOnObject)
             {
-                if (Vector3.Distance(transform.position, objectToHit.transform.position) < 0)
+                if (Vector3.Distance(transform.position, objectToHit.transform.position) < 1)
                 {
                     ResetMissle();
                 }
@@ -57,8 +61,9 @@ public class MissleScript : MonoBehaviour {
                 }
             }
         }
-        else if(GameSparksManager.Instance.PeerID != PlayerController_ID.ToString())
+        else
         {
+            Debug.LogError("missle is syncing");
             transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.red;
             transform.position = Vector3.Lerp(transform.position, SyncMovement, 1);
             transform.eulerAngles = Vector3.Slerp(transform.eulerAngles, SyncRot, 1);
@@ -69,7 +74,8 @@ public class MissleScript : MonoBehaviour {
         SyncMovement = _pos;
         SyncRot = _rot;
     }
-
+    #endregion
+    //================================================================================================================================
     #region SEND DATA
     void SendMissleData(int _var)
     {
@@ -79,11 +85,12 @@ public class MissleScript : MonoBehaviour {
             using (RTData data = RTData.Get())
             {
                 data.SetInt(1, missle_ID);
-                data.SetFloat(2, transform.position.x);
-                data.SetFloat(3, transform.position.y);
-                data.SetFloat(4, transform.position.z);
-                data.SetVector3(5, transform.eulerAngles);
-                data.SetInt(6, _var);
+                data.SetInt(2, PlayerController_ID);
+                data.SetFloat(3, transform.position.x);
+                data.SetFloat(4, transform.position.y);
+                data.SetFloat(5, transform.position.z);
+                data.SetVector3(6, transform.eulerAngles);
+                data.SetInt(7, _var);
 
                 GetRTSession.SendData(115, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
             }
@@ -91,7 +98,8 @@ public class MissleScript : MonoBehaviour {
         catch { }
     }
     #endregion
-
+    //================================================================================================================================
+    #region PUBLIC FUNCTIONS
     public void Set_MissleID(int _var)
     {
         missleParent = transform.parent;
@@ -100,10 +108,11 @@ public class MissleScript : MonoBehaviour {
         gameObject.name += _var;
         gameObject.SetActive(false);
     }
-    public void LockOnToThisObject(int senderID,GameObject _obj)
+    public void LockOnToThisObject(GameObject _sender,GameObject _obj)
     {
-        playerController_ID = senderID;
-        transform.position = missleParent.transform.position;
+        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nMissle "+gameObject.name+" Locking on to: "+_obj.name;
+        Debug.LogError("locking on to object "+_obj.gameObject.name);
+        transform.position = _sender.transform.position;
         objectToHit = _obj;
         transform.SetParent(null);
         lockOnObject = true;
@@ -114,15 +123,15 @@ public class MissleScript : MonoBehaviour {
         transform.SetParent(missleParent);
         transform.position = missleParent.transform.position;
         SendMissleData(0);
-        playerController_ID = 0;
         objectToHit = null;
         lockOnObject = false;
         gameObject.SetActive(false);
     }
-
-
+    #endregion
+    //================================================================================================================================
     void OnTriggerEnter(Collider hit)
     {
+        return;
         if (hit.tag == "Car")
         {
             try
@@ -139,7 +148,7 @@ public class MissleScript : MonoBehaviour {
                     data.SetInt(2,1);
 
                     GetRTSession.SendData(117, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nServer (" + GameSparksManager.Instance.PeerID + ") Owner (" + playerController_ID + "Missle # " + Missle_ID + " hit " + hit.gameObject.name;
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nServer (" + GameSparksManager.Instance.PeerID + ") Owner (" + _playerController_ID + "Missle # " + Missle_ID + " hit " + hit.gameObject.name;
                 }
             }
             catch { }

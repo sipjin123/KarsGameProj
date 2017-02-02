@@ -7,6 +7,7 @@ namespace Synergy88
 {
     public class SimpleCarController : MonoBehaviour {
 
+        #region VARIABLES
         [SerializeField]
         private int playerID = 0;
 
@@ -55,6 +56,9 @@ namespace Synergy88
         private float shieldDur = 0;
         private float maxShieldDur = 5;
 
+        #endregion
+
+        #region INITIALIZATION
         void RegisterDataToDebugMode()
         {
             DebugMode.GetInstance.RegisterDataType(ref maxRespawnTime, "RespawnTime P" + playerID);
@@ -89,6 +93,8 @@ namespace Synergy88
             catch
             { }
         }
+        #endregion
+        #region TRIGGER
         void OnTriggerEnter(Collider col)
         {
             if (!_hasFlag && col.tag == "Flag" && invis <= 0)
@@ -120,7 +126,7 @@ namespace Synergy88
                 }
             }
         }
-
+        #endregion
         void ResetFlag()
         {
             LoseFlag();
@@ -136,7 +142,7 @@ namespace Synergy88
 
         //*************************************************************
         //GAMESPARKS
-
+        public Image myHealthBar;
         GameSparks_DataSender _GSDataSender;
 
         [SerializeField]
@@ -161,33 +167,97 @@ namespace Synergy88
             if (_GSDataSender.NetworkID == 1)
             {
                 transform.position = new Vector3(0, 1.5f, 30);
+                myHealthBar = GameSparksManager.Instance.PlayerHealthBar_1;
             }
             else
             {
                 transform.position = new Vector3(0, 1.5f, -30);
+                myHealthBar = GameSparksManager.Instance.PlayerHealthBar_2;
             }
+            if (_GSDataSender.NetworkID.ToString() == GameSparksManager.Instance.PeerID)
+            {
+                GameSparksManager.Instance.InventoryPanel.SetActive(true);
+            }
+
             _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
             NetworkHasStarted = true;
+            CurrentHealth = 100;
+            inventoryList = new string[3];
         }
         #endregion
 
+        [SerializeField]
+        float CurrentHealth;
+
+        private GameSparksRTUnity GetRTSession;
+        void SwitchInterpolation(int _bool)
+        {
+            if(_bool == 0)
+            {
+                StartCoroutine("DelayExtrapolation");
+                return;
+            }
+            GetRTSession = GameSparksManager.Instance.GetRTSession();
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, _GSDataSender.NetworkID);
+                data.SetInt(2, _bool);
+
+                GetRTSession.SendData(122, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            }
+        }
+        IEnumerator DelayExtrapolation()
+        {
+            
+            yield return new WaitForSeconds(.1f);
+            _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
+            yield return new WaitForSeconds(.1f);
+            _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
+            yield return new WaitForSeconds(.1f);
+            _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
 
 
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, _GSDataSender.NetworkID);
+                data.SetInt(2, 0);
+
+                GetRTSession.SendData(122, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            }
+        }
+
+        //--------------------------------------------------------------------------
+        //PLAYER INTERACTION
+        #region PLAYER INTERACTION
         public void BumpThisObj()
         {
+            SwitchInterpolation(2);
+
             _bumped = true;
             flightForceDelplete = 5;
         }
         public void BumpThisObjWithForce()
         {
+            SwitchInterpolation(2);
+
             _bumped = true;
             flightForceDelplete = 10;
         }
         public void PlayerExplode()
         {
+            SwitchInterpolation(2);
+
+            CurrentHealth -= 20;
+            myHealthBar.fillAmount = CurrentHealth / 100;
+            _GSDataSender.SendHealth(CurrentHealth);
+
             isFlyng = true;
             flightForceDelplete = 10;
         }
+        #endregion
+        //--------------------------------------------------------------------------
+
+
         public void SetupInteractionVariables(int _isBumped,int _isFlying, int _isFalling,float _force)
         {
             //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nPlayer "+_GSDataSender.NetworkID+" received stuff";
@@ -219,6 +289,28 @@ namespace Synergy88
         Rigidbody _rigidbody;
         Rigidbody _carRigidBody;
         #endregion
+
+
+        string[] inventoryList;
+        void SendInventory()
+        {
+
+            GameSparksManager.Instance.SetupInventory(inventoryList[0], inventoryList[1], inventoryList[2]);
+            return;
+            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n" + inventoryList[0] + " " + inventoryList[1] + " " + inventoryList[2];
+            GameSparksRTUnity GetRTSession;
+            GetRTSession = GameSparksManager.Instance.GetRTSession();
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, 1);
+
+                data.SetString(2, inventoryList[0]);
+                data.SetString(3, inventoryList[1]);
+                data.SetString(4, inventoryList[2]);
+                GetRTSession.SendData(121, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            }
+        }
+
         #region TEST CONTROLS
         void GameTEsting()
         {
@@ -251,31 +343,51 @@ namespace Synergy88
                     }
                 }
             }
-
-
-            return;
-            transform.position += transform.forward * 0.05f;
-            
-            if (Input.GetKey(KeyCode.W))
+            if (Input.GetKeyDown(KeyCode.Z))
             {
-                transform.position += transform.forward * 0.5f;
-                _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
-            }
-            if (Input.GetKey(KeyCode.S))
-            {
-                transform.position -= transform.forward * 0.5f;
-                _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-                transform.position -= transform.right * 0.5f;
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                transform.position += transform.right * 0.5f;
+                PlayerExplode();
             }
 
-            _GSDataSender.SendTankMovement(_GSDataSender.NetworkID, transform.position, carObject.transform.eulerAngles);
+            if(GameSparksManager.Instance.PeerID == _GSDataSender.NetworkID.ToString())
+            {
+                if (Input.GetKeyDown(KeyCode.Minus))
+                {
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nSEND: Player " + _GSDataSender.NetworkID + " Health now is: " + CurrentHealth;
+                    CurrentHealth -= 20;
+                    myHealthBar.fillAmount = CurrentHealth / 100;
+                    _GSDataSender.SendHealth(CurrentHealth);
+                }
+                if (Input.GetKeyDown(KeyCode.Equals))
+                {
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nSEND: Player " + _GSDataSender.NetworkID + " Health now is: " + CurrentHealth;
+                    CurrentHealth += 20;
+                    myHealthBar.fillAmount = CurrentHealth / 100;
+                    _GSDataSender.SendHealth(CurrentHealth);
+                }
+
+                if (Input.GetKeyDown(KeyCode.Alpha1))
+                {
+                    inventoryList[0] = "TNT";
+                    SendInventory();
+                }
+                if (Input.GetKeyDown(KeyCode.Alpha2))
+                {
+                    inventoryList[1] = "Shield";
+                    SendInventory();
+                }
+                if (Input.GetKeyDown(KeyCode.Alpha3))
+                {
+                    inventoryList[2] = "Smoke";
+                    SendInventory();
+                }
+                if (Input.GetKeyDown(KeyCode.Alpha4))
+                { 
+                    inventoryList[0] = "None";
+                    inventoryList[1] = "None";
+                    inventoryList[2] = "None";
+                    SendInventory();
+                }
+            }
         }
         #endregion
         //*************************************************************
@@ -303,17 +415,19 @@ namespace Synergy88
                             {
                                 _bumped = false;
                                 isFalling = true;
+                                SwitchInterpolation(0);
                             }
                             return;
                         }
                         if (isFlyng)
                         {
                             flightForceDelplete--;
-                            transform.position += carObject.transform.up * 5;
+                            transform.position += carObject.transform.up * 2;
                             if (flightForceDelplete <= 0)
                             {
-                                _bumped = false;
+                                isFlyng = false;
                                 isFalling = true;
+                                SwitchInterpolation(0);
                             }
                             return;
                         }
@@ -327,6 +441,9 @@ namespace Synergy88
                             {
                                 isFalling = false;
                                 transform.position = new Vector3(transform.position.x, 1.5f, transform.position.z);
+
+                                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nPlayer Explode End";
+                                SwitchInterpolation(0);
                             }
                             return;
                         }

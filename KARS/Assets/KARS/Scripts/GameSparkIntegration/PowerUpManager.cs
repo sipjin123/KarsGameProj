@@ -158,7 +158,7 @@ public class PowerUpManager : MonoBehaviour {
             MissleList_Player2[MissleList_Player2.Count - 1] = temp;
         }
     }
-
+    /*
     void ClientSendToServerMissleLock(int sender, int receiver)
     {
         GetRTSession = GameSparksManager.Instance.GetRTSession();
@@ -168,7 +168,7 @@ public class PowerUpManager : MonoBehaviour {
             data.SetInt(2, receiver);
             GetRTSession.SendData(114, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
-    }
+    }*/
     #endregion
     //=======================================================================================================================
     void Update()
@@ -184,7 +184,17 @@ public class PowerUpManager : MonoBehaviour {
                 LockOnTarget(1, Player2);
             }
         }
-
+        if(Input.GetKeyDown(KeyCode.RightAlt))
+        {
+            if (GameSparksManager.Instance.PeerID == "2")
+            {
+                SetUpTNT(2, Player2.transform.position, true);
+            }
+            else if (GameSparksManager.Instance.PeerID == "1")
+            {
+                SetUpTNT(1, Player1.transform.position, true);
+            }
+        }
 
 
         return;

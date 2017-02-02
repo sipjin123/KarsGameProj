@@ -70,7 +70,7 @@ public class GameSparks_DataSender : MonoBehaviour
         InterpolateObj =  GameObject.CreatePrimitive(PrimitiveType.Sphere);
         InterpolateObj.transform.SetParent(transform);
         InterpolateObj.transform.localScale = new Vector3(2,0.1f,3);
-        InterpolateObj.transform.transform.localPosition = new Vector3(0, 0.55f, 0.75f);
+        InterpolateObj.transform.transform.localPosition = new Vector3(0, -0.55f, 0.75f);
         InterpolateObj.GetComponent<MeshRenderer>().material.color = Color.red;
         Destroy(InterpolateObj.GetComponent<SphereCollider>());
         InterpolateObj.gameObject.layer = LayerMask.NameToLayer("3D");
@@ -78,7 +78,7 @@ public class GameSparks_DataSender : MonoBehaviour
         ExtrapoalteObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         ExtrapoalteObj.transform.SetParent(transform);
         ExtrapoalteObj.transform.localScale = new Vector3(5, 0.1f, 2);
-        ExtrapoalteObj.transform.transform.localPosition = new Vector3(0, 0.55f, 0.75f);
+        ExtrapoalteObj.transform.transform.localPosition = new Vector3(0,- 0.55f, 0.75f);
         ExtrapoalteObj.GetComponent<MeshRenderer>().material.color = Color.blue;
         Destroy(ExtrapoalteObj.GetComponent<SphereCollider>());
         ExtrapoalteObj.gameObject.layer = LayerMask.NameToLayer("3D");
@@ -149,7 +149,17 @@ public class GameSparks_DataSender : MonoBehaviour
     //===============================================================================================================================================================================================
     //=====================================================================================================================
     //SEND DATA
+    public void SendHealth(float hp)
+    {
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, NetworkID);
+            data.SetFloat(2, hp);
 
+            GetRTSession.SendData(118, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+    }
+    
     public void SendInteractStatus(int playerId, int isBumped, int isFlying, int isFalling, float forceToDeplete)
     {
         using (RTData data = RTData.Get())
@@ -311,7 +321,11 @@ public class GameSparks_DataSender : MonoBehaviour
                 interpolationTime = currentTime - 0.2f;
             */
 
-
+            /*
+            _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, m_BufferedState[0].pos, 1);
+            _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(m_BufferedState[0].rot), 1);
+            return;
+            */
             Extrapolate();
             return;
             if (m_BufferedState[0].timestamp > interpolationTime)
@@ -433,20 +447,6 @@ public class GameSparks_DataSender : MonoBehaviour
 
 
             Vector3 NEW_POS = m_BufferedState[0].pos + (SPEED * (float)ELAPSED_TIME);
-            /*
-            //----------------------------------
-            //DEBUG
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nNewPos: "+NEW_POS +" [("+ m_BufferedState[0].pos + ")*(" + (SPEED * (float)ELAPSED_TIME)+")]"+"\nSpeed*ElapsTym("+ SPEED+" * "+(float)ELAPSED_TIME+")";
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nElapseTime: " + ELAPSED_TIME;
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nSpeed: (" + SPEED.x+" : "+SPEED.z+") [("+ (m_BufferedState[0].pos - m_BufferedState[1].pos)+") / ("+(float)timeDiff+")]";
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nTimeDiff: " + timeDiff+" = ("+ m_BufferedState[0].timestamp +" - "+ m_BufferedState[1].timestamp + ")\n";
-            
-
-            if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 4000)
-            {
-                GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
-            }
-            //----------------------------------*/
 
             _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, NEW_POS, lerpSpeed);
             _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(latest.rot), lerpSpeed);
@@ -460,13 +460,13 @@ public class GameSparks_DataSender : MonoBehaviour
             _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, newposs, lerpSpeed);
             _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(latest.rot), lerpSpeed);
             Debug.Log("DOING CUBIC");
-        }
+        }*/
         else
         {
             _objToTranslate.transform.position = m_BufferedState[0].pos;
             _objToRotate.transform.rotation = Quaternion.Euler(m_BufferedState[0].rot);
             Debug.Log("DOING INSTANT");
-        }*/
+        }
     }
 
     Vector3 CubicInterpolate(Vector3 y0, Vector3 y1, Vector3 y2, Vector3 y3, float mu)

@@ -23,6 +23,7 @@ public class PlayerCollider : MonoBehaviour {
             if (hit.gameObject.name == "BodyBumper")
             {
                 _simpleCarController.BumpThisObj();
+                return;
                 try
                 {
                     GetRTSession = GameSparksManager.Instance.GetRTSession();

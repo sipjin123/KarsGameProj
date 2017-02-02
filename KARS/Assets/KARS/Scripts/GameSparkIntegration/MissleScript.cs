@@ -51,7 +51,7 @@ public class MissleScript : MonoBehaviour {
             {
                 if (Vector3.Distance(transform.position, objectToHit.transform.position) < 1)
                 {
-                    ResetMissle();
+                    SendToSErverTheCollision();
                 }
                 else
                 {
@@ -129,33 +129,29 @@ public class MissleScript : MonoBehaviour {
     }
     #endregion
     //================================================================================================================================
-    void OnTriggerEnter(Collider hit)
+    void SendToSErverTheCollision()
     {
-        return;
-        if (hit.tag == "Car")
+        try
         {
-            try
+
+            if (objectToHit.GetComponent<GameSparks_DataSender>()._shieldSwitch)
             {
                 ResetMissle();
-
-                if (hit.GetComponent<GameSparks_DataSender>()._shieldSwitch)
-                    return;
-
-                GetRTSession = GameSparksManager.Instance.GetRTSession();
-                using (RTData data = RTData.Get())
-                {
-                    data.SetInt(1, hit.GetComponent<GameSparks_DataSender>().NetworkID);
-                    data.SetInt(2,1);
-
-                    GetRTSession.SendData(117, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nServer (" + GameSparksManager.Instance.PeerID + ") Owner (" + _playerController_ID + "Missle # " + Missle_ID + " hit " + hit.gameObject.name;
-                }
+                return;
             }
-            catch { }
-        }
-        else
-        {
 
+            GetRTSession = GameSparksManager.Instance.GetRTSession();
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, objectToHit.GetComponent<GameSparks_DataSender>().NetworkID);
+                data.SetInt(2, 2);
+
+                GetRTSession.SendData(117, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nServer (" + GameSparksManager.Instance.PeerID + ") Owner (" + _playerController_ID + "Missle # " + Missle_ID + " hit " + hit.gameObject.name;
+            }
+            ResetMissle();
         }
+        catch { }
     }
+
 }

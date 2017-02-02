@@ -41,11 +41,15 @@ public class TnTScript : MonoBehaviour {
     }
     public void DispatchTNTToDestination(int _id,Vector3 _pos, bool _enable)
     {
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nTNT # ("+tnt_Id+") of ("+_id+") HAS been dispatched to "+_pos;
-            owner_Id = _id;
-            transform.position = _pos;
-            gameObject.SetActive(_enable);
-            transform.SetParent(null);
+        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nTNT # ("+tnt_Id+") of ("+_id+") HAS been dispatched to "+_pos;
+        owner_Id = _id;
+        if (owner_Id == 1)
+            GetComponent<MeshRenderer>().material.color = Color.blue;
+         else
+            GetComponent<MeshRenderer>().material.color = Color.red;
+        transform.position = _pos;
+        gameObject.SetActive(_enable);
+        transform.SetParent(null);
     }
 
     void OnTriggerEnter(Collider hit)
@@ -55,6 +59,11 @@ public class TnTScript : MonoBehaviour {
             GameSparks_DataSender _dataSender = hit.GetComponent<GameSparks_DataSender>();
             if (_dataSender.NetworkID != owner_Id)
             {
+                if (hit.GetComponent<GameSparks_DataSender>()._shieldSwitch)
+                {
+                    ResetTnT();
+                    return;
+                }
                 _dataSender.gameObject.GetComponent<SimpleCarController>().PlayerExplode();
                 ResetTnT();
             }

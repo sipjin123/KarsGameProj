@@ -34,7 +34,7 @@ public class TrailCollision : MonoBehaviour
 
     void OnGUI()
     {
-        GUI.Box(new Rect(0,0,100,30),""+_mesh.vertexCount);
+        GUI.Box(new Rect(0,0,100,30),""+_mesh.vertexCount+" : "+_mesh.triangles.Length);
         for(int i = 0; i < _mesh.vertexCount; i++)
         {
             GUI.Box(new Rect(0, 30 +(30* i), 200, 30), i+" : " + _mesh.vertices[i]);
@@ -46,8 +46,13 @@ public class TrailCollision : MonoBehaviour
     }
     void Add()
     {
-        float dist = (float)(    Vector3.Distance(     _mesh.vertices[recentVertex] , _mesh.vertices[_mesh.vertexCount - 1]    )    );
-        TotalDistanceTrail += dist;
+        try
+        {
+            float dist = (float)(Vector3.Distance(_mesh.vertices[recentVertex], _mesh.vertices[_mesh.vertexCount - 1]));
+            TotalDistanceTrail += dist;
+        }
+        catch
+        { }
 
         Node.Add(Guide.transform.position);
         Node.Add(Guide2.transform.position);
@@ -59,29 +64,21 @@ public class TrailCollision : MonoBehaviour
 
     void Minus()
     {
-        reducing = true;
-        Node.Remove(Node[0]);
-        Node.Remove(Node[0]);
         CurrentVertex -= 2;
         CurrentTriangle -= 6;
-
-        GetComponent<MeshCollider>().sharedMesh = _mesh;
-        reducing = false;
-    }
+        Node.Remove(Node[0]);
+        Node.Remove(Node[0]);
+  }
 
     float currentRot;
     float timer;
 
-   public  float TotalDistanceTrail;
+    public  float TotalDistanceTrail;
     int recentVertex = 0;
-
-    bool reducing;
+    
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Minus))
-        {
-            Minus();
-        }
+        _Render();
 
         if (Input.GetKey(KeyCode.W))
         {
@@ -115,19 +112,49 @@ public class TrailCollision : MonoBehaviour
                 timer = 0;
             }
         }
-        if (!reducing) 
-        _Render();
-    }
 
+    }
+    
 
     void _Render()
     {
+
+
         Vector3[] vertices = new Vector3[CurrentVertex];
 
         for (int i = 0; i < Node.Count; i++)
         {
             vertices[i] = Node[i];
         }
+
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            _mesh = new Mesh();
+            _meshFilter.mesh = _mesh;
+            if (CurrentVertex > 4)
+            {
+                if (Vector3.Distance(vertices[0], vertices[2]) > 0)
+                {
+                    vertices[0] = Vector3.MoveTowards(vertices[0], vertices[2], 1.5f);
+                    vertices[1] = Vector3.MoveTowards(vertices[1], vertices[3], 1.5f);
+                    Node[0] = vertices[0];
+                    Node[1] = vertices[1];
+                }
+                else
+                {
+                    Minus();
+                    return;
+                }
+            }
+        }
+
+        vertices[CurrentVertex - 2] = Guide.transform.position;
+        vertices[CurrentVertex - 1] = Guide2.transform.position;
+
+
+
+
 
 
         int[] tri = new int[CurrentTriangle];
@@ -152,15 +179,14 @@ public class TrailCollision : MonoBehaviour
             }
             q++;
         }
-        vertices[CurrentVertex - 2] = Guide.transform.position;
-        vertices[CurrentVertex - 1] = Guide2.transform.position;
 
 
 
+        /*
         Vector3[] normals = new Vector3[CurrentVertex];
         for (int i = 0; i < CurrentVertex; i++)
             normals[i] = Vector3.forward;
-
+            */
 
         /*
         Vector2[] uv = new Vector2[CurrentVertex];
@@ -176,10 +202,12 @@ public class TrailCollision : MonoBehaviour
         {
             _mesh.vertices = vertices;
             _mesh.triangles = tri;
-            _mesh.normals = normals;
+            //_mesh.normals = normals;
         }
         catch
-        { }
+        {
+            Debug.LogError(vertices.Length);
+        }
     }
 
 }

@@ -9,7 +9,7 @@ public class Car_Movement : MonoBehaviour {
     CharacterController _characterController;
 
     float currentRotation_Y;
-    float rotationSpeed = 25f;
+    float rotationSpeed = 55f;
 
     public Transform CarRotationObject;
 

@@ -13,6 +13,9 @@ public class Car_Movement : MonoBehaviour {
 
     public Transform CarRotationObject;
 
+    [SerializeField]
+    TrailCollision _trailCollision;
+
     void Awake()
     {
         _characterController = GetComponent<CharacterController>();
@@ -27,6 +30,7 @@ public class Car_Movement : MonoBehaviour {
 	void FixedUpdate ()
     {
         _characterController.Move(CarRotationObject.transform.forward * movementSpeed * Time.fixedDeltaTime);
+        _trailCollision._Render();
 
         InputSystem();
 

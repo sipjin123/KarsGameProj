@@ -13,7 +13,7 @@ public class TronGameManager : MonoBehaviour {
         _instance = this;
     }
 
-    bool NetworkStart;
+    public bool NetworkStart;
     public GameObject[] PlayerObjects;
     public GameObject[] NetworkCanvas;
 
@@ -27,6 +27,11 @@ public class TronGameManager : MonoBehaviour {
         {
             for (int i = 0; i < NetworkCanvas.Length; i++)
                 NetworkCanvas[i].SetActive(false);
+            PlayerObjects[0].GetComponent<Car_DataReceiver>().enabled = false;
+            PlayerObjects[0].GetComponent<Car_Movement>().enabled = true;
+
+            PlayerObjects[0].GetComponent<Car_Movement>().myCam.enabled = true;
+            PlayerObjects[0].GetComponent<Car_Movement>().StartGame = true;
         }
     }
 

@@ -24,9 +24,13 @@ public class TrailCollision : MonoBehaviour
 
     public float TotalDistanceTrail;
     int recentVertex = 0;
-    float trailDepleteSpeed = .1f;
-    float trailDistanceCap = 50;
+    float trailDistanceCap = 20;
     float const_trailDistance = 5;
+
+    MeshCollider _meshCollider;
+    float lerpTimer = 0;
+
+    bool _emitTrail;
     #endregion
     //=============================================================================================================================================================
     #region INITIALIZATION
@@ -34,18 +38,22 @@ public class TrailCollision : MonoBehaviour
     {
         Node = new List<Vector3>();
          _meshFilter = GetComponent<MeshFilter>();
+        _meshCollider = GetComponent<MeshCollider>();
          _mesh = new Mesh();
         _meshFilter.mesh = _mesh;
 
         CurrentVertex = 4;
         CurrentTriangle = 6;
-        Node.Add(transform.position);
-        Node.Add(new Vector3(transform.position.x, -1, transform.position.z));
+        
+        Node.Add(Guide.transform.position);
+        Node.Add(Guide2.transform.position);
+
+        //_emitTrail = true;
     }
     #endregion
     //=============================================================================================================================================================
     #region TEST
-    void OjnGUI()
+    void sdadaOnGUI()
     {
         GUI.Box(new Rect(0,0,300,30),"("+_mesh.vertexCount+" : "+_mesh.triangles.Length+") "+TotalDistanceTrail);
         for(int i = 0; i < _mesh.vertexCount; i++)
@@ -59,6 +67,7 @@ public class TrailCollision : MonoBehaviour
     }
     #endregion
     //=============================================================================================================================================================
+    #region ADD/SUBTRACT MESH LENGTH
     void Add()
     {
         try
@@ -74,7 +83,6 @@ public class TrailCollision : MonoBehaviour
         CurrentVertex += 2;
         CurrentTriangle += 6;
 
-        GetComponent<MeshCollider>().sharedMesh = _mesh;
     }
 
     void Minus()
@@ -86,14 +94,92 @@ public class TrailCollision : MonoBehaviour
         Node.Remove(Node[0]);
         Node.Remove(Node[0]);
     }
+    #endregion
     //=============================================================================================================================================================
     void Update()
     {
+        if (_emitTrail)
+        {
+            _Render();
+        }
+        else
+        {
 
+        }
     }
     //=============================================================================================================================================================
-  
+    #region MESH SWITCH
+    public void SetEmiision(bool _switch)
+    {
+        _emitTrail = _switch;
+        if(_switch)
+        {
+            _mesh = new Mesh();
 
+            Vector3[] vertices = new Vector3[CurrentVertex];
+
+            for (int i = 0; i < Node.Count; i++)
+                vertices[i] = Node[i];
+            vertices[CurrentVertex - 2] = Guide.transform.position;
+            vertices[CurrentVertex - 1] = Guide2.transform.position;
+
+
+            #region TRIANGLES
+            int[] tri = new int[CurrentTriangle];
+            bool Reverse = false;
+            int q = 0;
+            for (int i = 0; i < CurrentTriangle; i += 3)
+            {
+                if (i % 2 != 0)
+                    Reverse = true;
+
+                if (!Reverse)
+                {
+                    tri[i] = q;
+                    tri[i + 1] = q + 2;
+                    tri[i + 2] = q + 1;
+                }
+                else
+                {
+                    tri[i] = q + 1;
+                    tri[i + 1] = q + 2;
+                    tri[i + 2] = q;
+                }
+                q++;
+            }
+            #endregion
+            try
+            {
+                _mesh.vertices = vertices;
+                _mesh.triangles = tri;
+
+                _meshFilter.mesh = _mesh;
+                _meshCollider.sharedMesh = _mesh;
+            }
+            catch
+            { }
+        }
+        else
+        {
+            Reset_Mesh();
+        }
+    }
+    public void Reset_Mesh()
+    {
+        TotalDistanceTrail = 0;
+        CurrentVertex = 4;
+        CurrentTriangle = 6;
+        _mesh = new Mesh();
+        _meshFilter.mesh = _mesh;
+
+        Node.Clear();
+        Node.Add(Guide.transform.position);
+        Node.Add(Guide2.transform.position);
+        _meshCollider.sharedMesh = _mesh;
+    }
+    #endregion
+    //=============================================================================================================================================================
+    #region MESH TRAIL
     public void _Render()
     {
         if (_mesh.vertexCount > 3)
@@ -121,13 +207,15 @@ public class TrailCollision : MonoBehaviour
             {
                 if (Vector3.Distance(vertices[0], vertices[2]) > 0)
                 {
-                    vertices[0] = Vector3.MoveTowards(vertices[0], vertices[2], trailDepleteSpeed);
-                    vertices[1] = Vector3.MoveTowards(vertices[1], vertices[3], trailDepleteSpeed);
+                    lerpTimer += .01f;
+                    vertices[0] = Vector3.Lerp(vertices[0], vertices[2], lerpTimer);
+                    vertices[1] = Vector3.Lerp(vertices[1], vertices[3], lerpTimer);
                     Node[0] = vertices[0];
                     Node[1] = vertices[1];
                 }
                 else
                 {
+                    lerpTimer = 0;
                     Minus();
                     return;
                 }
@@ -190,12 +278,15 @@ public class TrailCollision : MonoBehaviour
         {
             _mesh.vertices = vertices;
             _mesh.triangles = tri;
+            
             //_mesh.normals = normals;
         }
         catch
         {
             Debug.LogError(vertices.Length);
         }
+        _meshCollider.sharedMesh = _mesh;
     }
+    #endregion
     //=============================================================================================================================================================
 }

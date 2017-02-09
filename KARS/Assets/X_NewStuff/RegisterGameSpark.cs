@@ -19,7 +19,7 @@ public class RegisterGameSpark : MonoBehaviour {
 
 
     [SerializeField]
-    private Text ConnectionStatus,UserName,playerList;
+    private Text ConnectionStatus, UserName, playerList;
     
     public int PeerID;
 
@@ -58,15 +58,10 @@ public class RegisterGameSpark : MonoBehaviour {
 
         UserName.text = DateTime.UtcNow.Second.ToString() + DateTime.UtcNow.Millisecond.ToString() + UnityEngine.Random.Range(0, 1000);
 
-
-        //NETWORKTEST
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n Start";
     }
 
     public void LoginButton()
     {
-        //NETWORKTEST
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n ToAut";
         AuthenticateUser(UserName.text, "test", OnRegistration, OnAuthentication);
         Canvas_Login.SetActive(true);
         Canvas_GameType.SetActive(false);
@@ -131,8 +126,6 @@ public class RegisterGameSpark : MonoBehaviour {
     }
     public void FindPlayers()
     {
-        //NETWORKTEST
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n Finding Player";
 
 
         Debug.LogError("Attempting Matchmaking...");
@@ -150,9 +143,6 @@ public class RegisterGameSpark : MonoBehaviour {
 
     private void OnMatchFound(MatchFoundMessage _message)
     {
-        //NETWORKTEST
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n Found Match";
-
 
         //NOTES
         /*
@@ -168,44 +158,20 @@ public class RegisterGameSpark : MonoBehaviour {
         int totalPlayers = 0;
 
 
-
-        //NETWORKTEST
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n Init Player Data\n";
-
         foreach (MatchFoundMessage._Participant player in _message.Participants)
         {
-            //NETWORKTEST
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n Declare Player : " + ((int)player.PeerId);
             SpawnPlayers(int.Parse( player.PeerId.ToString() ) );
-            if (_message.JSONData["playerId"].ToString() != player.Id)
+            if (_message.JSONData["playerId"].ToString() == player.Id)
             {
-
-               // SpawnPlayers((int)player.PeerId);
-
-            }
-            else
-            {
-                //NETWORKTEST
-                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n----------------Declare Local Player : " + ((int)player.PeerId+"");
                 PeerID = int.Parse(player.PeerId.ToString());
-                // SpawnPlayers((int)player.PeerId);
-                // PeerID = player.PeerId.ToString();
-
-
-
             }
             totalPlayers += 1;
         }
 
-
-        //NETWORKTEST
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n\n Declare total Player : " + (totalPlayers);
         RTSessionInfo sessionInfo = new RTSessionInfo(_message);
         Debug.LogError("Writen builder: " + sessionInfo);
 
         
-        //NETWORKTEST
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n Start Session Init";
 
         GameSparkPacketReceiver.Instance.StartNewRTSession(sessionInfo);
 
@@ -234,15 +200,11 @@ public class RegisterGameSpark : MonoBehaviour {
 
     private void OnRegistration(RegistrationResponse _resp)
     {
-        //NETWORKTEST
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n OnRegister";
         ConnectionStatus.text += "Registered " + _resp.UserId;
         StartCoroutine("DelayFindPlayer");
     }
     private void OnAuthentication(AuthenticationResponse _resp)
     {
-        //NETWORKTEST
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n OnAuth";
         ConnectionStatus.text += "Authenticated " + _resp.UserId;
         StartCoroutine("DelayFindPlayer");
     }
@@ -252,20 +214,19 @@ public class RegisterGameSpark : MonoBehaviour {
 
     void SpawnPlayers(int _peerID)
     {
-        //NETWORKTEST
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nSpawning this: " + _peerID ;
-
         Car_DataReceiver _obj = null;
         if (_peerID == 1)
         {
             _obj = GameObject.Find("Car1").GetComponent<Car_DataReceiver>();
             _obj.SetNetworkObject( _peerID );
+            _obj.GetComponent<Car_Movement>().enabled = true;
         }
 
         if (_peerID == 2)
         {
             _obj = GameObject.Find("Car2").GetComponent<Car_DataReceiver>();
             _obj.SetNetworkObject(_peerID);
+            _obj.GetComponent<Car_Movement>().enabled = true;
         }
     }
 }

@@ -8,9 +8,54 @@ public class TronGameManager : MonoBehaviour {
     private static TronGameManager _instance;
     public static TronGameManager Instance { get { return _instance; } }
 
+    
+
+    public Text Text_rotationSpeed;
+    public float rotationSpeed;
+    public void TweakrotationSpeed(float _var)
+    {
+        rotationSpeed += _var;
+        Text_rotationSpeed.text = rotationSpeed.ToString();
+    }
+
+
+    public Text Text_MovementSpeed;
+    public float MovementSpeed ;
+    public void TweakMoveSpeed(float _var)
+    {
+        MovementSpeed += _var;
+        Text_MovementSpeed.text = MovementSpeed.ToString();
+    }
+
+    public Text Text_trailDistanceCap;
+    public float trailDistanceCap;
+    public void TweaktrailDistanceCap(float _var)
+    {
+        trailDistanceCap += _var;
+        Text_trailDistanceCap.text = trailDistanceCap.ToString();
+    }
+
+    public Text Text_const_trailDistance;
+    public float const_trailDistance ;
+    public void Tweakconst_trailDistance(float _var)
+    {
+        const_trailDistance += _var;
+        Text_const_trailDistance.text = const_trailDistance.ToString();
+    }
+
+    public GameObject _testPanel;
+    public void FlipTestPanel()
+    {
+        _testPanel.SetActive(!_testPanel.activeInHierarchy);
+    }
+
     void Awake()
     {
         _instance = this;
+        MovementSpeed = 5;
+        trailDistanceCap = 20f;
+        const_trailDistance = 5;
+        rotationSpeed = 55;
     }
 
     public bool NetworkStart;

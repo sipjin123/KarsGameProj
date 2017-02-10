@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TrailCollision : MonoBehaviour
 {
@@ -31,11 +32,16 @@ public class TrailCollision : MonoBehaviour
     float lerpTimer = 0;
 
     bool _emitTrail;
+
+    public Car_Movement _carMovement;
+
+    TronGameManager _tronGameManager;
     #endregion
     //=============================================================================================================================================================
     #region INITIALIZATION
     void Start()
     {
+        _tronGameManager = TronGameManager.Instance.GetComponent<TronGameManager>();
         Node = new List<Vector3>();
          _meshFilter = GetComponent<MeshFilter>();
         _meshCollider = GetComponent<MeshCollider>();
@@ -98,6 +104,9 @@ public class TrailCollision : MonoBehaviour
     //=============================================================================================================================================================
     void Update()
     {
+        trailDistanceCap = _tronGameManager.trailDistanceCap;
+        const_trailDistance = _tronGameManager.const_trailDistance;
+
         if (_emitTrail)
         {
             _Render();
@@ -114,7 +123,19 @@ public class TrailCollision : MonoBehaviour
         _emitTrail = _switch;
         if(_switch)
         {
+
+            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n"+ _carMovement.GetComponent<Car_DataReceiver>().Network_ID + " :MESH ENABLING";
             _mesh = new Mesh();
+
+
+            TotalDistanceTrail = 0;
+            CurrentVertex = 4;
+            CurrentTriangle = 6;
+            Node.Clear();
+            Node.Add(Guide.transform.position);
+            Node.Add(Guide2.transform.position);
+
+
 
             Vector3[] vertices = new Vector3[CurrentVertex];
 
@@ -154,13 +175,14 @@ public class TrailCollision : MonoBehaviour
                 _mesh.triangles = tri;
 
                 _meshFilter.mesh = _mesh;
-                _meshCollider.sharedMesh = _mesh;
             }
             catch
             { }
         }
         else
         {
+            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n" + _carMovement.GetComponent<Car_DataReceiver>().Network_ID + " :MESH DISABLING";
+            
             Reset_Mesh();
         }
     }

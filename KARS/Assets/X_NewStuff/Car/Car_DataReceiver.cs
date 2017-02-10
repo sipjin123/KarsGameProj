@@ -27,6 +27,7 @@ public class Car_DataReceiver : MonoBehaviour {
 
     public float Health;
     public Image HealthBar;
+    public Text hp_indicator;
     #endregion
     //================================================================================================================================
     public void SetNetworkObject(int netID)
@@ -46,7 +47,7 @@ public class Car_DataReceiver : MonoBehaviour {
 
             _carMovement.StartGame = true;
             ResetTrail(true);
-            Health = 100;
+            Health = 5;
         }
     }
     //================================================================================================================================
@@ -88,9 +89,9 @@ public class Car_DataReceiver : MonoBehaviour {
     {
         if (!_switch)
         {
-            Health -= 20;
-            HealthBar.fillAmount = Health / 100;
-
+            Health -= 1;
+            HealthBar.fillAmount = Health / 5;
+            hp_indicator.text = Health.ToString();
             using (RTData data = RTData.Get())
             {
                 data.SetInt(1, Network_ID);
@@ -233,7 +234,11 @@ public class Car_DataReceiver : MonoBehaviour {
             else
                 interpolationTime = currentTime - 0.2f;
             */
-            
+
+            _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, m_BufferedState[0].pos, .8f);
+            _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(m_BufferedState[0].rot), .8f);
+            return;
+
             Extrapolate();
             
             return;
@@ -373,7 +378,7 @@ public class Car_DataReceiver : MonoBehaviour {
         return (a0 * mu * mu2 + a1 * mu2 + a2 * mu + a3);
     }
 
-    void OnGUI()
+    void OnsdsGUI()
     {
         try
         {

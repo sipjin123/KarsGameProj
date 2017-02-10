@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Car_Movement : MonoBehaviour {
 
-    private float movementSpeed = 5f;
+    private float movementSpeed;
 
     CharacterController _characterController;
 
     float currentRotation_Y;
-    float rotationSpeed = 55f;
+    float rotationSpeed;
 
     public Transform CarRotationObject;
 
@@ -17,6 +17,8 @@ public class Car_Movement : MonoBehaviour {
     public TrailCollision _trailCollision;
     public Camera myCam;
 
+
+    TronGameManager _tronGameManager;
 
     Car_DataReceiver _carDataReceiver;
     bool isDead;
@@ -31,18 +33,37 @@ public class Car_Movement : MonoBehaviour {
     void Start()
     {
 
+        _tronGameManager = TronGameManager.Instance.GetComponent<TronGameManager>();
     }
 
     void FixedUpdate()
     {
+        movementSpeed = _tronGameManager.MovementSpeed;
+        rotationSpeed = _tronGameManager.rotationSpeed;
         if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && _carDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
             _characterController.Move(CarRotationObject.transform.forward * movementSpeed * Time.fixedDeltaTime);
             InputSystem();
+
         }
         else
         {
-
+            if (isDead)
+            {
+                DieTimer += Time.fixedDeltaTime;
+                if (DieTimer > 1)
+                {
+                    if (!signalSent)
+                    {
+                        signalSent = true;
+                        if (_carDataReceiver.Network_ID == 1)
+                            transform.position = new Vector3(-5, 10, 0);
+                        if (_carDataReceiver.Network_ID == 2)
+                            transform.position = new Vector3(5, 10, 0);
+                        StartCoroutine("DelayRespawn");
+                    }
+                }
+            }
         }
 
     }
@@ -92,15 +113,13 @@ public class Car_Movement : MonoBehaviour {
         }
     }
 
+    bool signalSent;
+    float DieTimer;
     public void Die()
     {
         //if(_carDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID)
         if ((TronGameManager.Instance.NetworkStart && _carDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart)
         {
-            if(_carDataReceiver.Network_ID == 1)
-            transform.position = new Vector3(-5, -10, 0);
-            if (_carDataReceiver.Network_ID == 2)
-                transform.position = new Vector3(5, -10, 0);
             isDead = true;
             try
             {
@@ -108,7 +127,7 @@ public class Car_Movement : MonoBehaviour {
             }
             catch
             { }
-            StartCoroutine("DelayRespawn");
+            transform.position = new Vector3(transform.position.x, 10, transform.position.z);
         }
     }
     IEnumerator DelayRespawn()
@@ -118,9 +137,12 @@ public class Car_Movement : MonoBehaviour {
             transform.position = new Vector3(-5, 1, 0);
         if (_carDataReceiver.Network_ID == 2)
             transform.position = new Vector3(5, 1, 0);
-
-
+        CarRotationObject.transform.eulerAngles = Vector3.zero;
+        currentRotation_Y = 0;
         isDead = false;
+        signalSent = false;
+        DieTimer = 0;
+        yield return new WaitForSeconds(.5f);
         try
         {
             _carDataReceiver.ResetTrail(true);

@@ -89,6 +89,7 @@ public class TrailCollision : MonoBehaviour
         CurrentVertex += 2;
         CurrentTriangle += 6;
 
+        _meshCollider.sharedMesh = _mesh;
     }
 
     void Minus()
@@ -307,7 +308,6 @@ public class TrailCollision : MonoBehaviour
         {
             Debug.LogError(vertices.Length);
         }
-        _meshCollider.sharedMesh = _mesh;
     }
     #endregion
     //=============================================================================================================================================================

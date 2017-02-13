@@ -235,9 +235,10 @@ public class Car_DataReceiver : MonoBehaviour {
                 interpolationTime = currentTime - 0.2f;
             */
 
+            /*
             _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, m_BufferedState[0].pos, .8f);
             _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(m_BufferedState[0].rot), .8f);
-            return;
+            return;*/
 
             Extrapolate();
             

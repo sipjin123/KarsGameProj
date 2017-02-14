@@ -34,8 +34,8 @@ public class PowerUpManager : MonoBehaviour {
     void Awake()
     {
         instance = this;
-        Player1 = GameObject.Find("BlueCar");
-        Player2 = GameObject.Find("RedCar");
+        Player1 = GameObject.Find("Car1");
+        Player2 = GameObject.Find("Car2");
     }
 
     public void StartNetwork()
@@ -74,7 +74,7 @@ public class PowerUpManager : MonoBehaviour {
             temp.GetComponent<TnTScript>().InitializeObj(i);
         }
         Debug.LogError("PEER SETUP");
-        ServerPeerID = int.Parse(GameSparksManager.Instance.PeerID);
+        ServerPeerID = (GameSparkPacketReceiver.Instance.PeerID);
     }
     #endregion
     //=======================================================================================================================
@@ -116,7 +116,7 @@ public class PowerUpManager : MonoBehaviour {
 
     public void SendToServer(int _id, int _tntID,Vector3 _pos, bool _enable)
     {
-        GetRTSession = GameSparksManager.Instance.GetRTSession();
+        GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, _id);
@@ -161,7 +161,7 @@ public class PowerUpManager : MonoBehaviour {
     /*
     void ClientSendToServerMissleLock(int sender, int receiver)
     {
-        GetRTSession = GameSparksManager.Instance.GetRTSession();
+        GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, sender);
@@ -175,22 +175,22 @@ public class PowerUpManager : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (GameSparksManager.Instance.PeerID == "2")
+            if (GameSparkPacketReceiver.Instance.PeerID == 2)
             {
                 LockOnTarget(2, Player1);
             }
-            else if (GameSparksManager.Instance.PeerID == "1")
+            else if (GameSparkPacketReceiver.Instance.PeerID == 1)
             {
                 LockOnTarget(1, Player2);
             }
         }
         if(Input.GetKeyDown(KeyCode.RightAlt))
         {
-            if (GameSparksManager.Instance.PeerID == "2")
+            if (GameSparkPacketReceiver.Instance.PeerID ==2)
             {
                 SetUpTNT(2, Player2.transform.position, true);
             }
-            else if (GameSparksManager.Instance.PeerID == "1")
+            else if (GameSparkPacketReceiver.Instance.PeerID == 1)
             {
                 SetUpTNT(1, Player1.transform.position, true);
             }
@@ -200,9 +200,9 @@ public class PowerUpManager : MonoBehaviour {
         return;
         if(Input.GetKeyDown(KeyCode.M))
         {
-            if (GameSparksManager.Instance.PeerID == "2")
+            if (GameSparkPacketReceiver.Instance.PeerID == 2)
             {
-                GetRTSession = GameSparksManager.Instance.GetRTSession();
+                GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
                 using (RTData data = RTData.Get())
                 {
                     data.SetInt(1, 1);
@@ -211,9 +211,9 @@ public class PowerUpManager : MonoBehaviour {
                     GetRTSession.SendData(117, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
                 }
             }
-            else if (GameSparksManager.Instance.PeerID == "1")
+            else if (GameSparkPacketReceiver.Instance.PeerID == 1)
             {
-                GetRTSession = GameSparksManager.Instance.GetRTSession();
+                GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
                 using (RTData data = RTData.Get())
                 {
                     data.SetInt(1,2);
@@ -233,11 +233,11 @@ public class PowerUpManager : MonoBehaviour {
 
     internal void LaunchMissle()
     {
-        if (GameSparksManager.Instance.PeerID == "2")
+        if (GameSparkPacketReceiver.Instance.PeerID == 2)
         {
             LockOnTarget(2, Player1);
         }
-        else if (GameSparksManager.Instance.PeerID == "1")
+        else if (GameSparkPacketReceiver.Instance.PeerID == 1)
         {
             LockOnTarget(1, Player2);
         }
@@ -247,11 +247,11 @@ public class PowerUpManager : MonoBehaviour {
     {
         Debug.LogError("Drop TNT");
 
-        if (GameSparksManager.Instance.PeerID == "2")
+        if (GameSparkPacketReceiver.Instance.PeerID == 2)
         {
             SetUpTNT(2, Player2.transform.position, true);
         }
-        else if (GameSparksManager.Instance.PeerID == "1")
+        else if (GameSparkPacketReceiver.Instance.PeerID == 1)
         {
             SetUpTNT(1, Player1.transform.position, true);
         }

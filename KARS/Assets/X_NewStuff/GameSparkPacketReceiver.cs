@@ -196,6 +196,7 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                     //UPDATES GAME TIME EVERY 5 SECONDS
                     if (!InitiateNetwork)
                     {
+                        PowerUpManager.Instance.StartNetwork();
                         for (int i = 0; i < _carPool.Count; i++)
                         {
                             _carPool[i].InitCam();
@@ -261,6 +262,48 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                         if (_GameSparks_DataSender.Network_ID == playerIndex)
                         {
                             _obj.GetComponent<Car_DataReceiver>().ReceivePowerUpState(powerUpSwitch);
+                        }
+                    }
+                    #endregion
+                }
+                break;
+            case 115:
+                {
+                    //MISSLE DATA RECEIVE
+                    #region MISSLE DATA RECEIVE
+                    int missleIndex = _packet.Data.GetInt(1).Value;
+                    int PlayerController = _packet.Data.GetInt(2).Value;
+                    List<GameObject> _objList = new List<GameObject>();
+
+                    if (PeerID == 1)
+                        _objList = PowerUpManager.Instance.MissleList_Player2;
+                    else if (PeerID == 2)
+                        _objList = PowerUpManager.Instance.MissleList_Player1;
+
+                    if (PlayerController != PeerID)
+                    {
+                        for (int i = 0; i < _objList.Count; i++)
+                        {
+                            if (missleIndex == _objList[i].GetComponent<MissleScript>().Missle_ID)
+                            {
+                                MissleScript _missleScript = _objList[i].GetComponent<MissleScript>();
+
+                                Vector3 temp = new Vector3(_packet.Data.GetFloat(3).Value, _packet.Data.GetFloat(4).Value, _packet.Data.GetFloat(5).Value);
+
+                                if (_packet.Data.GetInt(7).Value == 0)
+                                {
+                                    _missleScript.SetSYnc(temp, _packet.Data.GetVector3(6).Value);
+                                    _missleScript.transform.SetParent(_missleScript.missleParent);
+                                    _missleScript.gameObject.SetActive(false);
+                                    return;
+                                }
+                                else
+                                {
+                                    _missleScript.gameObject.SetActive(true);
+                                    _missleScript.transform.SetParent(null);
+                                    _missleScript.SetSYnc(temp, _packet.Data.GetVector3(6).Value);
+                                }
+                            }
                         }
                     }
                     #endregion

@@ -38,7 +38,6 @@ GameObject:
   - component: {fileID: 224373449747693470}
   - component: {fileID: 222828820920150196}
   - component: {fileID: 114206098150534860}
-  - component: {fileID: 114860667659831316}
   m_Layer: 5
   m_Name: DebugField
   m_TagString: Untagged
@@ -417,20 +416,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114860667659831316
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1296179725298400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23ad6aa549c16ee449ff4d1b2d578b82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ModifyButton: {fileID: 114040492998063726}
-  DataName: {fileID: 114500021755017412}
-  DataValue: {fileID: 114531661716557816}
 --- !u!114 &114991514169216652
 MonoBehaviour:
   m_ObjectHideFlags: 1

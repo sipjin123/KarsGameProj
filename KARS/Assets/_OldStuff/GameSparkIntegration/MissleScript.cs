@@ -6,6 +6,13 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class MissleScript : MonoBehaviour {
+    public struct State
+    {
+        internal Vector3 pos;
+        internal Vector3 rot;
+    }
+
+    public State[] m_BufferedState = new State[20];
     //================================================================================================================================
     #region VARIABLES
     [SerializeField]
@@ -43,9 +50,9 @@ public class MissleScript : MonoBehaviour {
     #region UPDATE AND SYNC
     void Update()
     {
-        if (_playerController_ID.ToString() == GameSparksManager.Instance.PeerID)
+        if (_playerController_ID == GameSparkPacketReceiver.Instance.PeerID)
         {
-            Debug.LogError("missle is controlling");
+            //Debug.LogError("missle is controlling");
             transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.blue;
             if (lockOnObject)
             {
@@ -56,14 +63,14 @@ public class MissleScript : MonoBehaviour {
                 else
                 {
                     SendMissleData(1);
-                    transform.position = Vector3.MoveTowards(transform.position, objectToHit.transform.position, missleSpeed);
-                    transform.LookAt(objectToHit.transform.position);
+                    transform.position += transform.forward * 1f; //Vector3.MoveTowards(transform.position, objectToHit.transform.position, missleSpeed);
+                    //transform.LookAt(objectToHit.transform.position);
                 }
             }
         }
         else
         {
-            Debug.LogError("missle is syncing");
+            //Debug.LogError("missle is syncing");
             transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.red;
             transform.position = Vector3.Lerp(transform.position, SyncMovement, 1);
             transform.eulerAngles = Vector3.Slerp(transform.eulerAngles, SyncRot, 1);
@@ -71,7 +78,25 @@ public class MissleScript : MonoBehaviour {
     }
     public void SetSYnc(Vector3 _pos,Vector3 _rot)
     {
-        SyncMovement = _pos;
+        for (int q = m_BufferedState.Length - 1; q >= 1; q--)
+        {
+            m_BufferedState[q] = m_BufferedState[q - 1];
+        }
+
+        State state;
+        state.pos = _pos;
+        state.rot =_rot;
+        m_BufferedState[0] = state;
+
+
+        try
+        {
+            SyncMovement = m_BufferedState[0].pos + (m_BufferedState[0].pos - m_BufferedState[1].pos);
+        }
+        catch
+        {
+            SyncMovement = _pos;
+        }
         SyncRot = _rot;
     }
     #endregion
@@ -81,7 +106,7 @@ public class MissleScript : MonoBehaviour {
     {
         try
         {
-            GetRTSession = GameSparksManager.Instance.GetRTSession();
+            GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
             using (RTData data = RTData.Get())
             {
                 data.SetInt(1, missle_ID);
@@ -110,9 +135,10 @@ public class MissleScript : MonoBehaviour {
     }
     public void LockOnToThisObject(GameObject _sender,GameObject _obj)
     {
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nMissle "+gameObject.name+" Locking on to: "+_obj.name;
-        Debug.LogError("locking on to object "+_obj.gameObject.name);
+        //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nMissle "+gameObject.name+" Locking on to: "+_obj.name;
+       // Debug.LogError("locking on to object "+_obj.gameObject.name);
         transform.position = _sender.transform.position;
+        transform.rotation = _sender.GetComponent<Car_Movement>().CarRotationObject.transform.rotation;
         objectToHit = _obj;
         transform.SetParent(null);
         lockOnObject = true;
@@ -134,24 +160,23 @@ public class MissleScript : MonoBehaviour {
         try
         {
 
-            if (objectToHit.GetComponent<GameSparks_DataSender>()._shieldSwitch)
+            if (objectToHit.GetComponent<Car_DataReceiver>()._shieldSwitch)
             {
                 ResetMissle();
                 return;
             }
 
-            GetRTSession = GameSparksManager.Instance.GetRTSession();
+            GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
             using (RTData data = RTData.Get())
             {
-                data.SetInt(1, objectToHit.GetComponent<GameSparks_DataSender>().NetworkID);
+                data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
                 data.SetInt(2, 2);
 
                 GetRTSession.SendData(117, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nServer (" + GameSparksManager.Instance.PeerID + ") Owner (" + _playerController_ID + "Missle # " + Missle_ID + " hit " + hit.gameObject.name;
+                //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nServer (" + GameSparkPacketReceiver.Instance.PeerID + ") Owner (" + _playerController_ID + "Missle # " + Missle_ID + " hit " + hit.gameObject.name;
             }
             ResetMissle();
         }
         catch { }
     }
-
 }

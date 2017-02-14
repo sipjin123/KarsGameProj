@@ -97,6 +97,7 @@ MonoBehaviour:
   _IsPersistent: 1
   CanvasList:
   - {fileID: 22331438}
+  backgroundImage: {fileID: 0}
 --- !u!114 &11401532
 MonoBehaviour:
   m_ObjectHideFlags: 1

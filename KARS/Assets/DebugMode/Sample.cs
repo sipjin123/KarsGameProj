@@ -12,11 +12,12 @@ public class Sample : MonoBehaviour {
 	
     void Start()
     {
+        /*
         DebugMode.GetInstance.RegisterDataType(ref datatype1, "Number1");
         DebugMode.GetInstance.RegisterDataType(ref datatype2, "Number2");
         DebugMode.GetInstance.RegisterDataType(ref datatype3, "Number3");
         DebugMode.GetInstance.RegisterDataType(ref datatype4, "Number4");
-        DebugMode.GetInstance.EnableDebugMode();
+        DebugMode.GetInstance.EnableDebugMode();*/
     }
     void OnGUI()
     {

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 //Use at own Risk
-public unsafe class DebugMode : MonoBehaviour {
+public class DebugMode : MonoBehaviour {
 
 
     private static DebugMode _instance;
@@ -21,7 +21,7 @@ public unsafe class DebugMode : MonoBehaviour {
     private List<int> _addressList;
     private List<string> _dataNames;
 
-    private float* tempAddress;
+    //private float* tempAddress;
 
     private bool isDebugOn = false;
     private GameRoot _game;
@@ -83,33 +83,34 @@ public unsafe class DebugMode : MonoBehaviour {
     //Stores the Data Type's Address
     internal void RegisterDataType(ref float value, string name)
     {     
+        /*
         fixed (float* val = &value){
             float* pMyInt = val;
             _addressList.Add((int)pMyInt);
             //addressInt = (int)pMyInt;
             //address = (float*)addressInt;
         }
-
+        */
         _dataNames.Add(name);
 
 
     }
-
+    /*
     internal void ChangeValue(int x, InputField displayText)
     {
         tempAddress = (float*)_addressList[x];
         *tempAddress = float.Parse(displayText.text);
         displayText.text = *tempAddress + "";
     }
-
+    */
     #region UI Creation
 
 
     internal void EnableDebugMode()
     {
-        CreateUI();
+        //CreateUI();
     }
-
+    /*
     private void CreateUI()
     {
         DebugField newdbField = new DebugField();
@@ -126,6 +127,6 @@ public unsafe class DebugMode : MonoBehaviour {
         }
         scrollRect.content.localPosition = Vector3.zero;
 
-    }
+    }*/
     #endregion
 }

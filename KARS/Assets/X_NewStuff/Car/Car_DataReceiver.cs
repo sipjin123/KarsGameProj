@@ -60,6 +60,18 @@ public class Car_DataReceiver : MonoBehaviour {
         }
         else
         {
+            if (Input.GetKeyDown(KeyCode.Alpha0))
+            {
+                _shieldSwitch = true;
+                _shieldObject.SetActive(true);
+                ActivatePowerup();
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha9))
+            {
+                _shieldSwitch = false;
+                _shieldObject.SetActive(false);
+                ActivatePowerup();
+            }
             SendCarMovement(Network_ID, _objToTranslate.position, _objToRotate.eulerAngles);
         }
     }
@@ -223,7 +235,7 @@ public class Car_DataReceiver : MonoBehaviour {
             interpolationTime = 0;
 
             //REFACTOR GAME TIME
-            interpolationTime = currentTime - 0.2f;
+            interpolationTime = currentTime - 0.1f;
             /*
             if (!_sparksManager.fixedInterTime)
             {
@@ -240,12 +252,15 @@ public class Car_DataReceiver : MonoBehaviour {
             _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(m_BufferedState[0].rot), .8f);
             return;*/
 
+            /*
             Extrapolate();
-            
-            return;
+            return;*/
+
+
             if (m_BufferedState[0].timestamp > interpolationTime)
             {
                 interpolationTime = currentTime - (PlayerPing + _gameSparkPacketReceiver.playerPingOffset);
+
                 InterpolateObj.SetActive(true);
                 ExtrapoalteObj.SetActive(false);
 
@@ -295,7 +310,7 @@ public class Car_DataReceiver : MonoBehaviour {
                     t = (float)((interpolationTime - lhs.timestamp) / length);
                 }
                 // if t=0 => lhs is used directly
-                
+                t = 1;
                 if (_gameSparkPacketReceiver._curMethod == GameSparkPacketReceiver.MethodUsed.LINEAR)
                 {
                     _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, lhs.pos, t);
@@ -323,7 +338,7 @@ public class Car_DataReceiver : MonoBehaviour {
     void Extrapolate()
     {
         State latest = m_BufferedState[0];
-        float lerpSpeed = 1;
+        float lerpSpeed = .8f;
         if (_gameSparkPacketReceiver._curMethod == GameSparkPacketReceiver.MethodUsed.LINEAR)
         {
             double timeDiff = 0;
@@ -345,8 +360,39 @@ public class Car_DataReceiver : MonoBehaviour {
 
             Vector3 NEW_POS = m_BufferedState[0].pos + (SPEED * (float)ELAPSED_TIME);
 
+            if(Vector3.Distance(NEW_POS,m_BufferedState[0].pos) >100)
+            {
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nExceed: " + (Vector3.Distance(NEW_POS, m_BufferedState[0].pos) );
+                if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
+                {
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
+                }
+                return;
+            }
+
+
+
+
+            Vector3 SLerpSpeed = (m_BufferedState[0].rot + m_BufferedState[1].rot) /2;
+            //Vector3 SLerpSpeed = (m_BufferedState[0].rot - m_BufferedState[1].rot) / (float)timeDiff;
+            //Vector3 NEW_Rot = m_BufferedState[0].rot + (SLerpSpeed * (float)ELAPSED_TIME);
+
+            try
+            {
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nBuff 0: " + m_BufferedState[0].rot.y + " Buff 1: " + m_BufferedState[1].rot.y + " == " + SLerpSpeed.y;
+                if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
+                {
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
+                }
+            }
+            catch { }
+
+
             _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, NEW_POS, lerpSpeed);
-            _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(latest.rot), lerpSpeed);
+            //_objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(latest.rot), lerpSpeed);
+
+            _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(SLerpSpeed), lerpSpeed);
+
             Debug.Log("DOING LINEAR");
         }
         /*
@@ -379,17 +425,27 @@ public class Car_DataReceiver : MonoBehaviour {
         return (a0 * mu * mu2 + a1 * mu2 + a2 * mu + a3);
     }
 
-    void OnsdsGUI()
-    {
-        try
-        {
-            if (Network_ID == RegisterGameSpark.Instance.PeerID)
-                    GUI.Box(new Rect(Screen.width - 100, Screen.height - 30, 100, 30), "" + Network_ID);
-        }
-        catch
-        { }
-    }
-
     #endregion
     //================================================================================================================================
+
+    public bool _shieldSwitch;
+    public GameObject _shieldObject;
+    public void ReceivePowerUpState(bool _switch)
+    {
+        _shieldObject.SetActive(_switch);
+        _shieldSwitch = _switch;
+    }
+    void ActivatePowerup()
+    {
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, Network_ID);
+            if (_shieldSwitch)
+                data.SetInt(2, 1);
+            else
+                data.SetInt(2, 0);
+
+            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+    }
 }

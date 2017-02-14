@@ -245,7 +245,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ButtonType: Currency
-  button: 4
 --- !u!114 &11497390
 MonoBehaviour:
   m_ObjectHideFlags: 1

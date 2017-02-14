@@ -42,7 +42,7 @@ namespace Synergy88 {
 
         void RegisterDataToDebugMode()
         {
-            DebugMode.GetInstance.RegisterDataType(ref timePerGame, "Time Per Game");
+            //DebugMode.GetInstance.RegisterDataType(ref timePerGame, "Time Per Game");
 
         }
 

@@ -161,8 +161,18 @@ public class GameSparkPacketReceiver : MonoBehaviour {
 
     public void SyncClock(RTPacket _packet)
     {
-        DateTime dateNow = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc); // get the current time
-        serverClock = dateNow.AddMilliseconds(_packet.Data.GetLong(1).Value + timeDelta).ToLocalTime(); // adjust current time to match clock from server
+        DateTime dateNow = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc); // get the current time
+        serverClock = dateNow.AddMilliseconds(_packet.Data.GetLong(1).Value).ToLocalTime();
+        //serverClock = dateNow.AddMilliseconds(_packet.Data.GetLong(1).Value + timeDelta).ToLocalTime(); // adjust current time to match clock from server
+
+        /*
+        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nServer Clock: " + serverClock+" : : "+ _packet.Data.GetLong(1).Value;
+
+        if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
+        {
+            GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
+        }
+        */
     }
     #endregion
     #region DATA RECEIVE
@@ -178,6 +188,8 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                 break;
             case 102:
                 {
+                    
+
 
                     FiveSecUpdateTime += 5; _5SecTimer.text = FiveSecUpdateTime.ToString();
                     SyncClock(_packet);
@@ -228,6 +240,30 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                             _obj.GetComponent<Car_Movement>()._trailCollision.Reset_Mesh();
                         }
                     }
+                }
+                break;
+            case 113:
+                {
+                    //UPDATES PLAYER POWERUPS
+                    #region UPDATES PLAYER POWERUPS
+                    int playerIndex = _packet.Data.GetInt(1).Value;
+                    bool powerUpSwitch = false;
+                    if (_packet.Data.GetInt(2).Value == 0)
+                        powerUpSwitch = false;
+                    else
+                        powerUpSwitch = true;
+
+                    for (int i = 0; i < _carPool.Count; i++)
+                    {
+                        GameObject _obj = _carPool[i].gameObject;
+                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
+
+                        if (_GameSparks_DataSender.Network_ID == playerIndex)
+                        {
+                            _obj.GetComponent<Car_DataReceiver>().ReceivePowerUpState(powerUpSwitch);
+                        }
+                    }
+                    #endregion
                 }
                 break;
             #region HEALTH

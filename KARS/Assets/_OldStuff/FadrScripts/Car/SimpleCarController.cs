@@ -61,11 +61,12 @@ namespace Synergy88
         #region INITIALIZATION
         void RegisterDataToDebugMode()
         {
+            /*
             DebugMode.GetInstance.RegisterDataType(ref maxRespawnTime, "RespawnTime P" + playerID);
             DebugMode.GetInstance.RegisterDataType(ref rotSpeed, "Rotation Speed P" + playerID);
             DebugMode.GetInstance.RegisterDataType(ref speed, "Car Speed P" + playerID);
             DebugMode.GetInstance.RegisterDataType(ref camDist, "CameraDist P" + playerID);
-            DebugMode.GetInstance.RegisterDataType(ref maxShieldDur, "ShieldDuration P" + playerID);
+            DebugMode.GetInstance.RegisterDataType(ref maxShieldDur, "ShieldDuration P" + playerID);*/
         }
 
         public void LoseFlag()

@@ -60,6 +60,7 @@ public class Car_Movement : MonoBehaviour {
                             transform.position = new Vector3(-5, 10, 0);
                         if (_carDataReceiver.Network_ID == 2)
                             transform.position = new Vector3(5, 10, 0);
+                        StopCoroutine("DelayRespawn");
                         StartCoroutine("DelayRespawn");
                     }
                 }
@@ -107,8 +108,9 @@ public class Car_Movement : MonoBehaviour {
 
     void OnTriggerEnter(Collider hit)
     {
-        if (hit.gameObject.tag == "Trail")
+        if (hit.gameObject.tag == "Trail" ||( hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
         {
+            if(!_carDataReceiver._shieldSwitch)
             Die();
         }
     }

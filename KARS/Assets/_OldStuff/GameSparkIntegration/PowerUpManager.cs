@@ -175,25 +175,11 @@ public class PowerUpManager : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (GameSparkPacketReceiver.Instance.PeerID == 2)
-            {
-                LockOnTarget(2, Player1);
-            }
-            else if (GameSparkPacketReceiver.Instance.PeerID == 1)
-            {
-                LockOnTarget(1, Player2);
-            }
+            LaunchMissleFromBUtton();
         }
         if(Input.GetKeyDown(KeyCode.RightAlt))
         {
-            if (GameSparkPacketReceiver.Instance.PeerID ==2)
-            {
-                SetUpTNT(2, Player2.transform.position, true);
-            }
-            else if (GameSparkPacketReceiver.Instance.PeerID == 1)
-            {
-                SetUpTNT(1, Player1.transform.position, true);
-            }
+            DropTNTFromButton();
         }
 
 
@@ -231,6 +217,18 @@ public class PowerUpManager : MonoBehaviour {
         }
     }
 
+    public void LaunchMissleFromBUtton()
+    {
+        if (GameSparkPacketReceiver.Instance.PeerID == 2)
+        {
+            LockOnTarget(2, Player1);
+        }
+        else if (GameSparkPacketReceiver.Instance.PeerID == 1)
+        {
+            LockOnTarget(1, Player2);
+        }
+    }
+
     internal void LaunchMissle()
     {
         if (GameSparkPacketReceiver.Instance.PeerID == 2)
@@ -243,6 +241,18 @@ public class PowerUpManager : MonoBehaviour {
         }
     }
 
+    public void DropTNTFromButton()
+    {
+
+        if (GameSparkPacketReceiver.Instance.PeerID == 2)
+        {
+            SetUpTNT(2, Player2.transform.position, true);
+        }
+        else if (GameSparkPacketReceiver.Instance.PeerID == 1)
+        {
+            SetUpTNT(1, Player1.transform.position, true);
+        }
+    }
     internal void DropTNT()
     {
         Debug.LogError("Drop TNT");

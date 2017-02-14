@@ -229,13 +229,18 @@ public class Car_DataReceiver : MonoBehaviour {
 
     void UpdateFunctInterpolate()
     {
+        if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
+        {
+            GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
+        }
+
         try
         {
             double currentTime = _gameSparkPacketReceiver.gameTimeInt;
             interpolationTime = 0;
 
             //REFACTOR GAME TIME
-            interpolationTime = currentTime - 0.1f;
+            //interpolationTime = currentTime - 0.1f;
             /*
             if (!_sparksManager.fixedInterTime)
             {
@@ -253,13 +258,19 @@ public class Car_DataReceiver : MonoBehaviour {
             return;*/
 
             /*
-            Extrapolate();
-            return;*/
+            interpolationTime = currentTime - (PlayerPing+_gameSparkPacketReceiver.playerPingOffset);
+            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nIT: " + interpolationTime + "=" + currentTime + "-" + (PlayerPing + _gameSparkPacketReceiver.playerPingOffset) + "(" + PlayerPing + "+" + _gameSparkPacketReceiver.playerPingOffset;
 
+            Interpolate();
+            return;
+            */
 
-            if (m_BufferedState[0].timestamp > interpolationTime)
+            //if (m_BufferedState[0].timestamp > interpolationTime)
+            
+
+            if( Mathf.Abs(Vector3.Distance( m_BufferedState[0].pos, m_BufferedState[1].pos )) > 10)
             {
-                interpolationTime = currentTime - (PlayerPing + _gameSparkPacketReceiver.playerPingOffset);
+                interpolationTime = currentTime - (PlayerPing+ _gameSparkPacketReceiver.playerPingOffset);
 
                 InterpolateObj.SetActive(true);
                 ExtrapoalteObj.SetActive(false);
@@ -275,12 +286,14 @@ public class Car_DataReceiver : MonoBehaviour {
                     GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
                 }
                 */
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n\nINTERPOLATE\n";
                 Interpolate();
             }
             else
             {
                 InterpolateObj.SetActive(false);
                 ExtrapoalteObj.SetActive(true);
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nEXTRAPOLATE";
                 Extrapolate();
             }
         }
@@ -305,46 +318,34 @@ public class Car_DataReceiver : MonoBehaviour {
                 float t = 0.0F;
                 // As the time difference gets closer to 100 ms t gets closer to 1 in 
                 // which case rhs is only used
-                if (length > 0.0001)
+                if (length > 0.1)
                 {
                     t = (float)((interpolationTime - lhs.timestamp) / length);
                 }
                 // if t=0 => lhs is used directly
                 t = 1;
+
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nT: " + t + "=" + (interpolationTime - lhs.timestamp) + "(" + interpolationTime + "-" + lhs.timestamp + ")/" +length +"("+rhs.timestamp+"-"+lhs.timestamp+")";
+
                 if (_gameSparkPacketReceiver._curMethod == GameSparkPacketReceiver.MethodUsed.LINEAR)
                 {
                     _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, lhs.pos, t);
                     _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(lhs.rot), rotSpeed);
                     Debug.LogWarning("DOING LINEAR");
                 }
-                else if (_gameSparkPacketReceiver._curMethod == GameSparkPacketReceiver.MethodUsed.CUBIC)
-                {
-                    Vector3 newposs = CubicInterpolate(m_BufferedState[0].pos, m_BufferedState[1].pos, m_BufferedState[2].pos, m_BufferedState[3].pos, t);
-
-                    _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, newposs, t);
-                    _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(lhs.rot), rotSpeed);
-                    Debug.LogWarning("DOING CUBIC");
-                }
-                else
-                {
-                    _objToTranslate.transform.position = m_BufferedState[0].pos;
-                    _objToRotate.transform.rotation = Quaternion.Euler(m_BufferedState[0].rot);
-                    Debug.LogWarning("DOING INSTANT");
-                }
-                return;
             }
         }
     }
     void Extrapolate()
     {
+        double currentTime = _gameSparkPacketReceiver.gameTimeInt;
+        interpolationTime = currentTime - 0.1f;
+
         State latest = m_BufferedState[0];
-        float lerpSpeed = .8f;
         if (_gameSparkPacketReceiver._curMethod == GameSparkPacketReceiver.MethodUsed.LINEAR)
         {
             double timeDiff = 0;
-
             timeDiff = (m_BufferedState[0].timestamp - m_BufferedState[1].timestamp);
-
             if (timeDiff == 0)
             {
                 timeDiff += 0.1f;
@@ -352,79 +353,29 @@ public class Car_DataReceiver : MonoBehaviour {
                 // GameObject.Find("GameUpdateText").GetComponent<Text>().text += "ZERO VAL:(" + m_BufferedState[1].pos.x + " : " + m_BufferedState[1].pos.z + ") " + m_BufferedState[1].timestamp + "\n";
             }
             
-
             Vector3 SPEED = (m_BufferedState[0].pos - m_BufferedState[1].pos) / (float)timeDiff;
             double ELAPSED_TIME = interpolationTime - m_BufferedState[0].timestamp;
-
-
-
             Vector3 NEW_POS = m_BufferedState[0].pos + (SPEED * (float)ELAPSED_TIME);
 
-            if(Vector3.Distance(NEW_POS,m_BufferedState[0].pos) >100)
+            if(Vector3.Distance(NEW_POS,m_BufferedState[0].pos) >55)
             {
-                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nExceed: " + (Vector3.Distance(NEW_POS, m_BufferedState[0].pos) );
+                //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nExceed: " + (Vector3.Distance(NEW_POS, m_BufferedState[0].pos) );
                 if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
                 {
                     GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
                 }
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nExceed WILL ITNERPOALTE: " + (Vector3.Distance(NEW_POS, m_BufferedState[0].pos));
+                Interpolate();
                 return;
             }
 
 
-
-
-            Vector3 SLerpSpeed = (m_BufferedState[0].rot + m_BufferedState[1].rot) /2;
-            //Vector3 SLerpSpeed = (m_BufferedState[0].rot - m_BufferedState[1].rot) / (float)timeDiff;
-            //Vector3 NEW_Rot = m_BufferedState[0].rot + (SLerpSpeed * (float)ELAPSED_TIME);
-
-            try
-            {
-                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nBuff 0: " + m_BufferedState[0].rot.y + " Buff 1: " + m_BufferedState[1].rot.y + " == " + SLerpSpeed.y;
-                if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
-                {
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
-                }
-            }
-            catch { }
-
-
+            float lerpSpeed = .9f;
             _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, NEW_POS, lerpSpeed);
-            //_objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(latest.rot), lerpSpeed);
-
-            _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(SLerpSpeed), lerpSpeed);
-
-            Debug.Log("DOING LINEAR");
-        }
-        /*
-        else if (_sparksManager._curMethod == GameSparksManager.CurrentMethod.CUBIC)
-        {
-            Vector3 newposs = CubicInterpolate(m_BufferedState[0].pos, m_BufferedState[1].pos, m_BufferedState[2].pos, m_BufferedState[3].pos, lerpSpeed);
-
-            _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, newposs, lerpSpeed);
+             lerpSpeed = .8f;
             _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(latest.rot), lerpSpeed);
-            Debug.Log("DOING CUBIC");
-        }*/
-        else
-        {
-            _objToTranslate.transform.position = m_BufferedState[0].pos;
-            _objToRotate.transform.rotation = Quaternion.Euler(m_BufferedState[0].rot);
-            Debug.Log("DOING INSTANT");
         }
     }
-
-    Vector3 CubicInterpolate(Vector3 y0, Vector3 y1, Vector3 y2, Vector3 y3, float mu)
-    {
-        Vector3 a0, a1, a2, a3;
-        float mu2;
-
-        mu2 = mu * mu;
-        a0 = y3 - y2 - y0 + y1;
-        a1 = y0 - y1 - a0;
-        a2 = y2 - y0;
-        a3 = y1;
-        return (a0 * mu * mu2 + a1 * mu2 + a2 * mu + a3);
-    }
-
     #endregion
     //================================================================================================================================
 
@@ -448,4 +399,12 @@ public class Car_DataReceiver : MonoBehaviour {
             GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
+
+    public void ActiveShieldFromButton()
+    {
+        _shieldSwitch = !_shieldSwitch;
+        _shieldObject.SetActive(_shieldSwitch);
+        ActivatePowerup();
+    }
+    
 }

@@ -522,6 +522,7 @@ public class GameSparkPacketReceiver : MonoBehaviour {
     }
     #endregion
     //====================================================================================
+    public Text PlayerPingText;
     void OnGUI()
     {
         GUI.Box(new Rect(0, Screen.height - 60, 100, 30), PeerID + ": " + _curMethod);

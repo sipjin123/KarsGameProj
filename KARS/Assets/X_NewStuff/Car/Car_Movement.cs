@@ -17,7 +17,7 @@ public class Car_Movement : MonoBehaviour {
     public TrailCollision _trailCollision;
     public Camera myCam;
 
-
+    public
     TronGameManager _tronGameManager;
 
     Car_DataReceiver _carDataReceiver;
@@ -32,14 +32,29 @@ public class Car_Movement : MonoBehaviour {
 
     void Start()
     {
-
         _tronGameManager = TronGameManager.Instance.GetComponent<TronGameManager>();
+    }
+
+    public bool localShieldIsActive;
+    public GameObject localShield;
+
+    public void ActiveShieldFromButton()
+    {
+        ActiveLocalShield(!localShieldIsActive);
+    }
+    public void ActiveLocalShield(bool _switch)
+    {
+        localShieldIsActive = _switch;
+        localShield.SetActive(_switch);
     }
 
     void FixedUpdate()
     {
         movementSpeed = _tronGameManager.MovementSpeed;
         rotationSpeed = _tronGameManager.rotationSpeed;
+
+
+
         if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && _carDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
             _characterController.Move(CarRotationObject.transform.forward * movementSpeed * Time.fixedDeltaTime);
@@ -108,10 +123,24 @@ public class Car_Movement : MonoBehaviour {
 
     void OnTriggerEnter(Collider hit)
     {
-        if (hit.gameObject.tag == "Trail" ||( hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
+        if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && _carDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
-            if(!_carDataReceiver._shieldSwitch)
-            Die();
+            if (hit.gameObject.tag == "Trail" || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
+            {
+                if (!TronGameManager.Instance.NetworkStart)
+                {
+                    if (localShieldIsActive == false)
+                    {
+                        Die();
+                    }
+                    return;
+                }
+
+                if (!_carDataReceiver._shieldSwitch)
+                {
+                    Die();
+                }
+            }
         }
     }
 
@@ -126,10 +155,25 @@ public class Car_Movement : MonoBehaviour {
             try
             {
                 _carDataReceiver.ResetTrail(false);
+                _carDataReceiver.ReduceHealth();
+
             }
             catch
-            { }
+            {
+            }
             transform.position = new Vector3(transform.position.x, 10, transform.position.z);
+
+            if (_tronGameManager.NetworkStart == false)
+            {
+                _trailCollision.SetEmiision(false);
+                try
+                {
+                    GetComponent<AI_Behaviour>().enabled = false;
+                }
+                catch
+                {
+                }
+            }
         }
     }
     IEnumerator DelayRespawn()
@@ -139,6 +183,9 @@ public class Car_Movement : MonoBehaviour {
             transform.position = new Vector3(-5, 1, 0);
         if (_carDataReceiver.Network_ID == 2)
             transform.position = new Vector3(5, 1, 0);
+        else
+            transform.position = new Vector3(0, 1, 0);
+
         CarRotationObject.transform.eulerAngles = Vector3.zero;
         currentRotation_Y = 0;
         isDead = false;
@@ -150,7 +197,18 @@ public class Car_Movement : MonoBehaviour {
             _carDataReceiver.ResetTrail(true);
         }
         catch
-        { }
+        {
+        }
+
+        if(_tronGameManager.NetworkStart == false)
+        {
+            try
+            {
+                GetComponent<AI_Behaviour>().enabled = true;
+            }
+            catch { }
+            _trailCollision.SetEmiision(true);
+        }
     }
 
     void MoveRight()

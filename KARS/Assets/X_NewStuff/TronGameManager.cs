@@ -62,6 +62,7 @@ public class TronGameManager : MonoBehaviour {
     public GameObject[] PlayerObjects;
     public GameObject[] NetworkCanvas;
 
+    public GameObject DEbugUI;
     public void SetNetworkStart( bool _switch)
     {
         NetworkStart = _switch;
@@ -77,6 +78,12 @@ public class TronGameManager : MonoBehaviour {
 
             PlayerObjects[0].GetComponent<Car_Movement>().myCam.enabled = true;
             PlayerObjects[0].GetComponent<Car_Movement>().StartGame = true;
+            PlayerObjects[0].GetComponent<Car_Movement>()._trailCollision.SetEmiision( true);
+
+
+            PlayerObjects[1].GetComponent<AI_Behaviour>().enabled = true;
+            PowerUpManager.Instance.StartNetwork();
+            DEbugUI.gameObject.SetActive(true);
         }
     }
 

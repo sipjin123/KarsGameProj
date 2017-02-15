@@ -124,8 +124,6 @@ public class TrailCollision : MonoBehaviour
         _emitTrail = _switch;
         if(_switch)
         {
-
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n"+ _carMovement.GetComponent<Car_DataReceiver>().Network_ID + " :MESH ENABLING";
             _mesh = new Mesh();
 
 
@@ -182,8 +180,14 @@ public class TrailCollision : MonoBehaviour
         }
         else
         {
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n" + _carMovement.GetComponent<Car_DataReceiver>().Network_ID + " :MESH DISABLING";
-            
+            try
+            {
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n" + _carMovement.GetComponent<Car_DataReceiver>().Network_ID + " :MESH DISABLING";
+            }
+            catch
+            {
+
+            }
             Reset_Mesh();
         }
     }

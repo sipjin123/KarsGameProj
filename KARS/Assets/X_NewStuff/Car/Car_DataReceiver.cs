@@ -60,6 +60,10 @@ public class Car_DataReceiver : MonoBehaviour {
         }
         else
         {
+            SendCarMovement(Network_ID, _objToTranslate.position, _objToRotate.eulerAngles);
+
+
+
             if (Input.GetKeyDown(KeyCode.Alpha0))
             {
                 _shieldSwitch = true;
@@ -72,7 +76,15 @@ public class Car_DataReceiver : MonoBehaviour {
                 _shieldObject.SetActive(false);
                 ActivatePowerup();
             }
-            SendCarMovement(Network_ID, _objToTranslate.position, _objToRotate.eulerAngles);
+
+            if (Input.GetKeyDown(KeyCode.Comma))
+            {
+                ResetTrail(true);
+            }
+            if (Input.GetKeyDown(KeyCode.Period))
+            {
+                ResetTrail(false);
+            }
         }
     }
     //================================================================================================================================
@@ -97,21 +109,22 @@ public class Car_DataReceiver : MonoBehaviour {
             GetRTSession.SendData(111, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
+
+    public void ReduceHealth()
+    {
+        Health -= 1;
+        HealthBar.fillAmount = Health / 5;
+        hp_indicator.text = Health.ToString();
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, Network_ID);
+            data.SetFloat(2, Health);
+            GetRTSession.SendData(118, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+    }
+
     public void ResetTrail(bool _switch)
     {
-        if (!_switch)
-        {
-            Health -= 1;
-            HealthBar.fillAmount = Health / 5;
-            hp_indicator.text = Health.ToString();
-            using (RTData data = RTData.Get())
-            {
-                data.SetInt(1, Network_ID);
-                data.SetFloat(2, Health);
-                GetRTSession.SendData(118, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-            }
-        }
-
         _carMovement._trailCollision.SetEmiision(_switch);
         using (RTData data = RTData.Get())
         {
@@ -120,7 +133,7 @@ public class Car_DataReceiver : MonoBehaviour {
 
             GetRTSession.SendData(122, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
-        SwitchInterpolation(_switch == true ? 0: 2);
+        //SwitchInterpolation(_switch == true ? 0: 2);
     }
 
     void SwitchInterpolation(int _bool)
@@ -198,7 +211,7 @@ public class Car_DataReceiver : MonoBehaviour {
             m_BufferedState[0] = state;
             
             PlayerPing = _gameSparkPacketReceiver.gameTimeInt - state.timestamp;
-
+            _gameSparkPacketReceiver.PlayerPingText.text = PlayerPing.ToString();
             // Increment state count but never exceed buffer size
             m_TimestampCount = Mathf.Min(m_TimestampCount + 1, m_BufferedState.Length);
 
@@ -229,10 +242,14 @@ public class Car_DataReceiver : MonoBehaviour {
 
     void UpdateFunctInterpolate()
     {
-        if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
+        try
         {
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
+            if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
+            {
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
+            }
         }
+        catch { }
 
         try
         {
@@ -406,5 +423,5 @@ public class Car_DataReceiver : MonoBehaviour {
         _shieldObject.SetActive(_shieldSwitch);
         ActivatePowerup();
     }
-    
+    public Text PingText;
 }

@@ -83,5 +83,4 @@ Builds
 *.sln
 KARS/Assets/__MACOSX/
 KARS/Assets/__MACOSX.meta
-*.meta
 *.apk

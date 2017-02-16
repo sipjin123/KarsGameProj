@@ -10,6 +10,7 @@ TagManager:
   - TNT
   - Missle
   - Trail
+  - Waypoint
   layers:
   - Default
   - TransparentFX
@@ -21,7 +22,7 @@ TagManager:
   - 
   - 3D
   - Trail
-  - 
+  - Waypoints
   - 
   - 
   - 

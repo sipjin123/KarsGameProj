@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class AI_Behaviour : MonoBehaviour {
-
+    #region VARIABLES
     public Transform WAypointParent;
     public GameObject _carRotate;
 
@@ -22,14 +22,17 @@ public class AI_Behaviour : MonoBehaviour {
 
     float randomRotationValueAI;
 
-    bool isDead; 
-
+    bool isDead;
+    #endregion
+    //==========================================================================================================================================
+    #region INIT
     void Start ()
     {
         currentChild = 0;
         SetPatternAndWaypoints(Random.RandomRange(0,Patterns.Length));
-        movementSpeed = 2;
-        rotSpeed = 5;
+        movementSpeed = 5;
+        rotSpeed = 55;
+        currentRotation_Y = _carRotate.transform.rotation.y;
     }
 	
     void SetPatternAndWaypoints(int _pattternVAl)
@@ -47,23 +50,43 @@ public class AI_Behaviour : MonoBehaviour {
         ifStart = true;
         _trailcollision.SetEmiision(true);
     }
-    //==========================================
+    #endregion
+    //==========================================================================================================================================
     void FixedUpdate ()
     {
         if (!ifStart || isDead)
             return;
 
-        RAycastFunct();
+        newRaycastFunc();
 
         if (findNextPath == false)
         {
             if (Vector3.Distance(transform.position, Waypoints[currentChild].transform.position) > 3)
             {
-                transform.position = Vector3.MoveTowards(transform.position, Waypoints[currentChild].transform.position, movementSpeed * Time.fixedDeltaTime);
+                //transform.position = Vector3.MoveTowards(transform.position, Waypoints[currentChild].transform.position, movementSpeed * Time.fixedDeltaTime);
 
-                var lookPos = Waypoints[currentChild].transform.position - transform.position;
-                var rotation = Quaternion.LookRotation(lookPos);
-                _carRotate.transform.rotation = Quaternion.Slerp(_carRotate.transform.rotation, rotation, Time.deltaTime * rotSpeed);
+                transform.position += _carRotate.transform.forward * Time.fixedDeltaTime * movementSpeed;
+                
+                //var lookPos = Waypoints[currentChild].transform.position - transform.position;
+                //var rotation = Quaternion.LookRotation(lookPos);
+                //_carRotate.transform.rotation = Quaternion.Slerp(_carRotate.transform.rotation, rotation, Time.deltaTime * rotSpeed);
+
+                Debug.DrawRay(radayRayPivot.transform.position, radayRayPivot.transform.forward * rayRange, Color.red);
+                if (Physics.Raycast(radayRayPivot.transform.position, radayRayPivot.transform.forward * rayRange, out radarRay2))
+                {
+                    //Debug.LogError("ray: "+radarRay2.collider.gameObject.name);
+                    if(radarRay2.collider.tag == "Waypoint" && (radarRay2.collider.transform.parent.gameObject == Waypoints[currentChild].gameObject))
+                    {
+                    }
+                    else
+                    {
+                        if (isRight == false)
+                            moveLeft();
+                        else
+                            moveRight();
+                    }
+                }
+                
             }
             else
             {
@@ -71,21 +94,22 @@ public class AI_Behaviour : MonoBehaviour {
                     currentChild++;
                 else
                     currentChild = 0;
+
+                isRight = Random.RandomRange(0, 2) == 1 ? true : false;
             }
         }
     }
-    //==========================================
+    //==========================================================================================================================================
     void OnTriggerEnter(Collider hit)
     {
         if(TronGameManager.Instance.NetworkStart == false)
-        if (hit.gameObject.tag == "Trail" || hit.gameObject.name.Contains("Missle")|| (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
+        if (hit.gameObject.tag == "Trail" || hit.gameObject.name.Contains("Missle")|| hit.gameObject.name.Contains("Wall") || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
         {
             if(!SHieldSwithc)
             DIE();
         }
     }
-    //==========================================
-
+    //==========================================================================================================================================
     public bool SHieldSwithc;
     public GameObject AIShield;
     public void ActivateAIShieldFromButton()
@@ -97,7 +121,7 @@ public class AI_Behaviour : MonoBehaviour {
         SHieldSwithc = !SHieldSwithc;
         AIShield.SetActive(_switch);
     }
-    //==========================================
+    //==========================================================================================================================================
     public void DIE()
     {
         transform.position = new Vector3(transform.position.x, 10, transform.position.z);
@@ -113,7 +137,7 @@ public class AI_Behaviour : MonoBehaviour {
         isDead = false;
         _trailcollision.SetEmiision(true);
     }
-    //==========================================
+    //==========================================================================================================================================
     public Vector3  clearPathPositionTotal;
     public Transform  radayRayPivot , radayRayPos1 , radayRayPos2, lockOnRayPos;
     RaycastHit  radarRay1, radarRay2, lockOnRay;
@@ -123,83 +147,12 @@ public class AI_Behaviour : MonoBehaviour {
 
     float rayRange = 100;
     bool findNextPath;
-    void RAycastFunct()
-    {
-        newRaycastFunc();
-        return;
-
-
-        Debug.DrawRay(radayRayPos1.transform.position, radayRayPos1.transform.forward * rayRange, Color.red);
-        Debug.DrawRay(radayRayPos2.transform.position, radayRayPos2.transform.forward * rayRange, Color.red);
-        if (Physics.Raycast(radayRayPos1.transform.position, radayRayPos1.transform.forward * rayRange, out radarRay1))
-        {
-            if (radarRay1.collider.tag != "Trail")
-            {
-                Debug.LogError("Ray1: " + radarRay1.collider.gameObject.name);
-                clearRadat1 = true;
-            }
-            else
-            {
-                clearRadat1 = false;
-            }
-        }
-        if (Physics.Raycast(radayRayPos2.transform.position, radayRayPos2.transform.forward * rayRange, out radarRay2))
-        {
-            if (radarRay2.collider.tag != "Trail")
-            {
-                Debug.LogError("Ray2: " + radarRay2.collider.gameObject.name);
-                clearRadar2 = true;
-            }
-            else
-            {
-                clearRadar2 = false;
-            }
-        }
-
-        if (clearRadat1 && clearRadar2)
-        {
-            Debug.DrawRay(radayRayPivot.transform.position, radayRayPivot.transform.forward * rayRange, Color.red);
-            if (Physics.Raycast(radayRayPivot.transform.position, radayRayPivot.transform.forward * rayRange, out radarRay2))
-            {
-                clearPathPositionTotal = radarRay2.point;
-            }
-
-
-
-            Debug.DrawRay(lockOnRayPos.transform.position, lockOnRayPos.transform.forward * rayRange, Color.red);
-            lockOnRayPos.transform.LookAt(Waypoints[currentChild].transform.position);
-            if (Physics.Raycast(lockOnRayPos.transform.position, lockOnRayPos.transform.forward * rayRange, out lockOnRay))
-            {
-                Debug.LogError("lock: " + lockOnRay.collider.gameObject.name);
-                if (lockOnRay.collider.tag == "Waypoint")
-                {
-                    Debug.LogError("WAWAWAWAAWWAWA");
-                    findNextPath = false;
-                }
-            }
-
-            if (Vector3.Distance(transform.position, clearPathPositionTotal) > 3)
-            {
-                transform.position = Vector3.MoveTowards(transform.position, clearPathPositionTotal, movementSpeed * Time.fixedDeltaTime);
-            }
-            else
-            {
-            }
-        }
-        else
-        {
-            findNextPath = true;
-            _carRotate.transform.Rotate(0, randomRotationValueAI, 0);
-        }
-
-
-
-    }
-
+   
 
     int[] RAyvalIndividual = new int[5];
     public Transform[] rayHitsPosition;
     RaycastHit[] RayHits = new RaycastHit[5];
+    public Transform waypointLockerTransform;
 
 
     bool startRotate;
@@ -228,6 +181,7 @@ public class AI_Behaviour : MonoBehaviour {
             {
                 if (RayHits[i].collider.tag == "Trail")
                 {
+                    if(Vector3.Distance( transform.position, RayHits[i].point) <5)
                     RAyvalIndividual[i] = 1;
                 }
                 else
@@ -246,7 +200,6 @@ public class AI_Behaviour : MonoBehaviour {
         {
             return false;
         }
-
     }
 
     public void newRaycastFunc()
@@ -271,11 +224,11 @@ public class AI_Behaviour : MonoBehaviour {
                 break;
             case AIPhase.LOOK_AROUND:
                 {
-                    transform.position += _carRotate.transform.forward * Time.fixedDeltaTime * (movementSpeed * .25f);
+                    transform.position += _carRotate.transform.forward * Time.fixedDeltaTime * (movementSpeed);
                     if (isRight)
-                        radayRayPivot.transform.Rotate(0, 1, 0);
+                        radayRayPivot.transform.Rotate(0, 5, 0);
                     else
-                        radayRayPivot.transform.Rotate(0, -1, 0);
+                        radayRayPivot.transform.Rotate(0, -5, 0);
                     if(ifPathisClearOfTrail())
                     {
                         referenceRotation = radayRayPivot.transform.rotation;
@@ -287,25 +240,30 @@ public class AI_Behaviour : MonoBehaviour {
                             timerDElay = 0;
                             radayRayPivot.transform.localRotation = Quaternion.Euler(Vector3.zero);
                             _aiPHase = AIPhase.ROTATE_CAR;
+
+                            if (RAyvalIndividual[0] == 1 && RAyvalIndividual[5] == 0)
+                                isRight = true;
+                            else
+                                isRight = false;
                         }
                     }
                 }
                 break;
             case AIPhase.ROTATE_CAR:
                 {
-                    transform.position += _carRotate.transform.forward * Time.fixedDeltaTime * (movementSpeed*.25f);
-                    timerDElay += Time.fixedDeltaTime;
-                    /*
-                    var lookPos = clearPathPositionTotal - transform.position;
-                    var rotation = Quaternion.LookRotation(lookPos);
-                    _carRotate.transform.rotation = Quaternion.Slerp(_carRotate.transform.rotation, rotation, Time.deltaTime * rotSpeed);*/
-
-                    _carRotate.transform.rotation = Quaternion.Slerp(_carRotate.transform.rotation, referenceRotation, Time.deltaTime * rotSpeed);
+                    transform.position += _carRotate.transform.forward * Time.fixedDeltaTime * (movementSpeed);
                     
+                    timerDElay += Time.fixedDeltaTime;
+                    //_carRotate.transform.rotation = Quaternion.Slerp(_carRotate.transform.rotation, referenceRotation, Time.deltaTime * rotSpeed);
+                    if (isRight)
+                        moveRight();
+                    else
+                        moveLeft();
                     if (timerDElay > 1)
                     {
                         _aiPHase = AIPhase.MOVE_TOWARD;
                     }
+                    
                 }
                 break;
             case AIPhase.MOVE_TOWARD:
@@ -334,7 +292,23 @@ public class AI_Behaviour : MonoBehaviour {
         }
     }
 
-    //==========================================
+    float currentRotation_Y;
+
+    void moveRight()
+    {
+
+        currentRotation_Y += rotSpeed * Time.fixedDeltaTime;
+        _carRotate.transform.eulerAngles = new Vector3(0, currentRotation_Y, 0);
+    }
+
+    void moveLeft()
+    {
+
+
+        currentRotation_Y -= rotSpeed * Time.fixedDeltaTime;
+        _carRotate.transform.eulerAngles = new Vector3(0, currentRotation_Y, 0);
+    }
+    //==========================================================================================================================================
     public void EnableDisableTest()
     {
         testPanel.SetActive(!testPanel.activeInHierarchy);

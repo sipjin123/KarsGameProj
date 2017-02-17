@@ -23,8 +23,12 @@ public class Car_Movement : MonoBehaviour {
     Car_DataReceiver _carDataReceiver;
     bool isDead;
     public bool StartGame;
+
+    public float AIMode_HpBar;
+
     void Awake()
     {
+        AIMode_HpBar = 5;
         _characterController = GetComponent<CharacterController>();
         _carDataReceiver = GetComponent<Car_DataReceiver>();
         currentRotation_Y = CarRotationObject.transform.eulerAngles.y;
@@ -152,19 +156,16 @@ public class Car_Movement : MonoBehaviour {
         if ((TronGameManager.Instance.NetworkStart && _carDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart)
         {
             isDead = true;
-            try
-            {
-                _carDataReceiver.ResetTrail(false);
-                _carDataReceiver.ReduceHealth();
 
-            }
-            catch
-            {
-            }
             transform.position = new Vector3(transform.position.x, 10, transform.position.z);
 
             if (_tronGameManager.NetworkStart == false)
             {
+                if (gameObject.name == "Car1")
+                {
+                    AIMode_HpBar -= 1;
+                    _tronGameManager.ReduceHPOfPlayer(1, AIMode_HpBar );
+                }
                 _trailCollision.SetEmiision(false);
                 try
                 {
@@ -173,6 +174,11 @@ public class Car_Movement : MonoBehaviour {
                 catch
                 {
                 }
+            }
+            else
+            {
+                _carDataReceiver.ResetTrail(false);
+                _carDataReceiver.ReduceHealth();
             }
         }
     }

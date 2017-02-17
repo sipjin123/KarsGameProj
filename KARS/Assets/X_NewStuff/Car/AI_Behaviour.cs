@@ -23,6 +23,7 @@ public class AI_Behaviour : MonoBehaviour {
     float randomRotationValueAI;
 
     bool isDead;
+    public float AI_Health;
     #endregion
     //==========================================================================================================================================
     #region INIT
@@ -33,6 +34,7 @@ public class AI_Behaviour : MonoBehaviour {
         movementSpeed = 5;
         rotSpeed = 55;
         currentRotation_Y = _carRotate.transform.rotation.y;
+        AI_Health = 5;
     }
 	
     void SetPatternAndWaypoints(int _pattternVAl)
@@ -105,8 +107,12 @@ public class AI_Behaviour : MonoBehaviour {
         if(TronGameManager.Instance.NetworkStart == false)
         if (hit.gameObject.tag == "Trail" || hit.gameObject.name.Contains("Missle")|| hit.gameObject.name.Contains("Wall") || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
         {
-            if(!SHieldSwithc)
-            DIE();
+                if (!SHieldSwithc)
+                {
+                    AI_Health -= 1;
+                    _tronGameManager.ReduceHPOfPlayer(2, AI_Health);
+                    DIE();
+                }
         }
     }
     //==========================================================================================================================================
@@ -133,7 +139,7 @@ public class AI_Behaviour : MonoBehaviour {
     {
         yield return new WaitForSeconds(3);
         SetPatternAndWaypoints(Random.RandomRange(0, Patterns.Length));
-        transform.position = new Vector3(3, 1, 0);
+        transform.position = new Vector3(25, 1, 0);
         isDead = false;
         _trailcollision.SetEmiision(true);
     }

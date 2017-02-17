@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Trail2
-  m_Shader: {fileID: 4800000, guid: fb46bf23e22e79243adc3ebd0142520c, type: 3}
+  m_Shader: {fileID: 200, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -104,6 +104,9 @@ Material:
         name: _GlossyReflections
       second: 1
     - first:
+        name: _InvFade
+      second: 1
+    - first:
         name: _Metallic
       second: 0
     - first:
@@ -158,3 +161,6 @@ Material:
     - first:
         name: _SpecColor
       second: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - first:
+        name: _TintColor
+      second: {r: 0.8088235, g: 0.059472326, b: 0.059472326, a: 0.5}

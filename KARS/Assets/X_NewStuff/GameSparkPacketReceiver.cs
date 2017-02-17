@@ -206,11 +206,20 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                 }
                 break;
             #endregion
-            #region MOVEMENT
             case 111:
                 {
                     //UPDATES PLAYER MOVEMENT
                     #region MOVEMENT
+                    /*
+                    NetworkPlayerData netPlayerData;
+                    netPlayerData.playerID = _packet.Data.GetInt(1).Value;
+                    netPlayerData.playerPos = new Vector3(_packet.Data.GetFloat(2).Value, _packet.Data.GetFloat(3).Value, _packet.Data.GetFloat(4).Value);
+                    netPlayerData.playerRot = _packet.Data.GetVector3(5).Value;
+                    netPlayerData.timeStamp = _packet.Data.GetDouble(7).Value;
+
+                    NetworkDataFilter.Instance.ReceiveNetworkPlayerData(netPlayerData);
+                    */
+                    
                     int receivedPlayerToMove = 0;
                     receivedPlayerToMove = _packet.Data.GetInt(1).Value;
                     for (int i = 0; i < _carPool.Count; i++)
@@ -226,9 +235,10 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                     #endregion
                 }
                 break;
-            #endregion
             case 131:
                 {
+                    //MESH RESET
+                    #region MESH RESET
                     int receivedPlayerToMove = 0;
                     receivedPlayerToMove = _packet.Data.GetInt(1).Value;
                     for (int i = 0; i < _carPool.Count; i++)
@@ -241,6 +251,7 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                             _obj.GetComponent<Car_Movement>()._trailCollision.Reset_Mesh();
                         }
                     }
+                    #endregion
                 }
                 break;
             case 113:
@@ -309,7 +320,6 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                     #endregion
                 }
                 break;
-            #region HEALTH
             case 118:
                 {
                     //UPDATES PLAYER HEALTH
@@ -346,11 +356,10 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                     #endregion
                 }
                 break;
-            #endregion
-            #region TRAIL
             case 122:
                 {
-
+                    //TRAIL
+                    #region TRAIL
                     int receivedPlayerToMove = _packet.Data.GetInt(1).Value;
                     int receivedPlayerAction = _packet.Data.GetInt(2).Value;
 
@@ -364,12 +373,13 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                             _obj.GetComponent<Car_Movement>()._trailCollision.SetEmiision(receivedPlayerAction == 2 ? true : false);
                         }
                     }
+                    #endregion
                 }
                 break;
-            #endregion
-            #region EXTRAPOLATION_SWITCH
             case 123:
                 {
+                    //EXTRAPOLATION_SWITCH
+                    #region EXTRAPOLATION_SWITCH
                     int receivedPlayerToMove = _packet.Data.GetInt(1).Value;
                     int receivedPlayerAction = _packet.Data.GetInt(2).Value;
 
@@ -378,9 +388,9 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                     {
                         _curMethod = (MethodUsed)receivedPlayerAction;
                     }
+                    #endregion
                 }
                 break;
-            #endregion
             case 066:
                 {
                     ResetGame();

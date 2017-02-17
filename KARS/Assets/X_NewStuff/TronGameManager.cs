@@ -63,6 +63,7 @@ public class TronGameManager : MonoBehaviour {
     public GameObject[] NetworkCanvas;
 
     public GameObject DEbugUI;
+    public GameObject singlePlayerUI;
     public void SetNetworkStart( bool _switch)
     {
         NetworkStart = _switch;
@@ -84,7 +85,47 @@ public class TronGameManager : MonoBehaviour {
             PlayerObjects[1].GetComponent<AI_Behaviour>().enabled = true;
             PowerUpManager.Instance.StartNetwork();
             DEbugUI.gameObject.SetActive(true);
+            singlePlayerUI.SetActive(true);
+
         }
     }
+    public void ReduceHPOfPlayer(int player, float life)
+    {
+        if(!NetworkStart)
+        {
+            if(player == 1)
+            {
+                Var_HP_1.text = life.ToString();
+                HealthBar1.fillAmount = life / 5;
+            }
+            else
+            {
+                Var_HP_2.text = life.ToString();
+                HealthBar2.fillAmount = life / 5;
+            }
+            if (life <= 0)
+            {
+                StartCoroutine("delaydeath");
+            }
+        }
+    }
+    public Image HealthBar1, HealthBar2;
+    public Text Var_HP_1, Var_HP_2;
 
+    IEnumerator delaydeath()
+    {
+        yield return new WaitForSeconds(1);
+
+        PlayerObjects[0].GetComponent<Car_Movement>().AIMode_HpBar = 6;
+        PlayerObjects[1].GetComponent<AI_Behaviour>().AI_Health = 6;
+        PlayerObjects[0].GetComponent<Car_Movement>().Die();
+        PlayerObjects[1].GetComponent<AI_Behaviour>().DIE();
+    }
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.G))
+        {
+            StartCoroutine("delaydeath");
+        }
+    }
 }

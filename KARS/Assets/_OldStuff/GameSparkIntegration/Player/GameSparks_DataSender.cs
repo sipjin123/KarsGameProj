@@ -254,14 +254,7 @@ public class GameSparks_DataSender : MonoBehaviour
             state.timestamp = _packet.Data.GetDouble(7).Value;
             m_BufferedState[0] = state;
 
-            /*
-
-            GameObject.Find("GameUpdateText2").GetComponent<Text>().text += "\nReceivedPos: (" + state.pos.x.ToString("F2") + " : " + state.pos.z.ToString("F2")+")";
-            GameObject.Find("GameUpdateText2").GetComponent<Text>().text += "\nReceivedTime: (" + state.timestamp+ ") During: "+_sparksManager.gameTimeInt;
-            GameObject.Find("GameUpdateText2").GetComponent<Text>().text += "\nGAP IS: (" + (state.timestamp - _sparksManager.gameTimeInt)+") ABS: (" + Mathf.Abs((int)m_BufferedState[0].timestamp - (int)_sparksManager.gameTimeInt) + "\n";
-
-            */
-
+ 
 
 
 
@@ -334,17 +327,6 @@ public class GameSparks_DataSender : MonoBehaviour
                 InterpolateObj.SetActive(true);
                 ExtrapoalteObj.SetActive(false);
 
-                /*
-                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nInterpolate Time: ("+interpolationTime.ToString("F2")+ ") BufferTime[0]: ("+m_BufferedState[0].timestamp.ToString("F2")+")\n"+
-                    //+currentTime+" - "+"(( "+PlayerPing+" + "+1000+" ) = "+(PlayerPing + 1000) + ")\n"; 
-                +currentTime + " - " + "(( " + PlayerPing + " + " + _sparksManager.playerPingOffset.ToString("F2") + " ) = " + (PlayerPing + _sparksManager.playerPingOffset).ToString("F2")+")";
-
-
-                if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
-                {
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
-                }
-                */
                 Interpolate();
             }
             else
@@ -383,12 +365,7 @@ public class GameSparks_DataSender : MonoBehaviour
 
                 // if t=0 => lhs is used directly
                 /*
-                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nTime Used: "+t+"\n";
 
-                if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
-                {
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
-                }
                 */
 
 
@@ -430,9 +407,7 @@ public class GameSparks_DataSender : MonoBehaviour
             if (timeDiff == 0)
             {
                 timeDiff += 0.1f;
-               // GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nZERO VAL: (" + m_BufferedState[0].pos.x+" : "+ m_BufferedState[0].pos.z + ") " + m_BufferedState[0].timestamp + "\n";
-               // GameObject.Find("GameUpdateText").GetComponent<Text>().text += "ZERO VAL:(" + m_BufferedState[1].pos.x + " : " + m_BufferedState[1].pos.z + ") " + m_BufferedState[1].timestamp + "\n";
-            }
+             }
 
 
 

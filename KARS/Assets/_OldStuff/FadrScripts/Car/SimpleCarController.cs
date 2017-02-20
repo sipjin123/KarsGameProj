@@ -261,7 +261,6 @@ namespace Synergy88
 
         public void SetupInteractionVariables(int _isBumped,int _isFlying, int _isFalling,float _force)
         {
-            //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nPlayer "+_GSDataSender.NetworkID+" received stuff";
             //if (_GSDataSender.NetworkID.ToString() != GameSparksManager.Instance.PeerID)
             {
                 if (_isBumped == 1)
@@ -298,7 +297,6 @@ namespace Synergy88
 
             GameSparksManager.Instance.SetupInventory(inventoryList[0], inventoryList[1], inventoryList[2]);
             return;
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n" + inventoryList[0] + " " + inventoryList[1] + " " + inventoryList[2];
             GameSparksRTUnity GetRTSession;
             GetRTSession = GameSparksManager.Instance.GetRTSession();
             using (RTData data = RTData.Get())
@@ -353,14 +351,12 @@ namespace Synergy88
             {
                 if (Input.GetKeyDown(KeyCode.Minus))
                 {
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nSEND: Player " + _GSDataSender.NetworkID + " Health now is: " + CurrentHealth;
                     CurrentHealth -= 20;
                     myHealthBar.fillAmount = CurrentHealth / 100;
                     _GSDataSender.SendHealth(CurrentHealth);
                 }
                 if (Input.GetKeyDown(KeyCode.Equals))
                 {
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nSEND: Player " + _GSDataSender.NetworkID + " Health now is: " + CurrentHealth;
                     CurrentHealth += 20;
                     myHealthBar.fillAmount = CurrentHealth / 100;
                     _GSDataSender.SendHealth(CurrentHealth);
@@ -443,7 +439,6 @@ namespace Synergy88
                                 isFalling = false;
                                 transform.position = new Vector3(transform.position.x, 1.5f, transform.position.z);
 
-                                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nPlayer Explode End";
                                 SwitchInterpolation(0);
                             }
                             return;

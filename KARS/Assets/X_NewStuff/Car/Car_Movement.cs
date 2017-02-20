@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Car_Movement : MonoBehaviour {
-
+    //==========================================================================================================================
+    #region VARIABLES
     private float movementSpeed;
 
     CharacterController _characterController;
@@ -24,8 +25,15 @@ public class Car_Movement : MonoBehaviour {
     bool isDead;
     public bool StartGame;
 
-    public float AIMode_HpBar;
 
+    //SINGLE PLAYER
+    public float AIMode_HpBar;
+    public bool localShieldIsActive;
+    public GameObject localShield;
+
+    #endregion
+    //==========================================================================================================================
+    #region INIT
     void Awake()
     {
         AIMode_HpBar = 5;
@@ -38,10 +46,8 @@ public class Car_Movement : MonoBehaviour {
     {
         _tronGameManager = TronGameManager.Instance.GetComponent<TronGameManager>();
     }
-
-    public bool localShieldIsActive;
-    public GameObject localShield;
-
+    #endregion
+    //==========================================================================================================================
     public void ActiveShieldFromButton()
     {
         ActiveLocalShield(!localShieldIsActive);
@@ -51,7 +57,7 @@ public class Car_Movement : MonoBehaviour {
         localShieldIsActive = _switch;
         localShield.SetActive(_switch);
     }
-
+    //==========================================================================================================================
     void FixedUpdate()
     {
         movementSpeed = _tronGameManager.MovementSpeed;
@@ -87,6 +93,7 @@ public class Car_Movement : MonoBehaviour {
         }
 
     }
+    //==========================================================================================================================
     void InputSystem()
     {
         if (Input.touchCount > 0)
@@ -124,7 +131,7 @@ public class Car_Movement : MonoBehaviour {
             }
         }
     }
-
+    //==========================================================================================================================
     void OnTriggerEnter(Collider hit)
     {
         if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && _carDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
@@ -147,7 +154,7 @@ public class Car_Movement : MonoBehaviour {
             }
         }
     }
-
+    //==========================================================================================================================
     bool signalSent;
     float DieTimer;
     public void Die()

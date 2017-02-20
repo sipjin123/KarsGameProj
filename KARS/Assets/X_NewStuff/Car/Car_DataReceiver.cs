@@ -30,6 +30,7 @@ public class Car_DataReceiver : MonoBehaviour {
     public Text hp_indicator;
     #endregion
     //================================================================================================================================
+    
     public void SetNetworkObject(int netID)
     {
         Network_ID = netID;
@@ -63,6 +64,10 @@ public class Car_DataReceiver : MonoBehaviour {
             SendCarMovement(Network_ID, _objToTranslate.position, _objToRotate.eulerAngles);
 
 
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
+            }
 
             if (Input.GetKeyDown(KeyCode.Alpha0))
             {
@@ -129,50 +134,12 @@ public class Car_DataReceiver : MonoBehaviour {
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, Network_ID);
-            data.SetInt(2, _switch == true ? 2:1);
+            data.SetInt(2, _switch == true ? 1:0);
+            data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_TRAIL);
 
-            GetRTSession.SendData(122, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-        //SwitchInterpolation(_switch == true ? 0: 2);
-    }
-
-    void SwitchInterpolation(int _bool)
-    {
-        /*
-        if (_bool == 0)
-        {
-            StartCoroutine("DelayExtrapolation");
-            return;
-        }
-        */
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, Network_ID);
-            data.SetInt(2, _bool);
-
-            GetRTSession.SendData(123, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
-    IEnumerator DelayExtrapolation()
-    {
-
-        yield return new WaitForSeconds(.1f);
-        SendCarMovement(Network_ID, _objToTranslate.position, _objToRotate.eulerAngles);
-        yield return new WaitForSeconds(.1f);
-        SendCarMovement(Network_ID, _objToTranslate.position, _objToRotate.eulerAngles);
-        yield return new WaitForSeconds(.1f);
-        SendCarMovement(Network_ID, _objToTranslate.position, _objToRotate.eulerAngles);
-
-
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, Network_ID);
-            data.SetInt(2, 0);
-
-            GetRTSession.SendData(122, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-    }
-
     #endregion
     //================================================================================================================================
     //
@@ -189,14 +156,13 @@ public class Car_DataReceiver : MonoBehaviour {
 
     public State[] m_BufferedState = new State[20];
     public int m_TimestampCount;
-    public void ReceiveBufferState(RTPacket _packet)
+    public void ReceiveBufferState(double _receivedTimeStamp, Vector3 _receivedPos, Vector3 _receivedRot)//RTPacket _packet)
     {
-        
-
 
         try
         {
-            if (_packet.Data.GetDouble(7).Value == m_BufferedState[0].timestamp )
+
+            if (_receivedTimeStamp == m_BufferedState[0].timestamp)// if (_packet.Data.GetDouble(7).Value == m_BufferedState[0].timestamp )
                 return;
 
             // Shift buffer contents, oldest data erased, 18 becomes 19, ... , 0 becomes 1
@@ -207,10 +173,10 @@ public class Car_DataReceiver : MonoBehaviour {
 
             // Save currect received state as 0 in the buffer, safe to overwrite after shifting
             State state;
-            state.pos = new Vector3(_packet.Data.GetFloat(2).Value, _packet.Data.GetFloat(3).Value, _packet.Data.GetFloat(4).Value);
+            state.pos = _receivedPos; //state.pos = new Vector3(_packet.Data.GetFloat(2).Value, _packet.Data.GetFloat(3).Value, _packet.Data.GetFloat(4).Value);
 
-            state.rot = _packet.Data.GetVector3(5).Value;
-            state.timestamp = _packet.Data.GetDouble(7).Value;
+            state.rot = _receivedRot;//state.rot = _packet.Data.GetVector3(5).Value;
+            state.timestamp = _receivedTimeStamp;//state.timestamp = _packet.Data.GetDouble(7).Value;
             m_BufferedState[0] = state;
             
             PlayerPing = _gameSparkPacketReceiver.gameTimeInt - state.timestamp;
@@ -306,14 +272,14 @@ public class Car_DataReceiver : MonoBehaviour {
                     GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
                 }
                 */
-                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n\nINTERPOLATE\n";
+                //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n\nINTERPOLATE\n";
                 Interpolate();
             }
             else
             {
                 InterpolateObj.SetActive(false);
                 ExtrapoalteObj.SetActive(true);
-                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nEXTRAPOLATE";
+                //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nEXTRAPOLATE";
                 Extrapolate();
             }
         }
@@ -345,7 +311,7 @@ public class Car_DataReceiver : MonoBehaviour {
                 // if t=0 => lhs is used directly
                 t = 1;
 
-                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nT: " + t + "=" + (interpolationTime - lhs.timestamp) + "(" + interpolationTime + "-" + lhs.timestamp + ")/" +length +"("+rhs.timestamp+"-"+lhs.timestamp+")";
+                //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nT: " + t + "=" + (interpolationTime - lhs.timestamp) + "(" + interpolationTime + "-" + lhs.timestamp + ")/" +length +"("+rhs.timestamp+"-"+lhs.timestamp+")";
 
                 if (_gameSparkPacketReceiver._curMethod == GameSparkPacketReceiver.MethodUsed.LINEAR)
                 {
@@ -416,6 +382,7 @@ public class Car_DataReceiver : MonoBehaviour {
             else
                 data.SetInt(2, 0);
 
+            data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_SHIELD);
             GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }

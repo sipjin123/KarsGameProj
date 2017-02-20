@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameSparkPacketReceiver : MonoBehaviour {
+public class GameSparkPacketReceiver : NetworkDataFilter
+{
 
     //=========================================================================================================================================================================
     //VARIABLES
@@ -210,28 +211,14 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                 {
                     //UPDATES PLAYER MOVEMENT
                     #region MOVEMENT
-                    /*
+                    
                     NetworkPlayerData netPlayerData;
                     netPlayerData.playerID = _packet.Data.GetInt(1).Value;
                     netPlayerData.playerPos = new Vector3(_packet.Data.GetFloat(2).Value, _packet.Data.GetFloat(3).Value, _packet.Data.GetFloat(4).Value);
                     netPlayerData.playerRot = _packet.Data.GetVector3(5).Value;
                     netPlayerData.timeStamp = _packet.Data.GetDouble(7).Value;
 
-                    NetworkDataFilter.Instance.ReceiveNetworkPlayerData(netPlayerData);
-                    */
-                    
-                    int receivedPlayerToMove = 0;
-                    receivedPlayerToMove = _packet.Data.GetInt(1).Value;
-                    for (int i = 0; i < _carPool.Count; i++)
-                    {
-                        GameObject _obj = _carPool[i].gameObject;
-                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
-
-                        if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
-                        {
-                            _obj.GetComponent<Car_DataReceiver>().ReceiveBufferState(_packet);
-                        }
-                    }
+                    ReceiveNetworkPlayerData(netPlayerData);
                     #endregion
                 }
                 break;
@@ -256,25 +243,15 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                 break;
             case 113:
                 {
-                    //UPDATES PLAYER POWERUPS
-                    #region UPDATES PLAYER POWERUPS
-                    int playerIndex = _packet.Data.GetInt(1).Value;
-                    bool powerUpSwitch = false;
-                    if (_packet.Data.GetInt(2).Value == 0)
-                        powerUpSwitch = false;
-                    else
-                        powerUpSwitch = true;
+                    //UPDATES PLAYER POWERUPS AND MESH SWITCH
+                    #region UPDATES PLAYER POWERUPS AND MESH SWITCH
+                    NetworkPlayerEvent _netPlayerEvent = new NetworkPlayerEvent();
+                    _netPlayerEvent.playerID = _packet.Data.GetInt(1).Value;
+                    _netPlayerEvent.playerStatusSwitch = _packet.Data.GetInt(2).Value == 1 ? true : false;
+                    _netPlayerEvent.playerStatus = (NetworkPlayerStatus)_packet.Data.GetInt(3).Value;
 
-                    for (int i = 0; i < _carPool.Count; i++)
-                    {
-                        GameObject _obj = _carPool[i].gameObject;
-                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
 
-                        if (_GameSparks_DataSender.Network_ID == playerIndex)
-                        {
-                            _obj.GetComponent<Car_DataReceiver>().ReceivePowerUpState(powerUpSwitch);
-                        }
-                    }
+                    NetworkDataFilter.Instance.ReceiveNetworkPlayerEvent(_netPlayerEvent);
                     #endregion
                 }
                 break;
@@ -351,26 +328,6 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                                 data.SetInt(1, 0);
                                 GetRTSession().SendData(066, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
                             }
-                        }
-                    }
-                    #endregion
-                }
-                break;
-            case 122:
-                {
-                    //TRAIL
-                    #region TRAIL
-                    int receivedPlayerToMove = _packet.Data.GetInt(1).Value;
-                    int receivedPlayerAction = _packet.Data.GetInt(2).Value;
-
-                    for (int i = 0; i < _carPool.Count; i++)
-                    {
-                        GameObject _obj = _carPool[i].gameObject;
-                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
-
-                        if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
-                        {
-                            _obj.GetComponent<Car_Movement>()._trailCollision.SetEmiision(receivedPlayerAction == 2 ? true : false);
                         }
                     }
                     #endregion

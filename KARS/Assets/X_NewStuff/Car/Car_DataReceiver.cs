@@ -25,12 +25,19 @@ public class Car_DataReceiver : MonoBehaviour {
     [SerializeField]
     private Car_Movement _carMovement;
 
+    private bool ShieldSwitch;
+    public bool GetShieldSwitch(){ return ShieldSwitch; }
+    public GameObject ShieldObject;
+
+
+    private bool StunSwitch;
+    public bool GetStunSwitch() { return StunSwitch; }
+    public GameObject StunObject;
+
     public float Health;
-    public Image HealthBar;
-    public Text hp_indicator;
     #endregion
     //================================================================================================================================
-    
+    #region NETWORK INIT
     public void SetNetworkObject(int netID)
     {
         Network_ID = netID;
@@ -49,8 +56,18 @@ public class Car_DataReceiver : MonoBehaviour {
             _carMovement.StartGame = true;
             ResetTrail(true);
             Health = 5;
+
+            if (Network_ID == 1)
+            {
+                UIManager.instance.Player1Panel.SetActive(true);
+            }
+            else if (Network_ID == 2)
+            {
+                UIManager.instance.Player2Panel.SetActive(true);
+            }
         }
     }
+    #endregion
     //================================================================================================================================
     void Update()
     {
@@ -63,33 +80,40 @@ public class Car_DataReceiver : MonoBehaviour {
         {
             SendCarMovement(Network_ID, _objToTranslate.position, _objToRotate.eulerAngles);
 
+            Test_Input();
+        }
+    }
+    void Test_Input()
+    {
+        if(Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            ActiveStunFromButton();
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
+        }
 
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
-            }
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            ShieldSwitch = true;
+            ShieldObject.SetActive(true);
+            SendNetworkPowerUp();
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            ShieldSwitch = false;
+            ShieldObject.SetActive(false);
+            SendNetworkPowerUp();
+        }
 
-            if (Input.GetKeyDown(KeyCode.Alpha0))
-            {
-                _shieldSwitch = true;
-                _shieldObject.SetActive(true);
-                ActivatePowerup();
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha9))
-            {
-                _shieldSwitch = false;
-                _shieldObject.SetActive(false);
-                ActivatePowerup();
-            }
-
-            if (Input.GetKeyDown(KeyCode.Comma))
-            {
-                ResetTrail(true);
-            }
-            if (Input.GetKeyDown(KeyCode.Period))
-            {
-                ResetTrail(false);
-            }
+        if (Input.GetKeyDown(KeyCode.Comma))
+        {
+            ResetTrail(true);
+        }
+        if (Input.GetKeyDown(KeyCode.Period))
+        {
+            ResetTrail(false);
         }
     }
     //================================================================================================================================
@@ -118,8 +142,16 @@ public class Car_DataReceiver : MonoBehaviour {
     public void ReduceHealth()
     {
         Health -= 1;
-        HealthBar.fillAmount = Health / 5;
-        hp_indicator.text = Health.ToString();
+        if(Network_ID == 1)
+        {
+            UIManager.instance.HealthBar_1.fillAmount = Health / 5;
+            UIManager.instance.HealthText_1.text = Health.ToString();
+        }
+        else if (Network_ID == 2)
+        {
+            UIManager.instance.HealthBar_2.fillAmount = Health / 5;
+            UIManager.instance.HealthText_2.text = Health.ToString();
+        }
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, Network_ID);
@@ -138,6 +170,75 @@ public class Car_DataReceiver : MonoBehaviour {
             data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_TRAIL);
 
             GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+    }
+
+
+    //SHIELD
+    //-------------------------------------------
+    public void ActiveShieldFromButton()
+    {
+        ShieldSwitch = !ShieldSwitch;
+        ShieldObject.SetActive(ShieldSwitch);
+        SendNetworkPowerUp();
+    }
+    private void SendNetworkPowerUp()
+    {
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, Network_ID);
+            if (ShieldSwitch)
+                data.SetInt(2, 1);
+            else
+                data.SetInt(2, 0);
+
+            data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_SHIELD);
+            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+    }
+    public void ReceivePowerUpState(bool _switch)
+    {
+        ShieldObject.SetActive(_switch);
+        ShieldSwitch = _switch;
+    }
+    //STUN
+    //-------------------------------------------
+    public void ActiveStunFromButton()
+    {
+        if (StunSwitch == false)
+        {
+            StunSwitch = true;
+            StunObject.SetActive(StunSwitch);
+            SendNetworkDisable();
+            StartCoroutine("StartStunTimer");
+        }
+    }
+    IEnumerator StartStunTimer()
+    {
+        yield return new WaitForSeconds(TronGameManager.Instance.const_StunDuration);
+        ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_STUN);
+        SendNetworkDisable();
+    }
+    private void SendNetworkDisable()
+    {
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, Network_ID);
+            if (StunSwitch)
+                data.SetInt(2, 1);
+            else
+                data.SetInt(2, 0);
+
+            data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_STUN);
+            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+    }
+    public void ReceiveDisableSTate(bool _switch, NetworkPlayerStatus _netStatus)
+    {
+        if (_netStatus == NetworkPlayerStatus.ACTIVATE_STUN)
+        {
+            StunObject.SetActive(_switch);
+            StunSwitch = _switch;
         }
     }
     #endregion
@@ -180,7 +281,7 @@ public class Car_DataReceiver : MonoBehaviour {
             m_BufferedState[0] = state;
             
             PlayerPing = _gameSparkPacketReceiver.gameTimeInt - state.timestamp;
-            _gameSparkPacketReceiver.PlayerPingText.text = PlayerPing.ToString();
+            UIManager.instance.PingText.text = PlayerPing.ToString();
             // Increment state count but never exceed buffer size
             m_TimestampCount = Mathf.Min(m_TimestampCount + 1, m_BufferedState.Length);
 
@@ -202,7 +303,6 @@ public class Car_DataReceiver : MonoBehaviour {
     //                                                       EXTRAPOLATION/INTERPOLATION
     //
     //================================================================================================================================
-    //INTERPOLATION EXTRAPOLATION
     #region INTERPOLATION EXTRAPOLATION
     double PlayerPing;
     double interpolationTime;
@@ -365,33 +465,4 @@ public class Car_DataReceiver : MonoBehaviour {
     #endregion
     //================================================================================================================================
 
-    public bool _shieldSwitch;
-    public GameObject _shieldObject;
-    public void ReceivePowerUpState(bool _switch)
-    {
-        _shieldObject.SetActive(_switch);
-        _shieldSwitch = _switch;
-    }
-    void ActivatePowerup()
-    {
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, Network_ID);
-            if (_shieldSwitch)
-                data.SetInt(2, 1);
-            else
-                data.SetInt(2, 0);
-
-            data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_SHIELD);
-            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-    }
-
-    public void ActiveShieldFromButton()
-    {
-        _shieldSwitch = !_shieldSwitch;
-        _shieldObject.SetActive(_shieldSwitch);
-        ActivatePowerup();
-    }
-    public Text PingText;
 }

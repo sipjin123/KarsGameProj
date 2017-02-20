@@ -21,15 +21,21 @@ public class Car_Movement : MonoBehaviour {
     public
     TronGameManager _tronGameManager;
 
-    Car_DataReceiver _carDataReceiver;
+    Car_DataReceiver MyCarDataReceiver;
     bool isDead;
     public bool StartGame;
+
+
+    
+
 
 
     //SINGLE PLAYER
     public float AIMode_HpBar;
     public bool localShieldIsActive;
     public GameObject localShield;
+
+
 
     #endregion
     //==========================================================================================================================
@@ -38,7 +44,7 @@ public class Car_Movement : MonoBehaviour {
     {
         AIMode_HpBar = 5;
         _characterController = GetComponent<CharacterController>();
-        _carDataReceiver = GetComponent<Car_DataReceiver>();
+        MyCarDataReceiver = GetComponent<Car_DataReceiver>();
         currentRotation_Y = CarRotationObject.transform.eulerAngles.y;
     }
 
@@ -65,9 +71,12 @@ public class Car_Movement : MonoBehaviour {
 
 
 
-        if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && _carDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
+        if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
-            _characterController.Move(CarRotationObject.transform.forward * movementSpeed * Time.fixedDeltaTime);
+            if (MyCarDataReceiver.GetStunSwitch() == false)
+            {
+                _characterController.Move(CarRotationObject.transform.forward * movementSpeed * Time.fixedDeltaTime);
+            }
             InputSystem();
 
         }
@@ -81,9 +90,9 @@ public class Car_Movement : MonoBehaviour {
                     if (!signalSent)
                     {
                         signalSent = true;
-                        if (_carDataReceiver.Network_ID == 1)
+                        if (MyCarDataReceiver.Network_ID == 1)
                             transform.position = new Vector3(-5, 10, 0);
-                        if (_carDataReceiver.Network_ID == 2)
+                        if (MyCarDataReceiver.Network_ID == 2)
                             transform.position = new Vector3(5, 10, 0);
                         StopCoroutine("DelayRespawn");
                         StartCoroutine("DelayRespawn");
@@ -134,8 +143,14 @@ public class Car_Movement : MonoBehaviour {
     //==========================================================================================================================
     void OnTriggerEnter(Collider hit)
     {
-        if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && _carDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
+        if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
+            UIManager.instance.GameUpdateText.text += "\nI WAS hit by: "+hit.gameObject.name;
+            /*
+            if (hit.gameObject.name.Contains("Missle"))
+            {
+                MyCarDataReceiver.ActiveStunFromButton();
+            }*/
             if (hit.gameObject.tag == "Wall" ||hit.gameObject.tag == "Trail" || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
             {
                 if (!TronGameManager.Instance.NetworkStart)
@@ -147,7 +162,7 @@ public class Car_Movement : MonoBehaviour {
                     return;
                 }
 
-                if (!_carDataReceiver._shieldSwitch)
+                if (MyCarDataReceiver.GetShieldSwitch() == false)
                 {
                     Die();
                 }
@@ -159,8 +174,8 @@ public class Car_Movement : MonoBehaviour {
     float DieTimer;
     public void Die()
     {
-        //if(_carDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID)
-        if ((TronGameManager.Instance.NetworkStart && _carDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart)
+        //if(MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID)
+        if ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart)
         {
             isDead = true;
 
@@ -184,17 +199,17 @@ public class Car_Movement : MonoBehaviour {
             }
             else
             {
-                _carDataReceiver.ResetTrail(false);
-                _carDataReceiver.ReduceHealth();
+                MyCarDataReceiver.ResetTrail(false);
+                MyCarDataReceiver.ReduceHealth();
             }
         }
     }
     IEnumerator DelayRespawn()
     {
         yield return new WaitForSeconds(3);
-        if (_carDataReceiver.Network_ID == 1)
+        if (MyCarDataReceiver.Network_ID == 1)
             transform.position = new Vector3(-5, 1, 0);
-        if (_carDataReceiver.Network_ID == 2)
+        if (MyCarDataReceiver.Network_ID == 2)
             transform.position = new Vector3(5, 1, 0);
         else
             transform.position = new Vector3(0, 1, 0);
@@ -207,7 +222,7 @@ public class Car_Movement : MonoBehaviour {
         yield return new WaitForSeconds(.5f);
         try
         {
-            _carDataReceiver.ResetTrail(true);
+            MyCarDataReceiver.ResetTrail(true);
         }
         catch
         {

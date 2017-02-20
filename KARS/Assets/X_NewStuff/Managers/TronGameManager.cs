@@ -49,13 +49,26 @@ public class TronGameManager : MonoBehaviour {
         _testPanel.SetActive(!_testPanel.activeInHierarchy);
     }
 
+
+
+    public Text Text_const_StunDuration;
+    public float const_StunDuration;
+    public void Tweakconst_StunDuration(float _var)
+    {
+        const_StunDuration += _var;
+        Text_const_StunDuration.text = const_StunDuration.ToString();
+    }
+
+
+
     void Awake()
     {
         _instance = this;
-        MovementSpeed = 5;
+        MovementSpeed = 3;
         trailDistanceCap = 20f;
         const_trailDistance = 5;
         rotationSpeed = 55;
+        const_StunDuration = 5;
     }
 
     public bool NetworkStart;

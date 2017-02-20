@@ -60,12 +60,21 @@ public class NetworkDataFilter : MonoBehaviour
                     carMovement._trailCollision.SetEmiision(_networkPlayerEvent.playerStatusSwitch);
                 }
                 break;
+            case NetworkPlayerStatus.ACTIVATE_STUN:
+                {
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nStun: " + _networkPlayerEvent.playerStatusSwitch;
+                    carReceiver.ReceiveDisableSTate( _networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
+                }
+                break;
         }
     }
     #endregion
     //===================================================================================================================================================================================================
 }
 
+
+
+#region PUBLIC CLASSES
 public struct NetworkPlayerData
 {
     internal int playerID;
@@ -80,12 +89,13 @@ public struct NetworkPlayerEvent
     internal NetworkPlayerStatus playerStatus;
     internal bool playerStatusSwitch; 
 }
-enum NetworkPlayerStatus
+public enum NetworkPlayerStatus
 {
     NONE,
     ACTIVATE_SHIELD,
     ACTIVATE_TRAIL,
     ACTIVATE_NITRO,
-    
+    ACTIVATE_STUN,
+   
 }
-
+#endregion

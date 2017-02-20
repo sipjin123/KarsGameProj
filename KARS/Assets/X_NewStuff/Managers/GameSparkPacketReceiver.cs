@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameSparkPacketReceiver : NetworkDataFilter
+public class GameSparkPacketReceiver : MonoBehaviour
 {
 
     //=========================================================================================================================================================================
@@ -40,10 +40,6 @@ public class GameSparkPacketReceiver : NetworkDataFilter
     }
 
     float FiveSecUpdateTime;
-    public Text _5SecTimer;
-    public Image PlayerHealthBar_1, PlayerHealthBar_2;
-    public Text HP_NUM_1, HP_NUM_2;
-
     bool InitiateNetwork;
     #endregion
     //=========================================================================================================================================================================
@@ -116,7 +112,7 @@ public class GameSparkPacketReceiver : NetworkDataFilter
 
 
             //NETWORKTEST
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n Netowrk Ready";
+            UIManager.instance.GameUpdateText.text += "\n Netowrk Ready";
 
             Debug.Log("GSM| RT Session Connected...");
             PeerID = RegisterGameSpark.Instance.PeerID;
@@ -192,7 +188,8 @@ public class GameSparkPacketReceiver : NetworkDataFilter
                     
 
 
-                    FiveSecUpdateTime += 5; _5SecTimer.text = FiveSecUpdateTime.ToString();
+                    FiveSecUpdateTime += 5;
+                    UIManager.instance.GameTimeText.text = FiveSecUpdateTime.ToString();
                     SyncClock(_packet);
                     //UPDATES GAME TIME EVERY 5 SECONDS
                     if (!InitiateNetwork)
@@ -218,7 +215,7 @@ public class GameSparkPacketReceiver : NetworkDataFilter
                     netPlayerData.playerRot = _packet.Data.GetVector3(5).Value;
                     netPlayerData.timeStamp = _packet.Data.GetDouble(7).Value;
 
-                    ReceiveNetworkPlayerData(netPlayerData);
+                    NetworkDataFilter.instance.ReceiveNetworkPlayerData(netPlayerData);
                     #endregion
                 }
                 break;
@@ -307,14 +304,14 @@ public class GameSparkPacketReceiver : NetworkDataFilter
                     
                     if (receivedPlayerID == 1)
                     {
-                        PlayerHealthBar_1.fillAmount = receivedPlayerHealth / 5;
-                        HP_NUM_1.text = receivedPlayerHealth.ToString();
+                        UIManager.instance.HealthBar_1.fillAmount = receivedPlayerHealth / 5;
+                        UIManager.instance.HealthText_1.text = receivedPlayerHealth.ToString();
 
                     }
                     if (receivedPlayerID == 2)
                     {
-                        PlayerHealthBar_2.fillAmount = receivedPlayerHealth / 5;
-                        HP_NUM_2.text = receivedPlayerHealth.ToString();
+                        UIManager.instance.HealthBar_2.fillAmount = receivedPlayerHealth / 5;
+                        UIManager.instance.HealthText_2.text = receivedPlayerHealth.ToString();
 
                     }
 
@@ -489,7 +486,6 @@ public class GameSparkPacketReceiver : NetworkDataFilter
     }
     #endregion
     //====================================================================================
-    public Text PlayerPingText;
     void OnGUI()
     {
         GUI.Box(new Rect(0, Screen.height - 60, 100, 30), PeerID + ": " + _curMethod);

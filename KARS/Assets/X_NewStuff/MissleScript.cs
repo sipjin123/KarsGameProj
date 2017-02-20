@@ -166,23 +166,28 @@ public class MissleScript : MonoBehaviour {
     {
         try
         {
-
-            if (objectToHit.GetComponent<Car_DataReceiver>()._shieldSwitch)
+            Car_DataReceiver carReceiver = objectToHit.GetComponent<Car_DataReceiver>();
+            if (_playerController_ID != carReceiver.Network_ID)
             {
+                if (carReceiver.GetShieldSwitch())
+                {
+                    carReceiver.ActiveShieldFromButton();
+                    ResetMissle();
+                    return;
+                }
+                carReceiver.ActiveStunFromButton();
+                GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+                using (RTData data = RTData.Get())
+                {
+                    data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
+                    data.SetInt(2, 1);
+                    data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_STUN);
+
+                    GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                    //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nServer (" + GameSparkPacketReceiver.Instance.PeerID + ") Owner (" + _playerController_ID + "Missle # " + Missle_ID + " hit " + hit.gameObject.name;
+                }
                 ResetMissle();
-                return;
             }
-
-            GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
-            using (RTData data = RTData.Get())
-            {
-                data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
-                data.SetInt(2, 2);
-
-                GetRTSession.SendData(117, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nServer (" + GameSparkPacketReceiver.Instance.PeerID + ") Owner (" + _playerController_ID + "Missle # " + Missle_ID + " hit " + hit.gameObject.name;
-            }
-            ResetMissle();
         }
         catch { }
     }

@@ -8,8 +8,8 @@ public class TronGameManager : MonoBehaviour {
     private static TronGameManager _instance;
     public static TronGameManager Instance { get { return _instance; } }
 
-    
 
+    #region TWEAKABLE VARIABLES
     public Text Text_rotationSpeed;
     public float rotationSpeed;
     public void TweakrotationSpeed(float _var)
@@ -49,8 +49,6 @@ public class TronGameManager : MonoBehaviour {
         _testPanel.SetActive(!_testPanel.activeInHierarchy);
     }
 
-
-
     public Text Text_const_StunDuration;
     public float const_StunDuration;
     public void Tweakconst_StunDuration(float _var)
@@ -58,6 +56,8 @@ public class TronGameManager : MonoBehaviour {
         const_StunDuration += _var;
         Text_const_StunDuration.text = const_StunDuration.ToString();
     }
+    #endregion
+
 
 
 
@@ -77,13 +77,59 @@ public class TronGameManager : MonoBehaviour {
 
     public GameObject DEbugUI;
     public GameObject singlePlayerUI;
+
+
+    public GameObject CharacterSelectPanel;
+
+    int carMeshIndex;
+    public GameObject[] carMeshList;
+    public void OpenCharacterSelect(bool _switch)
+    {
+        CharacterSelectPanel.SetActive(_switch);
+
+    }
+    public void NextCar()
+    {
+        carMeshIndex++;
+        if(carMeshIndex > carMeshList.Length-1)
+        {
+            carMeshIndex = 0;
+        }
+        for(int i = 0; i < carMeshList.Length;i++)
+        {
+            carMeshList[i].SetActive(false);
+        }
+        carMeshList[carMeshIndex].SetActive(true);
+    }
+    public void PreviousCar()
+    {
+        carMeshIndex--;
+        if (carMeshIndex <= -1)
+        {
+            carMeshIndex = carMeshList.Length - 1;
+        }
+        for (int i = 0; i < carMeshList.Length; i++)
+        {
+            carMeshList[i].SetActive(false);
+        }
+        carMeshList[carMeshIndex].SetActive(true);
+    }
+    public void StartGame()
+    {
+        OpenCharacterSelect(false);
+
+    }
+
     public void SetNetworkStart( bool _switch)
     {
         NetworkStart = _switch;
-        for (int i = 0; i < PlayerObjects.Length; i++)
-            PlayerObjects[i].SetActive(true);
-        
-        if (!_switch)
+        OpenCharacterSelect(true);
+        if (_switch)//MULTIPLAYER
+        {
+            for (int i = 0; i < PlayerObjects.Length; i++)
+                PlayerObjects[i].SetActive(true);
+        }
+        else if (!_switch)//SINGLE PLAYER
         {
             for (int i = 0; i < NetworkCanvas.Length; i++)
                 NetworkCanvas[i].SetActive(false);

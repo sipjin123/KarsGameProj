@@ -53,7 +53,6 @@ public class Car_DataReceiver : MonoBehaviour {
             NetworkCam.enabled = true;
             ifMy_Network_Player = true;
 
-            _carMovement.StartGame = true;
             ResetTrail(true);
             Health = 5;
 
@@ -65,6 +64,13 @@ public class Car_DataReceiver : MonoBehaviour {
             {
                 UIManager.instance.Player2Panel.SetActive(true);
             }
+        }
+    }
+    public void StartGame(bool _switch)
+    {
+        if (Network_ID == _gameSparkPacketReceiver.PeerID)
+        {
+            _carMovement.StartGame = _switch;
         }
     }
     #endregion

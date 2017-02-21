@@ -350,6 +350,23 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     ResetGame();
                 }
                 break;
+            case 114:
+                {
+                    int receivedPlayerToMove = 0;
+                    receivedPlayerToMove = _packet.Data.GetInt(1).Value;
+
+                    for (int i = 0; i < _carPool.Count; i++)
+                    {
+                        GameObject _obj = _carPool[i].gameObject;
+                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
+
+                        if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
+                        {
+                            _GameSparks_DataSender.SetCarAvatar(_packet.Data.GetInt(2).Value);
+                        }
+                    }
+                }
+                break;
         }
 
     }

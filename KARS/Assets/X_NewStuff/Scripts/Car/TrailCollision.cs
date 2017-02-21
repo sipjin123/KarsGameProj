@@ -25,8 +25,8 @@ public class TrailCollision : MonoBehaviour
 
     public float TotalDistanceTrail;
     int recentVertex = 0;
-    float trailDistanceCap = 20;
-    float const_trailDistance = 5;
+    float trailDistanceTotal = 20;
+    float trailDistanceChid = 5;
 
     MeshCollider _meshCollider;
     float lerpTimer = 0;
@@ -79,7 +79,7 @@ public class TrailCollision : MonoBehaviour
         try
         {
             //float dist = (float)(Vector3.Distance(_mesh.vertices[_mesh.vertexCount -3], _mesh.vertices[_mesh.vertexCount - 1]));
-            TotalDistanceTrail += const_trailDistance;
+            TotalDistanceTrail += trailDistanceChid;
         }
         catch
         { }
@@ -94,7 +94,7 @@ public class TrailCollision : MonoBehaviour
 
     void Minus()
     {
-        TotalDistanceTrail -= const_trailDistance;
+        TotalDistanceTrail -= trailDistanceChid;
 
         CurrentVertex -= 2;
         CurrentTriangle -= 6;
@@ -105,8 +105,8 @@ public class TrailCollision : MonoBehaviour
     //=============================================================================================================================================================
     void Update()
     {
-        trailDistanceCap = _tronGameManager.trailDistanceCap;
-        const_trailDistance = _tronGameManager.const_trailDistance;
+        trailDistanceTotal = _tronGameManager.trailDistanceTotal;
+        trailDistanceChid = _tronGameManager.trailDistanceChild;
 
         if (_emitTrail)
         {
@@ -211,7 +211,7 @@ public class TrailCollision : MonoBehaviour
     {
         if (_mesh.vertexCount > 3)
         {
-            if (Vector3.Distance(_mesh.vertices[_mesh.vertexCount - 3], _mesh.vertices[_mesh.vertexCount - 1]) > const_trailDistance)
+            if (Vector3.Distance(_mesh.vertices[_mesh.vertexCount - 3], _mesh.vertices[_mesh.vertexCount - 1]) > trailDistanceChid)
             {
                 Add();
             }
@@ -223,7 +223,7 @@ public class TrailCollision : MonoBehaviour
             vertices[i] = Node[i];
         
 
-        if(TotalDistanceTrail > trailDistanceCap)
+        if(TotalDistanceTrail > trailDistanceTotal)
         {
             _mesh = new Mesh();
             _meshFilter.mesh = _mesh;

@@ -11,14 +11,6 @@ public class TronGameManager : MonoBehaviour {
 
 
     #region TWEAKABLE VARIABLES
-    public Text Text_rotationSpeed;
-    public float rotationSpeed;
-    public void TweakrotationSpeed(float _var)
-    {
-        rotationSpeed += _var;
-        Text_rotationSpeed.text = rotationSpeed.ToString();
-    }
-
 
     public Text Text_MovementSpeed;
     public float MovementSpeed ;
@@ -26,29 +18,37 @@ public class TronGameManager : MonoBehaviour {
     {
         MovementSpeed += _var;
         Text_MovementSpeed.text = MovementSpeed.ToString();
+        PlayerPrefs.SetFloat(PrefKey_Movement, MovementSpeed);
     }
 
-    public Text Text_trailDistanceCap;
-    public float trailDistanceCap;
-    public void TweaktrailDistanceCap(float _var)
+    public Text Text_rotationSpeed;
+    public float rotationSpeed;
+    public void TweakrotationSpeed(float _var)
     {
-        trailDistanceCap += _var;
-        Text_trailDistanceCap.text = trailDistanceCap.ToString();
+        rotationSpeed += _var;
+        Text_rotationSpeed.text = rotationSpeed.ToString();
+        PlayerPrefs.SetFloat(PrefKey_Rotation, rotationSpeed);
     }
 
-    public Text Text_const_trailDistance;
-    public float const_trailDistance ;
-    public void Tweakconst_trailDistance(float _var)
+
+    public Text Text_trailDistanceTotal;
+    public float trailDistanceTotal;
+    public void TweaktrailDistanceTotal(float _var)
     {
-        const_trailDistance += _var;
-        Text_const_trailDistance.text = const_trailDistance.ToString();
+        trailDistanceTotal += _var;
+        Text_trailDistanceTotal.text = trailDistanceTotal.ToString();
+        PlayerPrefs.SetFloat(PrefKey_TrailTotal, trailDistanceTotal);
     }
 
-    public GameObject _testPanel;
-    public void FlipTestPanel()
+    public Text Text_trailDistanceChild;
+    public float trailDistanceChild;
+    public void Tweakconst_trailDistanceChild(float _var)
     {
-        _testPanel.SetActive(!_testPanel.activeInHierarchy);
+        trailDistanceChild += _var;
+        Text_trailDistanceChild.text = trailDistanceChild.ToString();
+        PlayerPrefs.SetFloat(PrefKey_TrailCap, trailDistanceChild);
     }
+
 
     public Text Text_const_StunDuration;
     public float const_StunDuration;
@@ -56,20 +56,66 @@ public class TronGameManager : MonoBehaviour {
     {
         const_StunDuration += _var;
         Text_const_StunDuration.text = const_StunDuration.ToString();
+        PlayerPrefs.SetFloat(PrefKey_Stun, const_StunDuration);
+    }
+
+
+
+    public Text Text_missleCooldown;
+    public float missleCooldown;
+    public void Tweak_missleCooldown(float _var)
+    {
+        missleCooldown += _var;
+        Text_missleCooldown.text = missleCooldown.ToString();
+        PlayerPrefs.SetFloat(PrefKey_MissleCooldown, missleCooldown);
+    }
+
+
+    public Text Text_shieldCooldown;
+    public float shieldCooldown;
+    public void Tweak_shieldCooldown(float _var)
+    {
+        shieldCooldown += _var;
+        Text_shieldCooldown.text = shieldCooldown.ToString();
+        PlayerPrefs.SetFloat(PrefKey_ShieldCooldown, shieldCooldown);
+    }
+
+    public GameObject _testPanel;
+    public void FlipTestPanel()
+    {
+        _testPanel.SetActive(!_testPanel.activeInHierarchy);
     }
     #endregion
 
 
 
+    private static float DefaultMovement = 3;
+    private static float DefaultRotation= 55;
+    private static float DefaultStun = 5;
+    private static float DefaulttrailDistanceTotal = 20;
+    private static float DefaulttrailDistanceChild = 5;
+    private static float DefaultMissleCooldown = 5;
+    private static float DefaultShieldCooldown = 5;
+
+    private static string PrefKey_Movement = "MovementKey";
+    private static string PrefKey_Rotation = "RotationKey";
+    private static string PrefKey_Stun = "StunKey";
+    private static string PrefKey_TrailTotal = "TrailTotalKey";
+    private static string PrefKey_TrailCap = "TrailCapKey";
+    private static string PrefKey_MissleCooldown = "MissleCooldownKey";
+    private static string PrefKey_ShieldCooldown = "ShieldCooldownKey";
 
     void Awake()
     {
         _instance = this;
-        MovementSpeed = 3;
-        trailDistanceCap = 20f;
-        const_trailDistance = 5;
-        rotationSpeed = 55;
-        const_StunDuration = 5;
+        MovementSpeed = PlayerPrefs.GetFloat(PrefKey_Movement, DefaultMovement);
+        rotationSpeed = PlayerPrefs.GetFloat(PrefKey_Rotation, DefaultRotation);
+        const_StunDuration = PlayerPrefs.GetFloat(PrefKey_Stun, DefaultStun);
+        trailDistanceTotal = PlayerPrefs.GetFloat(PrefKey_TrailTotal, DefaulttrailDistanceTotal);
+        trailDistanceChild = PlayerPrefs.GetFloat(PrefKey_TrailCap, DefaulttrailDistanceChild);
+
+        missleCooldown = PlayerPrefs.GetFloat(PrefKey_MissleCooldown, DefaultMissleCooldown);
+        shieldCooldown = PlayerPrefs.GetFloat(PrefKey_ShieldCooldown, DefaultShieldCooldown);
     }
 
     public bool NetworkStart;
@@ -84,44 +130,68 @@ public class TronGameManager : MonoBehaviour {
 
     int carMeshIndex;
     public GameObject[] carMeshList;
-    public void OpenCharacterSelect(bool _switch)
-    {
-        CharacterSelectPanel.SetActive(_switch);
+    public GameObject[] StatList;
 
-    }
-    public void NextCar()
-    {
-        carMeshIndex++;
-        if(carMeshIndex > carMeshList.Length-1)
-        {
-            carMeshIndex = 0;
-        }
-        for(int i = 0; i < carMeshList.Length;i++)
-        {
-            carMeshList[i].SetActive(false);
-        }
-        carMeshList[carMeshIndex].SetActive(true);
-    }
-    public void PreviousCar()
-    {
-        carMeshIndex--;
-        if (carMeshIndex <= -1)
-        {
-            carMeshIndex = carMeshList.Length - 1;
-        }
-        for (int i = 0; i < carMeshList.Length; i++)
-        {
-            carMeshList[i].SetActive(false);
-        }
-        carMeshList[carMeshIndex].SetActive(true);
-    }
-    public void StartGame()
-    {
-        OpenCharacterSelect(false);
-        ReadyPlayer(GameSparkPacketReceiver.Instance.PeerID);
-    }
 
-    public void SetNetworkStart( bool _switch)
+    public Image HealthBar1, HealthBar2;
+    public Text Var_HP_1, Var_HP_2;
+
+
+    GameSparksRTUnity GetRTSession;
+
+    //==================================================================================================================================
+    #region TEST INPUTS G,K,L
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.G))
+        {
+            StartCoroutine("delaydeath");
+        }
+        if(Input.GetKeyDown(KeyCode.K))
+        {
+            ReadyPlayer(1);
+        }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            ReadyPlayer(2);
+        }
+    }
+    #endregion
+    //==================================================================================================================================
+    #region PLAYER DEATH AND HP REDUCTION
+    public void ReduceHPOfPlayer(int player, float life)
+    {
+        if (!NetworkStart)
+        {
+            if (player == 1)
+            {
+                Var_HP_1.text = life.ToString();
+                HealthBar1.fillAmount = life / 5;
+            }
+            else
+            {
+                Var_HP_2.text = life.ToString();
+                HealthBar2.fillAmount = life / 5;
+            }
+            if (life <= 0)
+            {
+                StartCoroutine("delaydeath");
+            }
+        }
+    }
+    IEnumerator delaydeath()
+    {
+        yield return new WaitForSeconds(1);
+
+        PlayerObjects[0].GetComponent<Car_Movement>().AIMode_HpBar = 6;
+        PlayerObjects[1].GetComponent<AI_Behaviour>().AI_Health = 6;
+        PlayerObjects[0].GetComponent<Car_Movement>().Die();
+        PlayerObjects[1].GetComponent<AI_Behaviour>().DIE();
+    }
+    #endregion
+    //==================================================================================================================================
+    #region CHARACTER SELECT
+    public void SetNetworkStart(bool _switch)
     {
         NetworkStart = _switch;
         if (_switch)//MULTIPLAYER
@@ -138,7 +208,7 @@ public class TronGameManager : MonoBehaviour {
 
             PlayerObjects[0].GetComponent<Car_Movement>().myCam.enabled = true;
             PlayerObjects[0].GetComponent<Car_Movement>().StartGame = true;
-            PlayerObjects[0].GetComponent<Car_Movement>()._trailCollision.SetEmiision( true);
+            PlayerObjects[0].GetComponent<Car_Movement>()._trailCollision.SetEmiision(true);
 
 
             PlayerObjects[1].GetComponent<AI_Behaviour>().enabled = true;
@@ -149,59 +219,90 @@ public class TronGameManager : MonoBehaviour {
         }
         OpenCharacterSelect(true);
     }
-    public void ReduceHPOfPlayer(int player, float life)
+
+    public void OpenCharacterSelect(bool _switch)
     {
-        if(!NetworkStart)
-        {
-            if(player == 1)
-            {
-                Var_HP_1.text = life.ToString();
-                HealthBar1.fillAmount = life / 5;
-            }
-            else
-            {
-                Var_HP_2.text = life.ToString();
-                HealthBar2.fillAmount = life / 5;
-            }
-            if (life <= 0)
-            {
-                StartCoroutine("delaydeath");
-            }
-        }
-    }
-    public Image HealthBar1, HealthBar2;
-    public Text Var_HP_1, Var_HP_2;
+        CharacterSelectPanel.SetActive(_switch);
 
-    IEnumerator delaydeath()
+    }
+    public void NextCar()
     {
-        yield return new WaitForSeconds(1);
-
-        PlayerObjects[0].GetComponent<Car_Movement>().AIMode_HpBar = 6;
-        PlayerObjects[1].GetComponent<AI_Behaviour>().AI_Health = 6;
-        PlayerObjects[0].GetComponent<Car_Movement>().Die();
-        PlayerObjects[1].GetComponent<AI_Behaviour>().DIE();
+        carMeshIndex++;
+        if (carMeshIndex > carMeshList.Length - 1)
+        {
+            carMeshIndex = 0;
+        }
+        for (int i = 0; i < carMeshList.Length; i++)
+        {
+            carMeshList[i].SetActive(false);
+            StatList[i].SetActive(false);
+        }
+        carMeshList[carMeshIndex].SetActive(true);
+        StatList[carMeshIndex].SetActive(true);
     }
-
-
-
-    GameSparksRTUnity GetRTSession;
-
-    void Update()
+    public void PreviousCar()
     {
-        if(Input.GetKeyDown(KeyCode.G))
+        carMeshIndex--;
+        if (carMeshIndex <= -1)
         {
-            StartCoroutine("delaydeath");
+            carMeshIndex = carMeshList.Length - 1;
         }
-        if(Input.GetKeyDown(KeyCode.K))
+        for (int i = 0; i < carMeshList.Length; i++)
         {
-            ReadyPlayer(1);
+            carMeshList[i].SetActive(false);
+            StatList[i].SetActive(false);
         }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            ReadyPlayer(2);
-        }
+        carMeshList[carMeshIndex].SetActive(true);
+        StatList[carMeshIndex].SetActive(true);
     }
+    public void ReturnStatsToDefault()
+    {
+        MovementSpeed = (DefaultMovement);
+        rotationSpeed =  (DefaultRotation);
+        const_StunDuration = (DefaultStun);
+        trailDistanceTotal = (DefaulttrailDistanceTotal);
+        trailDistanceChild = (DefaulttrailDistanceChild);
 
+        missleCooldown = (DefaultMissleCooldown);
+        shieldCooldown = (DefaultShieldCooldown);
+    }
+    public void StartGame()
+    {
+        /*
+        switch (carMeshIndex)
+        {
+            case 0:
+                MovementSpeed = 3;
+                rotationSpeed = 55;
+                const_StunDuration = 5;
+                break;
+            case 1:
+                MovementSpeed = 6;
+                rotationSpeed = 55;
+                const_StunDuration = 5;
+                break;
+            case 2:
+                MovementSpeed = 3;
+                rotationSpeed = 75;
+                const_StunDuration = 5;
+                break;
+        }*/
+
+        TweakMoveSpeed(0);
+        TweakrotationSpeed(0);
+        Tweakconst_StunDuration(0);
+        Tweakconst_trailDistanceChild(0);
+        TweaktrailDistanceTotal(0);
+
+        Tweak_missleCooldown(0);
+        Tweak_shieldCooldown(0);
+
+        OpenCharacterSelect(false);
+        ReadyPlayer(GameSparkPacketReceiver.Instance.PeerID);
+    }
+    #endregion
+    //==================================================================================================================================
+    #region PLAYER START SYNC
     void ReadyPlayer(int _player)
     {
         StartCoroutine(DelayStartChecker(_player));
@@ -210,9 +311,9 @@ public class TronGameManager : MonoBehaviour {
     {
 
         yield return new WaitForSeconds(3);
+        GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
 
         PlayerObjects[_player - 1].GetComponent<Car_Movement>().SetReady(true);
-        GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, _player);
@@ -222,10 +323,20 @@ public class TronGameManager : MonoBehaviour {
         }
 
 
+        PlayerObjects[_player-1].GetComponent<Car_DataReceiver>().SetCarAvatar(carMeshIndex);
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, _player);
+            data.SetInt(2, carMeshIndex);
+            GetRTSession.SendData(114, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+
+
         if (PlayerObjects[0].GetComponent<Car_Movement>().isREady && PlayerObjects[1].GetComponent<Car_Movement>().isREady)
         {
             for (int i = 0; i < PlayerObjects.Length; i++)
             {
+
                 PlayerObjects[i].GetComponent<Car_Movement>().SetStartGame(true);
                 using (RTData data = RTData.Get())
                 {
@@ -237,4 +348,6 @@ public class TronGameManager : MonoBehaviour {
             }
         }
     }
+    #endregion
+    //==================================================================================================================================
 }

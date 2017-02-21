@@ -197,7 +197,7 @@ public class PowerUpManager : MonoBehaviour {
     }*/
     #endregion
     //=======================================================================================================================
-    void Update()
+    void FixedUpdate()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -209,30 +209,23 @@ public class PowerUpManager : MonoBehaviour {
         }
 
 
-        return;
-        if(Input.GetKeyDown(KeyCode.M))
+
+
+        if (MissleCooldownTimer_Switch)
         {
-            if (GameSparkPacketReceiver.Instance.PeerID == 2)
-            {
-                GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
-                using (RTData data = RTData.Get())
-                {
-                    data.SetInt(1, 1);
-                    data.SetInt(2, 1);
+            if(ServerPeerID == 1)
+                MissleCDImage1.fillAmount = MissleCooldownTimer_Count / TronGameManager.Instance.missleCooldown;
+            else
+                MissleCDImage2.fillAmount = MissleCooldownTimer_Count / TronGameManager.Instance.missleCooldown;
 
-                    GetRTSession.SendData(117, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                }
+
+            if (MissleCooldownTimer_Count < TronGameManager.Instance.missleCooldown)
+            {
+                MissleCooldownTimer_Count += Time.fixedDeltaTime;
             }
-            else if (GameSparkPacketReceiver.Instance.PeerID == 1)
+            else
             {
-                GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
-                using (RTData data = RTData.Get())
-                {
-                    data.SetInt(1,2);
-                    data.SetInt(2, 1);
-
-                    GetRTSession.SendData(117, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                }
+                MissleCooldownTimer_Switch = false;
             }
         }
 
@@ -243,8 +236,17 @@ public class PowerUpManager : MonoBehaviour {
         }
     }
 
+
+    bool MissleCooldownTimer_Switch;
+    float MissleCooldownTimer_Count;
+
+    public Image MissleCDImage1, MissleCDImage2;
     public void LaunchMissleFromBUtton()
     {
+        if (MissleCooldownTimer_Switch == true)
+            return;
+        MissleCooldownTimer_Switch = true;
+        MissleCooldownTimer_Count = 0;
         if (GameSparkPacketReceiver.Instance.PeerID == 2)
         {
             LockOnTarget(2, Player1);

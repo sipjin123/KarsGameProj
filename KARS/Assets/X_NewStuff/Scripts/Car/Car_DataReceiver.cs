@@ -478,5 +478,14 @@ public class Car_DataReceiver : MonoBehaviour {
     }
     #endregion
     //================================================================================================================================
+    public void SetCarAvatar(int _avatarNumber)
+    {
+        for(int i = 0; i < AvatarList.Length; i++)
+        {
+            AvatarList[i].SetActive(false);
+        }
 
+        AvatarList[_avatarNumber].SetActive(true);
+    }
+    public GameObject[] AvatarList;
 }

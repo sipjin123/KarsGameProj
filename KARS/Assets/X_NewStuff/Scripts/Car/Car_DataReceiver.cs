@@ -246,6 +246,14 @@ public class Car_DataReceiver : MonoBehaviour {
             StunObject.SetActive(_switch);
             StunSwitch = _switch;
         }
+        if (_netStatus == NetworkPlayerStatus.SET_READY)
+        {
+            _carMovement.SetReady(_switch);
+        }
+        if (_netStatus == NetworkPlayerStatus.SET_START)
+        {
+            _carMovement.SetStartGame(_switch);
+        }
     }
     #endregion
     //================================================================================================================================

@@ -66,6 +66,18 @@ public class NetworkDataFilter : MonoBehaviour
                     carReceiver.ReceiveDisableSTate( _networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
                 }
                 break;
+            case NetworkPlayerStatus.SET_READY:
+                {
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nReady: " + _networkPlayerEvent.playerStatusSwitch;
+                    carReceiver.ReceiveDisableSTate(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
+                }
+                break;
+            case NetworkPlayerStatus.SET_START:
+                {
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nStart: " + _networkPlayerEvent.playerStatusSwitch;
+                    carReceiver.ReceiveDisableSTate(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
+                }
+                break;
         }
     }
     #endregion
@@ -96,6 +108,7 @@ public enum NetworkPlayerStatus
     ACTIVATE_TRAIL,
     ACTIVATE_NITRO,
     ACTIVATE_STUN,
-   
+    SET_READY,
+    SET_START
 }
 #endregion

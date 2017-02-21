@@ -56,4 +56,4 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/KARS/Scenes/Preloader/Loading004.unity
   - enabled: 1
-    path: Assets/TronTest.unity
+    path: Assets/X_NewStuff/TronTest.unity

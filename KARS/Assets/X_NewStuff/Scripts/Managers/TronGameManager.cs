@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using GameSparks.RT;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -117,13 +118,12 @@ public class TronGameManager : MonoBehaviour {
     public void StartGame()
     {
         OpenCharacterSelect(false);
-
+        ReadyPlayer(GameSparkPacketReceiver.Instance.PeerID);
     }
 
     public void SetNetworkStart( bool _switch)
     {
         NetworkStart = _switch;
-        OpenCharacterSelect(true);
         if (_switch)//MULTIPLAYER
         {
             for (int i = 0; i < PlayerObjects.Length; i++)
@@ -147,6 +147,7 @@ public class TronGameManager : MonoBehaviour {
             singlePlayerUI.SetActive(true);
 
         }
+        OpenCharacterSelect(true);
     }
     public void ReduceHPOfPlayer(int player, float life)
     {
@@ -180,11 +181,60 @@ public class TronGameManager : MonoBehaviour {
         PlayerObjects[0].GetComponent<Car_Movement>().Die();
         PlayerObjects[1].GetComponent<AI_Behaviour>().DIE();
     }
+
+
+
+    GameSparksRTUnity GetRTSession;
+
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.G))
         {
             StartCoroutine("delaydeath");
+        }
+        if(Input.GetKeyDown(KeyCode.K))
+        {
+            ReadyPlayer(1);
+        }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            ReadyPlayer(2);
+        }
+    }
+
+    void ReadyPlayer(int _player)
+    {
+        StartCoroutine(DelayStartChecker(_player));
+    }
+    IEnumerator DelayStartChecker(int _player)
+    {
+
+        yield return new WaitForSeconds(3);
+
+        PlayerObjects[_player - 1].GetComponent<Car_Movement>().SetReady(true);
+        GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, _player);
+            data.SetInt(2, 1);
+            data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
+            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+
+
+        if (PlayerObjects[0].GetComponent<Car_Movement>().isREady && PlayerObjects[1].GetComponent<Car_Movement>().isREady)
+        {
+            for (int i = 0; i < PlayerObjects.Length; i++)
+            {
+                PlayerObjects[i].GetComponent<Car_Movement>().SetStartGame(true);
+                using (RTData data = RTData.Get())
+                {
+                    data.SetInt(1, i+1);
+                    data.SetInt(2, 1);
+                    data.SetInt(3, (int)NetworkPlayerStatus.SET_START);
+                    GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                }
+            }
         }
     }
 }

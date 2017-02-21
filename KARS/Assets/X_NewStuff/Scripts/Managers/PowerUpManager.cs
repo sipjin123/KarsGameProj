@@ -73,7 +73,7 @@ public class PowerUpManager : MonoBehaviour {
             TnTList.Add(temp);
             temp.GetComponent<TnTScript>().InitializeObj(i);
         }
-        Debug.LogError("PEER SETUP");
+        UIManager.instance.GameUpdateText.text += "\nPeer is Setup";
         try
         {
             ServerPeerID = (GameSparkPacketReceiver.Instance.PeerID);

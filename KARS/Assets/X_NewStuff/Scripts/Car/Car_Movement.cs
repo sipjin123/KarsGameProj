@@ -24,9 +24,16 @@ public class Car_Movement : MonoBehaviour {
     Car_DataReceiver MyCarDataReceiver;
     bool isDead;
     public bool StartGame;
+    public bool isREady;
 
-
-    
+    public void SetStartGame(bool _switch)
+    {
+        StartGame = _switch;
+    }
+    public void SetReady(bool _Switch)
+    {
+        isREady = _Switch;
+    }
 
 
 

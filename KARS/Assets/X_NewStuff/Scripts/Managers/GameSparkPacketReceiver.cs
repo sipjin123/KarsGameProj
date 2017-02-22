@@ -503,7 +503,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
     }
     #endregion
     //====================================================================================
-    void OnGUI()
+    void OnGsdsdUI()
     {
         GUI.Box(new Rect(0, Screen.height - 60, 100, 30), PeerID + ": " + _curMethod);
     }

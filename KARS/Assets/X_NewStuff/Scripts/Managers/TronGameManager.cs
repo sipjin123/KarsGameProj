@@ -80,6 +80,70 @@ public class TronGameManager : MonoBehaviour {
         PlayerPrefs.SetFloat(PrefKey_ShieldCooldown, shieldCooldown);
     }
 
+
+
+    public Text Text_nitroCooldown;
+    public float nitroCooldown;
+    public void Tweak_nitroCooldown(float _var)
+    {
+        nitroCooldown += _var;
+        Text_nitroCooldown.text = nitroCooldown.ToString();
+        PlayerPrefs.SetFloat(PrefKey_NitroCooldown, nitroCooldown);
+    }
+
+
+    public Text Text_nitroSpeed;
+    public float nitroSpeed;
+    public void Tweak_nitroSpeed(float _var)
+    {
+        nitroSpeed += _var;
+        Text_nitroSpeed.text = nitroSpeed.ToString();
+        PlayerPrefs.SetFloat(PrefKey_NitroSpeed, nitroSpeed);
+    }
+
+
+
+    public Text Text_nitroDuration;
+    public float nitroDuration;
+    public void Tweak_nitroDuration(float _var)
+    {
+        nitroDuration += _var;
+        Text_nitroDuration.text = nitroDuration.ToString();
+        PlayerPrefs.SetFloat(PrefKey_NitroDuration, nitroDuration);
+    }
+
+
+
+    public Text Text_accelerationSpeedMax;
+    public float accelerationSpeedMax;
+    public void Tweak_accelerationSpeedMax(float _var)
+    {
+        accelerationSpeedMax += _var;
+        Text_accelerationSpeedMax.text = accelerationSpeedMax.ToString();
+        PlayerPrefs.SetFloat(PrefKey_AccelerationSpeedMax, accelerationSpeedMax);
+    }
+
+
+
+
+
+    public Text Text_accelerationTimerMax;
+    public float accelerationTimerMax;
+    public void Tweak_accelerationTimerMax(float _var)
+    {
+        accelerationTimerMax += _var;
+        Text_accelerationTimerMax.text = accelerationTimerMax.ToString();
+        PlayerPrefs.SetFloat(PrefKey_AccelerationTimerMax, accelerationTimerMax);
+    }
+
+
+
+
+
+
+
+
+
     public GameObject _testPanel;
     public void FlipTestPanel()
     {
@@ -89,33 +153,84 @@ public class TronGameManager : MonoBehaviour {
 
 
 
-    private static float DefaultMovement = 3;
+    private static float DefaultMovement = 1;
     private static float DefaultRotation= 55;
-    private static float DefaultStun = 5;
+
     private static float DefaulttrailDistanceTotal = 20;
     private static float DefaulttrailDistanceChild = 5;
+
+    private static float DefaultStun = 5;
+
     private static float DefaultMissleCooldown = 5;
     private static float DefaultShieldCooldown = 5;
 
+    private static float DefaultNitroCooldown = 5;
+    private static float DefaultNitroSpeed= 20;
+    private static float DefaultNitroDuration= 5;
+
+    private static float DefaultAccelerationSpeedMax= 10;
+    private static float DefaultAccelerationTimerMax = 5;
+
+
+
+
+
     private static string PrefKey_Movement = "MovementKey";
     private static string PrefKey_Rotation = "RotationKey";
-    private static string PrefKey_Stun = "StunKey";
+
     private static string PrefKey_TrailTotal = "TrailTotalKey";
     private static string PrefKey_TrailCap = "TrailCapKey";
+
+    private static string PrefKey_Stun = "StunKey";
+
     private static string PrefKey_MissleCooldown = "MissleCooldownKey";
     private static string PrefKey_ShieldCooldown = "ShieldCooldownKey";
 
+    private static string PrefKey_NitroCooldown = "NitroCooldownKey";
+    private static string PrefKey_NitroSpeed= "NitroSpeedKey";
+    private static string PrefKey_NitroDuration = "NitroDurationKey";
+
+    private static string PrefKey_AccelerationSpeedMax = "AccelerationSpeedMaxKey";
+    private static string PrefKey_AccelerationTimerMax = "AccelerationTimerMaxKey";
     void Awake()
     {
         _instance = this;
         MovementSpeed = PlayerPrefs.GetFloat(PrefKey_Movement, DefaultMovement);
         rotationSpeed = PlayerPrefs.GetFloat(PrefKey_Rotation, DefaultRotation);
-        const_StunDuration = PlayerPrefs.GetFloat(PrefKey_Stun, DefaultStun);
+
         trailDistanceTotal = PlayerPrefs.GetFloat(PrefKey_TrailTotal, DefaulttrailDistanceTotal);
         trailDistanceChild = PlayerPrefs.GetFloat(PrefKey_TrailCap, DefaulttrailDistanceChild);
 
+        const_StunDuration = PlayerPrefs.GetFloat(PrefKey_Stun, DefaultStun);
+
         missleCooldown = PlayerPrefs.GetFloat(PrefKey_MissleCooldown, DefaultMissleCooldown);
         shieldCooldown = PlayerPrefs.GetFloat(PrefKey_ShieldCooldown, DefaultShieldCooldown);
+
+        nitroCooldown = PlayerPrefs.GetFloat(PrefKey_NitroCooldown, DefaultNitroCooldown);
+        nitroSpeed = PlayerPrefs.GetFloat(PrefKey_NitroSpeed, DefaultNitroSpeed);
+        nitroDuration = PlayerPrefs.GetFloat(PrefKey_NitroDuration, DefaultNitroDuration);
+
+        accelerationSpeedMax = PlayerPrefs.GetFloat(PrefKey_AccelerationSpeedMax, DefaultAccelerationSpeedMax);
+        accelerationTimerMax = PlayerPrefs.GetFloat(PrefKey_AccelerationTimerMax, DefaultAccelerationTimerMax);
+
+        TweakMoveSpeed(0);
+        TweakrotationSpeed(0);
+
+        Tweakconst_trailDistanceChild(0);
+        TweaktrailDistanceTotal(0);
+
+        Tweakconst_StunDuration(0);
+
+        Tweak_missleCooldown(0);
+        Tweak_shieldCooldown(0);
+
+        Tweak_nitroCooldown(0);
+        Tweak_nitroSpeed(0);
+        Tweak_nitroDuration(0);
+
+        Tweak_accelerationSpeedMax(0);
+        Tweak_accelerationTimerMax(0);
+
     }
 
     public bool NetworkStart;
@@ -259,12 +374,38 @@ public class TronGameManager : MonoBehaviour {
     {
         MovementSpeed = (DefaultMovement);
         rotationSpeed =  (DefaultRotation);
-        const_StunDuration = (DefaultStun);
+
         trailDistanceTotal = (DefaulttrailDistanceTotal);
         trailDistanceChild = (DefaulttrailDistanceChild);
 
+        const_StunDuration = (DefaultStun);
+
         missleCooldown = (DefaultMissleCooldown);
         shieldCooldown = (DefaultShieldCooldown);
+
+        nitroCooldown = (DefaultNitroCooldown);
+        nitroSpeed = (DefaultNitroSpeed);
+        nitroDuration = (DefaultNitroDuration);
+
+
+
+        TweakMoveSpeed(0);
+        TweakrotationSpeed(0);
+
+        Tweakconst_trailDistanceChild(0);
+        TweaktrailDistanceTotal(0);
+
+        Tweakconst_StunDuration(0);
+
+        Tweak_missleCooldown(0);
+        Tweak_shieldCooldown(0);
+
+        Tweak_nitroCooldown(0);
+        Tweak_nitroSpeed(0);
+        Tweak_nitroDuration(0);
+
+        Tweak_accelerationSpeedMax(0);
+        Tweak_accelerationTimerMax(0);
     }
     public void StartGame()
     {
@@ -290,12 +431,21 @@ public class TronGameManager : MonoBehaviour {
 
         TweakMoveSpeed(0);
         TweakrotationSpeed(0);
-        Tweakconst_StunDuration(0);
+
         Tweakconst_trailDistanceChild(0);
         TweaktrailDistanceTotal(0);
 
+        Tweakconst_StunDuration(0);
+
         Tweak_missleCooldown(0);
         Tweak_shieldCooldown(0);
+
+        Tweak_nitroCooldown(0);
+        Tweak_nitroSpeed(0);
+        Tweak_nitroDuration(0);
+
+        Tweak_accelerationSpeedMax(0);
+        Tweak_accelerationTimerMax(0);
 
         OpenCharacterSelect(false);
         ReadyPlayer(GameSparkPacketReceiver.Instance.PeerID);

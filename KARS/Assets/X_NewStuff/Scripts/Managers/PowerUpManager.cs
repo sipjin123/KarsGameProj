@@ -210,24 +210,63 @@ public class PowerUpManager : MonoBehaviour {
 
 
 
-
-        if (MissleCooldownTimer_Switch)
-        {
-            if(ServerPeerID == 1)
-                MissleCDImage1.fillAmount = MissleCooldownTimer_Count / TronGameManager.Instance.missleCooldown;
-            else
-                MissleCDImage2.fillAmount = MissleCooldownTimer_Count / TronGameManager.Instance.missleCooldown;
-
-
-            if (MissleCooldownTimer_Count < TronGameManager.Instance.missleCooldown)
+            if (MissleCooldownTimer_Switch == true)
             {
-                MissleCooldownTimer_Count += Time.fixedDeltaTime;
+                if (ServerPeerID == 1)
+                    UIManager.instance.MissleBar_1.fillAmount = MissleCooldownTimer_Count / TronGameManager.Instance.missleCooldown;
+                else
+                    UIManager.instance.MissleBar_2.fillAmount = MissleCooldownTimer_Count / TronGameManager.Instance.missleCooldown;
+
+                if (MissleCooldownTimer_Count < TronGameManager.Instance.missleCooldown)
+                {
+                    MissleCooldownTimer_Count += Time.fixedDeltaTime;
+                }
+                else
+                {
+                    MissleCooldownTimer_Switch = false;
+                }
             }
-            else
+
+            if(NitroActiveTimer_Switch)
             {
-                MissleCooldownTimer_Switch = false;
+
+                if (ServerPeerID == 1)
+                    UIManager.instance.NitrosBar_1.fillAmount = 1- (NitroActiveTimer_Timer / TronGameManager.Instance.nitroDuration);
+                else
+                    UIManager.instance.NitrosBar_2.fillAmount = 1-(NitroActiveTimer_Timer / TronGameManager.Instance.nitroDuration);
+
+                if (NitroActiveTimer_Timer < TronGameManager.Instance.nitroDuration)
+                {
+                    NitroActiveTimer_Timer += Time.deltaTime;
+                }
+                else 
+                {
+                    NitroActiveTimer_Switch = false;
+
+                    NitroCooldownTimer_Switch = true;
+                    NitroCooldownTimer_Timer = 0;
+                    if (ServerPeerID == 1)
+                        Player1.GetComponent<Car_Movement>().NitrosActive = false;
+                    else
+                        Player2.GetComponent<Car_Movement>().NitrosActive = false;
+                }
             }
-        }
+            if(NitroCooldownTimer_Switch)
+            {
+                if (ServerPeerID == 1)
+                    UIManager.instance.NitrosBar_1.fillAmount = NitroCooldownTimer_Timer / TronGameManager.Instance.nitroCooldown;
+                else
+                    UIManager.instance.NitrosBar_2.fillAmount = NitroCooldownTimer_Timer / TronGameManager.Instance.nitroCooldown;
+
+                if (NitroCooldownTimer_Timer < TronGameManager.Instance.nitroCooldown)
+                {
+                    NitroCooldownTimer_Timer += Time.fixedDeltaTime;
+                }
+                else
+                {
+                    NitroCooldownTimer_Switch = false;
+                }
+            }
 
         if(Input.GetKeyDown(KeyCode.Y))
         {
@@ -239,8 +278,7 @@ public class PowerUpManager : MonoBehaviour {
 
     bool MissleCooldownTimer_Switch;
     float MissleCooldownTimer_Count;
-
-    public Image MissleCDImage1, MissleCDImage2;
+    
     public void LaunchMissleFromBUtton()
     {
         if (MissleCooldownTimer_Switch == true)
@@ -272,6 +310,37 @@ public class PowerUpManager : MonoBehaviour {
             LockOnTarget(1, Player2);
         }
     }
+
+
+    bool NitroActiveTimer_Switch;
+    float NitroActiveTimer_Timer;
+
+    bool NitroCooldownTimer_Switch;
+    float NitroCooldownTimer_Timer;
+
+    public void ActivateNitrosFromButton()
+    {
+        if (NitroActiveTimer_Switch == true)
+            return;
+
+        NitroActiveTimer_Switch = true;
+        NitroActiveTimer_Timer = 0;
+
+        if (ServerPeerID == 1)
+            Player1.GetComponent<Car_Movement>().NitrosActive = true;
+        else
+            Player2.GetComponent<Car_Movement>().NitrosActive = true;
+
+    }
+
+
+
+
+
+
+
+
+
 
     public void DropTNTFromButton()
     {

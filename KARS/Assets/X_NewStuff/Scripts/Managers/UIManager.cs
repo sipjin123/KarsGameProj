@@ -20,5 +20,11 @@ public class UIManager : MonoBehaviour {
     public Text NetworkTimeText, GameTimeText;
 
     public GameObject Player1Panel, Player2Panel;
+    public Image SpeedBar_1, SpeedBar_2;
+    public Text SpeedTexT_1, SpeedText_2, SpeedTimeText_1,SpeedTimeText_2, SpeedMaxText_1, SpeedMaxText_2;
+
+    public Image MissleBar_1, MissleBar_2;
+    public Image ShieldBar_1, ShieldBar_2;
+    public Image NitrosBar_1, NitrosBar_2;
 
 }

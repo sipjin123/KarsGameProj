@@ -35,7 +35,8 @@ public class Car_Movement : MonoBehaviour {
         isREady = _Switch;
     }
 
-
+    bool signalSent;
+    float DieTimer;
 
     //SINGLE PLAYER
     public float AIMode_HpBar;
@@ -43,7 +44,13 @@ public class Car_Movement : MonoBehaviour {
     public GameObject localShield;
 
 
+    float accelerationSpeed_Counter;
 
+    float accelerationTimer ;
+    float accelerationSpeed_Max ;
+
+    float NitrosSpeed ;
+    public bool NitrosActive;
     #endregion
     //==========================================================================================================================
     #region INIT
@@ -61,6 +68,7 @@ public class Car_Movement : MonoBehaviour {
     }
     #endregion
     //==========================================================================================================================
+    #region SINGLE PLAYER SHIELD
     public void ActiveShieldFromButton()
     {
         ActiveLocalShield(!localShieldIsActive);
@@ -70,19 +78,55 @@ public class Car_Movement : MonoBehaviour {
         localShieldIsActive = _switch;
         localShield.SetActive(_switch);
     }
+    #endregion
     //==========================================================================================================================
     void FixedUpdate()
     {
         movementSpeed = _tronGameManager.MovementSpeed;
         rotationSpeed = _tronGameManager.rotationSpeed;
 
+        NitrosSpeed = _tronGameManager.nitroSpeed;
+
+        accelerationTimer = _tronGameManager.accelerationTimerMax;
+        accelerationSpeed_Max = _tronGameManager.accelerationSpeedMax;
 
 
         if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
             if (MyCarDataReceiver.GetStunSwitch() == false)
             {
-                _characterController.Move(CarRotationObject.transform.forward * movementSpeed * Time.fixedDeltaTime);
+                if(accelerationSpeed_Counter < accelerationSpeed_Max)
+                {
+                    if (MyCarDataReceiver.Network_ID == 1)
+                    {
+                        UIManager.instance.SpeedBar_1.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
+                        UIManager.instance.SpeedTimeText_1.text = accelerationSpeed_Counter.ToString();
+                        UIManager.instance.SpeedMaxText_1.text = accelerationSpeed_Max.ToString();
+                        UIManager.instance.SpeedTexT_1.text = accelerationSpeed_Counter.ToString();
+                    }
+                    else
+                    {
+                        UIManager.instance.SpeedBar_2.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
+                        UIManager.instance.SpeedTimeText_2.text = accelerationSpeed_Counter.ToString();
+                        UIManager.instance.SpeedMaxText_2.text = accelerationSpeed_Max.ToString();
+                        UIManager.instance.SpeedText_2.text = accelerationSpeed_Counter.ToString();
+                    }
+                    accelerationSpeed_Counter += Time.fixedDeltaTime * ((accelerationSpeed_Max) /accelerationTimer);
+                }
+                if(NitrosActive == false)
+                {
+                    NitrosSpeed = 0;
+                }
+                _characterController.Move(CarRotationObject.transform.forward * ((movementSpeed + accelerationSpeed_Counter + NitrosSpeed) * Time.fixedDeltaTime));
+            }
+            else
+            {
+                accelerationSpeed_Counter = 1;
+                if (NitrosActive == false)
+                {
+                    NitrosSpeed = 0;
+                }
+                _characterController.Move(CarRotationObject.transform.forward * ((movementSpeed + accelerationSpeed_Counter + NitrosSpeed) * Time.fixedDeltaTime));
             }
             InputSystem();
 
@@ -103,6 +147,7 @@ public class Car_Movement : MonoBehaviour {
                             transform.position = new Vector3(5, 10, 0);
                         StopCoroutine("DelayRespawn");
                         StartCoroutine("DelayRespawn");
+                        accelerationSpeed_Counter = 0;
                     }
                 }
             }
@@ -110,6 +155,7 @@ public class Car_Movement : MonoBehaviour {
 
     }
     //==========================================================================================================================
+    #region INPUT
     void InputSystem()
     {
         if (Input.touchCount > 0)
@@ -147,6 +193,18 @@ public class Car_Movement : MonoBehaviour {
             }
         }
     }
+
+    void MoveRight()
+    {
+        currentRotation_Y += rotationSpeed * Time.fixedDeltaTime;
+        CarRotationObject.transform.eulerAngles = new Vector3(0, currentRotation_Y, 0);
+    }
+    void MoveLeft()
+    {
+        currentRotation_Y -= rotationSpeed * Time.fixedDeltaTime;
+        CarRotationObject.transform.eulerAngles = new Vector3(0, currentRotation_Y, 0);
+    }
+    #endregion
     //==========================================================================================================================
     void OnTriggerEnter(Collider hit)
     {
@@ -177,8 +235,7 @@ public class Car_Movement : MonoBehaviour {
         }
     }
     //==========================================================================================================================
-    bool signalSent;
-    float DieTimer;
+    #region PLAYER DEATH
     public void Die()
     {
         //if(MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID)
@@ -245,15 +302,5 @@ public class Car_Movement : MonoBehaviour {
             _trailCollision.SetEmiision(true);
         }
     }
-
-    void MoveRight()
-    {
-        currentRotation_Y += rotationSpeed * Time.fixedDeltaTime;
-        CarRotationObject.transform.eulerAngles = new Vector3(0,currentRotation_Y,0);
-    }
-    void MoveLeft()
-    {
-        currentRotation_Y -= rotationSpeed * Time.fixedDeltaTime;
-        CarRotationObject.transform.eulerAngles = new Vector3(0, currentRotation_Y, 0);
-    }
+    #endregion
 }

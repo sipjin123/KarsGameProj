@@ -234,7 +234,7 @@ public class TrailCollision : MonoBehaviour
             {
                 if (Vector3.Distance(vertices[0], vertices[2]) > 0)
                 {
-                    lerpTimer += .01f;
+                    lerpTimer += .25f;
                     vertices[0] = Vector3.Lerp(vertices[0], vertices[2], lerpTimer);
                     vertices[1] = Vector3.Lerp(vertices[1], vertices[3], lerpTimer);
                     Node[0] = vertices[0];

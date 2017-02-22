@@ -13,6 +13,18 @@ public class MissleScript : MonoBehaviour {
     }
 
     public State[] m_BufferedState = new State[20];
+    public enum MISSLE_TYPE
+    {
+        STUN,
+        BLIND,
+        CONFUSE
+    }
+    public MISSLE_TYPE _missleType;
+
+    public void SetMissleType(MISSLE_TYPE _misType)
+    {
+        _missleType = _misType;
+    }
     //================================================================================================================================
     #region VARIABLES
     [SerializeField]
@@ -140,10 +152,11 @@ public class MissleScript : MonoBehaviour {
         gameObject.name += _var;
         gameObject.SetActive(false);
     }
-    public void LockOnToThisObject(GameObject _sender,GameObject _obj)
+    public void LockOnToThisObject(GameObject _sender,GameObject _obj, MISSLE_TYPE _misType)
     {
+        _missleType = _misType;
         //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nMissle "+gameObject.name+" Locking on to: "+_obj.name;
-       // Debug.LogError("locking on to object "+_obj.gameObject.name);
+        // Debug.LogError("locking on to object "+_obj.gameObject.name);
         transform.position = _sender.transform.position;
         transform.rotation = _sender.GetComponent<Car_Movement>().CarRotationObject.transform.rotation;
         objectToHit = _obj;
@@ -175,17 +188,46 @@ public class MissleScript : MonoBehaviour {
                     ResetMissle();
                     return;
                 }
-                carReceiver.ActiveStunFromButton();
-                GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
-                using (RTData data = RTData.Get())
-                {
-                    data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
-                    data.SetInt(2, 1);
-                    data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_STUN);
 
-                    GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                    //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nServer (" + GameSparkPacketReceiver.Instance.PeerID + ") Owner (" + _playerController_ID + "Missle # " + Missle_ID + " hit " + hit.gameObject.name;
+                if (_missleType == MISSLE_TYPE.STUN)
+                {
+                    carReceiver.ActiveStunFromButton();
+                    GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+                    using (RTData data = RTData.Get())
+                    {
+                        data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
+                        data.SetInt(2, 1);
+                        data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_STUN);
+
+                        GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                    }
                 }
+                else if(_missleType == MISSLE_TYPE.BLIND)
+                {
+                    GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+                    using (RTData data = RTData.Get())
+                    {
+                        data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
+                        data.SetInt(2, 1);
+                        data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_BLIND);
+
+                        GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                    }
+                }
+                else if(_missleType == MISSLE_TYPE.CONFUSE)
+                {
+                    GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+                    using (RTData data = RTData.Get())
+                    {
+                        data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
+                        data.SetInt(2, 1);
+                        data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_CONFUSE);
+
+                        GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                    }
+                }
+
+
                 ResetMissle();
             }
         }

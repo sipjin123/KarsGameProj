@@ -246,6 +246,25 @@ public class Car_DataReceiver : MonoBehaviour {
             StunObject.SetActive(_switch);
             StunSwitch = _switch;
         }
+        if (_netStatus == NetworkPlayerStatus.ACTIVATE_BLIND)
+        {
+            BlindObject.SetActive(_switch);
+            BlindSwitch = _switch;
+
+            if (BlindSwitch == true)
+            {
+                StartCoroutine("StartBlindTimer");
+            }
+        }
+        if (_netStatus == NetworkPlayerStatus.ACTIVATE_CONFUSE)
+        {
+            if (_carMovement.FlipSwitch == false)
+            {
+                ConfuseObject.SetActive(true);
+                _carMovement.FlipSwitch = true;
+                StartCoroutine("StartFlip");
+            }
+        }
         if (_netStatus == NetworkPlayerStatus.SET_READY)
         {
             _carMovement.SetReady(_switch);
@@ -488,4 +507,23 @@ public class Car_DataReceiver : MonoBehaviour {
         AvatarList[_avatarNumber].SetActive(true);
     }
     public GameObject[] AvatarList;
+
+    private bool BlindSwitch;
+    public bool GetBlindSwitch() { return BlindSwitch; }
+    public GameObject BlindObject;
+
+    private IEnumerator StartBlindTimer()
+    {
+        yield return new WaitForSeconds(TronGameManager.Instance.BlindDuration);
+        BlindSwitch = false;
+        BlindObject.SetActive(false);
+    }
+
+    public GameObject ConfuseObject;
+    private IEnumerator StartFlip()
+    {
+        yield return new WaitForSeconds(TronGameManager.Instance.ConfuseDuration);
+        _carMovement.FlipSwitch = false;
+        ConfuseObject.SetActive(false);
+    }
 }

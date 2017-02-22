@@ -66,6 +66,18 @@ public class NetworkDataFilter : MonoBehaviour
                     carReceiver.ReceiveDisableSTate( _networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
                 }
                 break;
+            case NetworkPlayerStatus.ACTIVATE_BLIND:
+                {
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nBlind: " + _networkPlayerEvent.playerStatusSwitch;
+                    carReceiver.ReceiveDisableSTate(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
+                }
+                break;
+            case NetworkPlayerStatus.ACTIVATE_CONFUSE:
+                {
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nConfuse: " + _networkPlayerEvent.playerStatusSwitch;
+                    carReceiver.ReceiveDisableSTate(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
+                }
+                break;
             case NetworkPlayerStatus.SET_READY:
                 {
                     GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nReady: " + _networkPlayerEvent.playerStatusSwitch;
@@ -108,6 +120,8 @@ public enum NetworkPlayerStatus
     ACTIVATE_TRAIL,
     ACTIVATE_NITRO,
     ACTIVATE_STUN,
+    ACTIVATE_BLIND,
+    ACTIVATE_CONFUSE,
     SET_READY,
     SET_START
 }

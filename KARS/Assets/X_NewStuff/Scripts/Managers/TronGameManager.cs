@@ -11,7 +11,7 @@ public class TronGameManager : MonoBehaviour {
 
 
     #region TWEAKABLE VARIABLES
-
+    #region MOVEMENT
     public Text Text_MovementSpeed;
     public float MovementSpeed ;
     public void TweakMoveSpeed(float _var)
@@ -30,7 +30,26 @@ public class TronGameManager : MonoBehaviour {
         PlayerPrefs.SetFloat(PrefKey_Rotation, rotationSpeed);
     }
 
+    public Text Text_accelerationSpeedMax;
+    public float accelerationSpeedMax;
+    public void Tweak_accelerationSpeedMax(float _var)
+    {
+        accelerationSpeedMax += _var;
+        Text_accelerationSpeedMax.text = accelerationSpeedMax.ToString();
+        PlayerPrefs.SetFloat(PrefKey_AccelerationSpeedMax, accelerationSpeedMax);
+    }
 
+    public Text Text_accelerationTimerMax;
+    public float accelerationTimerMax;
+    public void Tweak_accelerationTimerMax(float _var)
+    {
+        accelerationTimerMax += _var;
+        Text_accelerationTimerMax.text = accelerationTimerMax.ToString();
+        PlayerPrefs.SetFloat(PrefKey_AccelerationTimerMax, accelerationTimerMax);
+    }
+    #endregion
+
+    #region TRAIL
     public Text Text_trailDistanceTotal;
     public float trailDistanceTotal;
     public void TweaktrailDistanceTotal(float _var)
@@ -48,6 +67,7 @@ public class TronGameManager : MonoBehaviour {
         Text_trailDistanceChild.text = trailDistanceChild.ToString();
         PlayerPrefs.SetFloat(PrefKey_TrailCap, trailDistanceChild);
     }
+    #endregion
 
 
     public Text Text_const_StunDuration;
@@ -59,8 +79,25 @@ public class TronGameManager : MonoBehaviour {
         PlayerPrefs.SetFloat(PrefKey_Stun, const_StunDuration);
     }
 
+    public Text Text_BlindDuration;
+    public float BlindDuration;
+    public void Tweakconst_BlindDuration(float _var)
+    {
+        BlindDuration += _var;
+        Text_BlindDuration.text = BlindDuration.ToString();
+        PlayerPrefs.SetFloat(PrefKey_Blind, BlindDuration);
+    }
 
+    public Text Text_ConfuseDuration;
+    public float ConfuseDuration;
+    public void Tweakconst_ConfuseDuration(float _var)
+    {
+        ConfuseDuration += _var;
+        Text_ConfuseDuration.text = ConfuseDuration.ToString();
+        PlayerPrefs.SetFloat(PrefKey_Confuse, ConfuseDuration);
+    }
 
+    #region POWERUPS
     public Text Text_missleCooldown;
     public float missleCooldown;
     public void Tweak_missleCooldown(float _var)
@@ -112,29 +149,7 @@ public class TronGameManager : MonoBehaviour {
         PlayerPrefs.SetFloat(PrefKey_NitroDuration, nitroDuration);
     }
 
-
-
-    public Text Text_accelerationSpeedMax;
-    public float accelerationSpeedMax;
-    public void Tweak_accelerationSpeedMax(float _var)
-    {
-        accelerationSpeedMax += _var;
-        Text_accelerationSpeedMax.text = accelerationSpeedMax.ToString();
-        PlayerPrefs.SetFloat(PrefKey_AccelerationSpeedMax, accelerationSpeedMax);
-    }
-
-
-
-
-
-    public Text Text_accelerationTimerMax;
-    public float accelerationTimerMax;
-    public void Tweak_accelerationTimerMax(float _var)
-    {
-        accelerationTimerMax += _var;
-        Text_accelerationTimerMax.text = accelerationTimerMax.ToString();
-        PlayerPrefs.SetFloat(PrefKey_AccelerationTimerMax, accelerationTimerMax);
-    }
+    #endregion
 
 
 
@@ -160,6 +175,8 @@ public class TronGameManager : MonoBehaviour {
     private static float DefaulttrailDistanceChild = 5;
 
     private static float DefaultStun = 5;
+    private static float DefaultBlind = 5;
+    private static float DefaultConfuse = 5;
 
     private static float DefaultMissleCooldown = 5;
     private static float DefaultShieldCooldown = 5;
@@ -182,6 +199,8 @@ public class TronGameManager : MonoBehaviour {
     private static string PrefKey_TrailCap = "TrailCapKey";
 
     private static string PrefKey_Stun = "StunKey";
+    private static string PrefKey_Blind = "BlindKey";
+    private static string PrefKey_Confuse = "ConfuseKey";
 
     private static string PrefKey_MissleCooldown = "MissleCooldownKey";
     private static string PrefKey_ShieldCooldown = "ShieldCooldownKey";
@@ -202,6 +221,8 @@ public class TronGameManager : MonoBehaviour {
         trailDistanceChild = PlayerPrefs.GetFloat(PrefKey_TrailCap, DefaulttrailDistanceChild);
 
         const_StunDuration = PlayerPrefs.GetFloat(PrefKey_Stun, DefaultStun);
+        BlindDuration = PlayerPrefs.GetFloat(PrefKey_Blind, DefaultBlind);
+        ConfuseDuration = PlayerPrefs.GetFloat(PrefKey_Confuse, DefaultConfuse);
 
         missleCooldown = PlayerPrefs.GetFloat(PrefKey_MissleCooldown, DefaultMissleCooldown);
         shieldCooldown = PlayerPrefs.GetFloat(PrefKey_ShieldCooldown, DefaultShieldCooldown);
@@ -220,6 +241,8 @@ public class TronGameManager : MonoBehaviour {
         TweaktrailDistanceTotal(0);
 
         Tweakconst_StunDuration(0);
+        Tweakconst_BlindDuration(0);
+        Tweakconst_ConfuseDuration(0);
 
         Tweak_missleCooldown(0);
         Tweak_shieldCooldown(0);
@@ -379,6 +402,8 @@ public class TronGameManager : MonoBehaviour {
         trailDistanceChild = (DefaulttrailDistanceChild);
 
         const_StunDuration = (DefaultStun);
+        BlindDuration = (DefaultBlind);
+        ConfuseDuration = (DefaultConfuse);
 
         missleCooldown = (DefaultMissleCooldown);
         shieldCooldown = (DefaultShieldCooldown);
@@ -396,6 +421,8 @@ public class TronGameManager : MonoBehaviour {
         TweaktrailDistanceTotal(0);
 
         Tweakconst_StunDuration(0);
+        Tweakconst_BlindDuration(0);
+        Tweakconst_ConfuseDuration(0);
 
         Tweak_missleCooldown(0);
         Tweak_shieldCooldown(0);

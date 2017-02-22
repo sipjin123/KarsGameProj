@@ -160,11 +160,11 @@ public class PowerUpManager : MonoBehaviour {
     //=======================================================================================================================
     //MISSLE SEND AND RECEIVE FROM SERVER
     #region MISSLE SEND AND RECEIVE FROM SERVER
-    public void LockOnTarget(int senderID,GameObject _obj)
+    public void LockOnTarget(int senderID,GameObject _obj, MissleScript.MISSLE_TYPE _misType)
     {
         if(senderID == 1 || senderID == 0)
         {
-            MissleList_Player1[0].GetComponent<MissleScript>().LockOnToThisObject(Player1,_obj);
+            MissleList_Player1[0].GetComponent<MissleScript>().LockOnToThisObject(Player1,_obj, _misType);
             GameObject temp = MissleList_Player1[0];
             for (int i = 0; i < MissleList_Player1.Count - 1; i++)
             {
@@ -174,7 +174,7 @@ public class PowerUpManager : MonoBehaviour {
         }
         else if (senderID == 2)
         {
-            MissleList_Player2[0].GetComponent<MissleScript>().LockOnToThisObject(Player2,_obj);
+            MissleList_Player2[0].GetComponent<MissleScript>().LockOnToThisObject(Player2,_obj, _misType);
 
             GameObject temp = MissleList_Player2[0];
             for (int i = 0; i < MissleList_Player2.Count - 1; i++)
@@ -201,7 +201,7 @@ public class PowerUpManager : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            LaunchMissleFromBUtton();
+            LaunchMissleFromBUtton(1);
         }
         if(Input.GetKeyDown(KeyCode.RightAlt))
         {
@@ -279,7 +279,7 @@ public class PowerUpManager : MonoBehaviour {
     bool MissleCooldownTimer_Switch;
     float MissleCooldownTimer_Count;
     
-    public void LaunchMissleFromBUtton()
+    public void LaunchMissleFromBUtton(int _misNum)
     {
         if (MissleCooldownTimer_Switch == true)
             return;
@@ -287,15 +287,15 @@ public class PowerUpManager : MonoBehaviour {
         MissleCooldownTimer_Count = 0;
         if (GameSparkPacketReceiver.Instance.PeerID == 2)
         {
-            LockOnTarget(2, Player1);
+            LockOnTarget(2, Player1,(MissleScript.MISSLE_TYPE)_misNum);
         }
         else if (GameSparkPacketReceiver.Instance.PeerID == 1)
         {
-            LockOnTarget(1, Player2);
+            LockOnTarget(1, Player2, (MissleScript.MISSLE_TYPE)_misNum);
         }
         else
         {
-            LockOnTarget(0,Player2);
+            LockOnTarget(0,Player2, (MissleScript.MISSLE_TYPE)_misNum);
         }
     }
 
@@ -303,11 +303,11 @@ public class PowerUpManager : MonoBehaviour {
     {
         if (GameSparkPacketReceiver.Instance.PeerID == 2)
         {
-            LockOnTarget(2, Player1);
+         //   LockOnTarget(2, Player1, (MissleScript.MISSLE_TYPE)_misNum);
         }
         else if (GameSparkPacketReceiver.Instance.PeerID == 1)
         {
-            LockOnTarget(1, Player2);
+         //   LockOnTarget(1, Player2, (MissleScript.MISSLE_TYPE)_misNum);
         }
     }
 

@@ -51,6 +51,8 @@ public class Car_Movement : MonoBehaviour {
 
     float NitrosSpeed ;
     public bool NitrosActive;
+
+    public bool FlipSwitch;
     #endregion
     //==========================================================================================================================
     #region INIT
@@ -162,20 +164,32 @@ public class Car_Movement : MonoBehaviour {
         {
             if (Input.GetTouch(0).position.x > Screen.width * .5f)
             {
-                MoveRight();
+                if (FlipSwitch)
+                    MoveLeft();
+                else
+                    MoveRight();
             }
             else
             {
-                MoveLeft();
+                if (FlipSwitch)
+                    MoveRight();
+                else
+                    MoveLeft();
             }
         }
         if (Input.GetKey(KeyCode.A))
         {
-            MoveLeft();
+            if (FlipSwitch)
+                MoveRight();
+            else
+                MoveLeft();
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            MoveRight();
+            if (FlipSwitch)
+                MoveLeft();
+            else
+                MoveRight();
         }
         if (Input.GetKey(KeyCode.X))
         {
@@ -185,11 +199,17 @@ public class Car_Movement : MonoBehaviour {
         {
             if (Input.mousePosition.x > Screen.width * .5f)
             {
-                MoveRight();
+                if (FlipSwitch)
+                    MoveLeft();
+                else
+                    MoveRight();
             }
             else
             {
-                MoveLeft();
+                if (FlipSwitch)
+                    MoveRight();
+                else
+                    MoveLeft();
             }
         }
     }

@@ -204,6 +204,7 @@ public class MissleScript : MonoBehaviour {
                 }
                 else if(_missleType == MISSLE_TYPE.BLIND)
                 {
+                    carReceiver.ActiveBlindFromButton();
                     GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
                     using (RTData data = RTData.Get())
                     {
@@ -216,6 +217,7 @@ public class MissleScript : MonoBehaviour {
                 }
                 else if(_missleType == MISSLE_TYPE.CONFUSE)
                 {
+                    carReceiver.ActiveConfuseFromButton();
                     GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
                     using (RTData data = RTData.Get())
                     {

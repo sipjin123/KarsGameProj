@@ -160,6 +160,11 @@ public class Car_Movement : MonoBehaviour {
     #region INPUT
     void InputSystem()
     {
+        if (_moveRight)
+            MoveRight();
+        if (_moveLeft)
+            MoveLeft();
+        return;
         if (Input.touchCount > 0)
         {
             if (Input.GetTouch(0).position.x > Screen.width * .5f)
@@ -212,6 +217,27 @@ public class Car_Movement : MonoBehaviour {
                     MoveLeft();
             }
         }
+    }
+
+
+    bool _moveLeft, _moveRight;
+    public void HoldRight()
+    {
+        _moveRight = true;
+        _moveLeft = false;
+    }
+    public void ReleaseRight()
+    {
+        _moveRight = false;
+    }
+    public void HoldLeft()
+    {
+        _moveLeft = true;
+        _moveRight = false;
+    }
+    public void ReleaseLeft()
+    {
+        _moveLeft = false;
     }
 
     void MoveRight()

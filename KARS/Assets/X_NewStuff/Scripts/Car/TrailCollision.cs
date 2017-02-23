@@ -34,6 +34,7 @@ public class TrailCollision : MonoBehaviour
     bool _emitTrail;
 
     public Car_Movement _carMovement;
+    public Car_DataReceiver _carReceiveData;
 
     TronGameManager _tronGameManager;
     #endregion
@@ -105,8 +106,10 @@ public class TrailCollision : MonoBehaviour
     //=============================================================================================================================================================
     void Update()
     {
-        trailDistanceTotal = _tronGameManager.trailDistanceTotal;
-        trailDistanceChid = _tronGameManager.trailDistanceChild;
+        //trailDistanceTotal = _tronGameManager.trailDistanceTotal;
+        trailDistanceTotal = _carReceiveData.TrailValue();
+        //trailDistanceChid = _tronGameManager.trailDistanceChild;
+        trailDistanceChid = trailDistanceTotal / 4;
 
         if (_emitTrail)
         {

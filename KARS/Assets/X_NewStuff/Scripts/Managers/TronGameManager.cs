@@ -8,171 +8,204 @@ public class TronGameManager : MonoBehaviour {
 
     private static TronGameManager _instance;
     public static TronGameManager Instance { get { return _instance; } }
+    //==================================================================================================================================
+    #region VARIABLES
+    public bool NetworkStart;
+    public GameObject[] PlayerObjects;
+    public GameObject[] NetworkCanvas;
 
+    public GameObject DEbugUI;
+    public GameObject singlePlayerUI;
+    
+    public GameObject CharacterSelectPanel;
+
+    int carMeshIndex;
+    public GameObject[] carMeshList;
+    public GameObject[] StatList;
+    
+    public Image HealthBar1, HealthBar2;
+    public Text Var_HP_1, Var_HP_2;
+    
+    GameSparksRTUnity GetRTSession;
 
     #region TWEAKABLE VARIABLES
     #region MOVEMENT
     public Text Text_MovementSpeed;
-    public float MovementSpeed ;
-    public void TweakMoveSpeed(float _var)
-    {
-        MovementSpeed += _var;
-        Text_MovementSpeed.text = MovementSpeed.ToString();
-        PlayerPrefs.SetFloat(PrefKey_Movement, MovementSpeed);
-    }
+    public float MovementSpeed;
 
     public Text Text_rotationSpeed;
     public float rotationSpeed;
-    public void TweakrotationSpeed(float _var)
-    {
-        rotationSpeed += _var;
-        Text_rotationSpeed.text = rotationSpeed.ToString();
-        PlayerPrefs.SetFloat(PrefKey_Rotation, rotationSpeed);
-    }
 
     public Text Text_accelerationSpeedMax;
     public float accelerationSpeedMax;
+    
+    public Text Text_accelerationTimerMax;
+    public float accelerationTimerMax;
+
+
+    public void TweakMoveSpeed(float _var)
+    {
+        MovementSpeed += _var;
+    }
+    public void TweakrotationSpeed(float _var)
+    {
+        rotationSpeed += _var;
+    }
+
     public void Tweak_accelerationSpeedMax(float _var)
     {
         accelerationSpeedMax += _var;
-        Text_accelerationSpeedMax.text = accelerationSpeedMax.ToString();
-        PlayerPrefs.SetFloat(PrefKey_AccelerationSpeedMax, accelerationSpeedMax);
     }
-
-    public Text Text_accelerationTimerMax;
-    public float accelerationTimerMax;
     public void Tweak_accelerationTimerMax(float _var)
     {
         accelerationTimerMax += _var;
-        Text_accelerationTimerMax.text = accelerationTimerMax.ToString();
-        PlayerPrefs.SetFloat(PrefKey_AccelerationTimerMax, accelerationTimerMax);
     }
     #endregion
 
     #region TRAIL
     public Text Text_trailDistanceTotal;
     public float trailDistanceTotal;
-    public void TweaktrailDistanceTotal(float _var)
-    {
-        trailDistanceTotal += _var;
-        Text_trailDistanceTotal.text = trailDistanceTotal.ToString();
-        PlayerPrefs.SetFloat(PrefKey_TrailTotal, trailDistanceTotal);
-    }
 
     public Text Text_trailDistanceChild;
     public float trailDistanceChild;
+
+    public void TweaktrailDistanceTotal(float _var)
+    {
+        trailDistanceTotal += _var;
+    }
+
     public void Tweakconst_trailDistanceChild(float _var)
     {
         trailDistanceChild += _var;
-        Text_trailDistanceChild.text = trailDistanceChild.ToString();
-        PlayerPrefs.SetFloat(PrefKey_TrailCap, trailDistanceChild);
     }
     #endregion
 
-
+    #region DISABLES 
     public Text Text_const_StunDuration;
     public float const_StunDuration;
-    public void Tweakconst_StunDuration(float _var)
-    {
-        const_StunDuration += _var;
-        Text_const_StunDuration.text = const_StunDuration.ToString();
-        PlayerPrefs.SetFloat(PrefKey_Stun, const_StunDuration);
-    }
 
     public Text Text_BlindDuration;
     public float BlindDuration;
+    
+    public Text Text_ConfuseDuration;
+    public float ConfuseDuration;
+
+    public void Tweakconst_StunDuration(float _var)
+    {
+        const_StunDuration += _var;
+    }
+
     public void Tweakconst_BlindDuration(float _var)
     {
         BlindDuration += _var;
-        Text_BlindDuration.text = BlindDuration.ToString();
-        PlayerPrefs.SetFloat(PrefKey_Blind, BlindDuration);
     }
 
-    public Text Text_ConfuseDuration;
-    public float ConfuseDuration;
     public void Tweakconst_ConfuseDuration(float _var)
     {
         ConfuseDuration += _var;
-        Text_ConfuseDuration.text = ConfuseDuration.ToString();
-        PlayerPrefs.SetFloat(PrefKey_Confuse, ConfuseDuration);
     }
+    #endregion
 
     #region POWERUPS
     public Text Text_missleCooldown;
     public float missleCooldown;
-    public void Tweak_missleCooldown(float _var)
-    {
-        missleCooldown += _var;
-        Text_missleCooldown.text = missleCooldown.ToString();
-        PlayerPrefs.SetFloat(PrefKey_MissleCooldown, missleCooldown);
-    }
-
 
     public Text Text_shieldCooldown;
     public float shieldCooldown;
-    public void Tweak_shieldCooldown(float _var)
-    {
-        shieldCooldown += _var;
-        Text_shieldCooldown.text = shieldCooldown.ToString();
-        PlayerPrefs.SetFloat(PrefKey_ShieldCooldown, shieldCooldown);
-    }
-
-
-
+    
     public Text Text_nitroCooldown;
     public float nitroCooldown;
-    public void Tweak_nitroCooldown(float _var)
-    {
-        nitroCooldown += _var;
-        Text_nitroCooldown.text = nitroCooldown.ToString();
-        PlayerPrefs.SetFloat(PrefKey_NitroCooldown, nitroCooldown);
-    }
-
 
     public Text Text_nitroSpeed;
     public float nitroSpeed;
-    public void Tweak_nitroSpeed(float _var)
-    {
-        nitroSpeed += _var;
-        Text_nitroSpeed.text = nitroSpeed.ToString();
-        PlayerPrefs.SetFloat(PrefKey_NitroSpeed, nitroSpeed);
-    }
-
-
 
     public Text Text_nitroDuration;
     public float nitroDuration;
+
+    public void Tweak_missleCooldown(float _var)
+    {
+        missleCooldown += _var;
+    }
+
+    public void Tweak_shieldCooldown(float _var)
+    {
+        shieldCooldown += _var;
+    }
+
+    public void Tweak_nitroCooldown(float _var)
+    {
+        nitroCooldown += _var;
+    }
+
+    public void Tweak_nitroSpeed(float _var)
+    {
+        nitroSpeed += _var;
+    }
+
     public void Tweak_nitroDuration(float _var)
     {
         nitroDuration += _var;
-        Text_nitroDuration.text = nitroDuration.ToString();
-        PlayerPrefs.SetFloat(PrefKey_NitroDuration, nitroDuration);
     }
-
     #endregion
 
+    public void UpdateTexts()
+    {
+        Text_MovementSpeed.text = MovementSpeed.ToString("F1");
+        Text_rotationSpeed.text = rotationSpeed.ToString("F1");
 
+        Text_accelerationSpeedMax.text = accelerationSpeedMax.ToString("F1");
+        Text_accelerationTimerMax.text = accelerationTimerMax.ToString("F1");
 
+        Text_trailDistanceTotal.text = trailDistanceTotal.ToString("F1");
+        Text_trailDistanceChild.text = trailDistanceChild.ToString("F1");
 
+        Text_const_StunDuration.text = const_StunDuration.ToString("F1");
+        Text_BlindDuration.text = BlindDuration.ToString("F1");
+        Text_ConfuseDuration.text = ConfuseDuration.ToString("F1");
 
+        Text_missleCooldown.text = missleCooldown.ToString("F1");
+        Text_shieldCooldown.text = shieldCooldown.ToString("F1");
+        Text_nitroCooldown.text = nitroCooldown.ToString("F1");
+        Text_nitroSpeed.text = nitroSpeed.ToString("F1");
+        Text_nitroDuration.text = nitroDuration.ToString("F1");
 
+        PlayerPrefs.SetFloat(PrefKey_Movement, MovementSpeed);
+        PlayerPrefs.SetFloat(PrefKey_Rotation, rotationSpeed);
+        PlayerPrefs.SetFloat(PrefKey_AccelerationSpeedMax, accelerationSpeedMax);
+        PlayerPrefs.SetFloat(PrefKey_AccelerationTimerMax, accelerationTimerMax);
+        
+        PlayerPrefs.SetFloat(PrefKey_TrailTotal, trailDistanceTotal);
+        PlayerPrefs.SetFloat(PrefKey_TrailCap, trailDistanceChild);
 
+        PlayerPrefs.SetFloat(PrefKey_Stun, const_StunDuration);
+        PlayerPrefs.SetFloat(PrefKey_Blind, BlindDuration);
+        PlayerPrefs.SetFloat(PrefKey_Confuse, ConfuseDuration);
 
+        PlayerPrefs.SetFloat(PrefKey_MissleCooldown, missleCooldown);
+        PlayerPrefs.SetFloat(PrefKey_ShieldCooldown, shieldCooldown);
+        PlayerPrefs.SetFloat(PrefKey_NitroCooldown, nitroCooldown);
+        PlayerPrefs.SetFloat(PrefKey_NitroSpeed, nitroSpeed);
+        PlayerPrefs.SetFloat(PrefKey_NitroDuration, nitroDuration);
 
+        Speed_Text.text = Speed_Stat.ToString();
+        Acceleration_Text.text = Acceleration_Stat.ToString();
+        Rotation_Text.text = Rotation_Stat.ToString();
+        Trail_Text.text = Trail_Stat.ToString();
+    }
+    
     public GameObject _testPanel;
     public void FlipTestPanel()
     {
         _testPanel.SetActive(!_testPanel.activeInHierarchy);
     }
     #endregion
-
-
-
+    
+    #region DEFAULT VALUES
     private static float DefaultMovement = 1;
-    private static float DefaultRotation= 55;
+    private static float DefaultRotation= 40;
 
-    private static float DefaulttrailDistanceTotal = 20;
-    private static float DefaulttrailDistanceChild = 5;
+    private static float DefaulttrailDistanceTotal = 5;
+    private static float DefaulttrailDistanceChild = DefaulttrailDistanceTotal/3;
 
     private static float DefaultStun = 5;
     private static float DefaultBlind = 5;
@@ -187,11 +220,9 @@ public class TronGameManager : MonoBehaviour {
 
     private static float DefaultAccelerationSpeedMax= 10;
     private static float DefaultAccelerationTimerMax = 5;
-
-
-
-
-
+    #endregion
+    
+    #region PLAYER PREF KEYS
     private static string PrefKey_Movement = "MovementKey";
     private static string PrefKey_Rotation = "RotationKey";
 
@@ -211,6 +242,11 @@ public class TronGameManager : MonoBehaviour {
 
     private static string PrefKey_AccelerationSpeedMax = "AccelerationSpeedMaxKey";
     private static string PrefKey_AccelerationTimerMax = "AccelerationTimerMaxKey";
+    #endregion
+
+    #endregion
+    //==================================================================================================================================
+    #region INITALIZATION
     void Awake()
     {
         _instance = this;
@@ -254,45 +290,17 @@ public class TronGameManager : MonoBehaviour {
         Tweak_accelerationSpeedMax(0);
         Tweak_accelerationTimerMax(0);
 
-    }
 
-    public bool NetworkStart;
-    public GameObject[] PlayerObjects;
-    public GameObject[] NetworkCanvas;
+        Speed_Stat = 0;
+        Acceleration_Stat = 0;
+        Rotation_Stat = 0;
+        Rotation_Stat = 0;
 
-    public GameObject DEbugUI;
-    public GameObject singlePlayerUI;
-
-
-    public GameObject CharacterSelectPanel;
-
-    int carMeshIndex;
-    public GameObject[] carMeshList;
-    public GameObject[] StatList;
-
-
-    public Image HealthBar1, HealthBar2;
-    public Text Var_HP_1, Var_HP_2;
-
-
-    GameSparksRTUnity GetRTSession;
-
-    //==================================================================================================================================
-    #region TEST INPUTS G,K,L
-    void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.G))
-        {
-            StartCoroutine("delaydeath");
-        }
-        if(Input.GetKeyDown(KeyCode.K))
-        {
-            ReadyPlayer(1);
-        }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            ReadyPlayer(2);
-        }
+        Add_Stat_Speed(1);
+        Add_Stat_Acceleration(1);
+        Add_Stat_Rotation(1);
+        Add_Stat_Trail(1);
+        UpdateTexts();
     }
     #endregion
     //==================================================================================================================================
@@ -523,6 +531,91 @@ public class TronGameManager : MonoBehaviour {
                     GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
                 }
             }
+        }
+    }
+    #endregion
+    //==================================================================================================================================
+
+
+    public float Base_Value_Speed = 10, 
+        Base_Value_Acceleration = 5, 
+        Base_Value_Rotation = 40, 
+        Base_Value_Trail = 5;
+
+    public float Increment_Value_Speed = .25f,
+        Increment_Value_Acceleration = -.1f,
+        Increment_Value_Rotation = 2.5f,
+        Increment_Value_Trail = .5f;
+
+    float Speed_Stat, Acceleration_Stat, Rotation_Stat, Trail_Stat;
+    [SerializeField]
+    private Text Speed_Text, Acceleration_Text, Rotation_Text, Trail_Text;
+
+
+    public void Add_Stat_Speed(int _stat)
+    {
+        Speed_Stat += _stat;
+        Speed_Stat = Mathf.Clamp(Speed_Stat, 0, 20);
+
+        accelerationSpeedMax = Base_Value_Speed + ( (Speed_Stat-1) * Increment_Value_Speed);
+    }
+    public void Add_Stat_Acceleration(int _stat)
+    {
+        Acceleration_Stat += _stat;
+        Acceleration_Stat = Mathf.Clamp(Acceleration_Stat, 0, 20);
+
+        accelerationTimerMax = Base_Value_Acceleration + ( (Acceleration_Stat-1) * Increment_Value_Acceleration);
+    }
+    public void Add_Stat_Rotation(int _stat)
+    {
+        Rotation_Stat += _stat;
+        Rotation_Stat = Mathf.Clamp(Rotation_Stat, 0, 20);
+
+        rotationSpeed = Base_Value_Rotation + ((Rotation_Stat - 1) * Increment_Value_Rotation);
+    }
+    public void Add_Stat_Trail(int _stat)
+    {
+        Trail_Stat += _stat;
+        Trail_Stat = Mathf.Clamp(Trail_Stat, 0, 20);
+
+        trailDistanceTotal = Base_Value_Trail+ ((Trail_Stat- 1) * Increment_Value_Trail);
+        trailDistanceChild = trailDistanceTotal / 4;
+
+        if (GameSparkPacketReceiver.Instance.PeerID == 1)
+            PlayerObjects[0].GetComponent<Car_DataReceiver>().ReceiveTrailVAlue(trailDistanceTotal);
+        if (GameSparkPacketReceiver.Instance.PeerID == 2)
+            PlayerObjects[1].GetComponent<Car_DataReceiver>().ReceiveTrailVAlue(trailDistanceTotal);
+
+        try
+        {
+            GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, GameSparkPacketReceiver.Instance.PeerID);
+                data.SetFloat(2, trailDistanceTotal);
+                GetRTSession.SendData(116, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            }
+        }
+        catch { }
+    }
+
+
+
+    //==================================================================================================================================
+    #region TEST INPUTS G,K,L
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            StartCoroutine("delaydeath");
+        }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            ReadyPlayer(1);
+        }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            ReadyPlayer(2);
         }
     }
     #endregion

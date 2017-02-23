@@ -219,25 +219,6 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     #endregion
                 }
                 break;
-            case 131:
-                {
-                    //MESH RESET
-                    #region MESH RESET
-                    int receivedPlayerToMove = 0;
-                    receivedPlayerToMove = _packet.Data.GetInt(1).Value;
-                    for (int i = 0; i < _carPool.Count; i++)
-                    {
-                        GameObject _obj = _carPool[i].gameObject;
-                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
-
-                        if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
-                        {
-                            _obj.GetComponent<Car_Movement>()._trailCollision.Reset_Mesh();
-                        }
-                    }
-                    #endregion
-                }
-                break;
             case 113:
                 {
                     //UPDATES PLAYER POWERUPS AND MESH SWITCH
@@ -249,6 +230,26 @@ public class GameSparkPacketReceiver : MonoBehaviour
 
 
                     NetworkDataFilter.Instance.ReceiveNetworkPlayerEvent(_netPlayerEvent);
+                    #endregion
+                }
+                break;
+            case 114:
+                {
+                    //CAR AVATAR SWITCH
+                    #region CAR AVATAR SWITCH
+                    int receivedPlayerToMove = 0;
+                    receivedPlayerToMove = _packet.Data.GetInt(1).Value;
+
+                    for (int i = 0; i < _carPool.Count; i++)
+                    {
+                        GameObject _obj = _carPool[i].gameObject;
+                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
+
+                        if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
+                        {
+                            _GameSparks_DataSender.SetCarAvatar(_packet.Data.GetInt(2).Value);
+                        }
+                    }
                     #endregion
                 }
                 break;
@@ -294,6 +295,23 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     #endregion
                 }
                 break;
+            case 116:
+                {
+                    int receivedPlayerToMove = _packet.Data.GetInt(1).Value;
+                    float receivedTrailValue = _packet.Data.GetFloat(2).Value;
+
+                    for (int i = 0; i < _carPool.Count; i++)
+                    {
+                        GameObject _obj = _carPool[i].gameObject;
+                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
+
+                        if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
+                        {
+                            _GameSparks_DataSender.ReceiveTrailVAlue(receivedTrailValue);
+                        }
+                    }
+                }
+                break;
             case 118:
                 {
                     //UPDATES PLAYER HEALTH
@@ -332,6 +350,9 @@ public class GameSparkPacketReceiver : MonoBehaviour
                 break;
             case 123:
                 {
+                    UIManager.instance.GameUpdateText.text += "OBSOLETE OPCODE";
+                    Debug.LogError("OBSOLETE OPCODE");
+                    return;
                     //EXTRAPOLATION_SWITCH
                     #region EXTRAPOLATION_SWITCH
                     int receivedPlayerToMove = _packet.Data.GetInt(1).Value;
@@ -350,11 +371,15 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     ResetGame();
                 }
                 break;
-            case 114:
+            case 131:
                 {
+                    UIManager.instance.GameUpdateText.text += "OBSOLETE OPCODE";
+                    Debug.LogError("OBSOLETE OPCODE");
+                    return;
+                    //MESH RESET
+                    #region MESH RESET
                     int receivedPlayerToMove = 0;
                     receivedPlayerToMove = _packet.Data.GetInt(1).Value;
-
                     for (int i = 0; i < _carPool.Count; i++)
                     {
                         GameObject _obj = _carPool[i].gameObject;
@@ -362,9 +387,10 @@ public class GameSparkPacketReceiver : MonoBehaviour
 
                         if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
                         {
-                            _GameSparks_DataSender.SetCarAvatar(_packet.Data.GetInt(2).Value);
+                            _obj.GetComponent<Car_Movement>()._trailCollision.Reset_Mesh();
                         }
                     }
+                    #endregion
                 }
                 break;
         }
@@ -503,10 +529,6 @@ public class GameSparkPacketReceiver : MonoBehaviour
     }
     #endregion
     //====================================================================================
-    void OnGsdsdUI()
-    {
-        GUI.Box(new Rect(0, Screen.height - 60, 100, 30), PeerID + ": " + _curMethod);
-    }
 }
 
 

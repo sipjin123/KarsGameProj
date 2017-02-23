@@ -46,50 +46,22 @@ public class NetworkDataFilter : MonoBehaviour
             }
         }
 
-        switch (_networkPlayerEvent.playerStatus)
+        if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_STUN ||
+            _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_BLIND ||
+            _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_CONFUSE ||
+            _networkPlayerEvent.playerStatus == NetworkPlayerStatus.SET_START ||
+            _networkPlayerEvent.playerStatus == NetworkPlayerStatus.SET_READY)
         {
-            case NetworkPlayerStatus.ACTIVATE_SHIELD:
-                {
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nShield: " + _networkPlayerEvent.playerStatusSwitch;
-                    carReceiver.ReceivePowerUpState(_networkPlayerEvent.playerStatusSwitch);
-                }
-                break;
-            case NetworkPlayerStatus.ACTIVATE_TRAIL:
-                {
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nTRAIL: "+ _networkPlayerEvent.playerStatusSwitch;
-                    carMovement._trailCollision.SetEmiision(_networkPlayerEvent.playerStatusSwitch);
-                }
-                break;
-            case NetworkPlayerStatus.ACTIVATE_STUN:
-                {
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nStun: " + _networkPlayerEvent.playerStatusSwitch;
-                    carReceiver.ReceiveDisableSTate( _networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
-                }
-                break;
-            case NetworkPlayerStatus.ACTIVATE_BLIND:
-                {
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nBlind: " + _networkPlayerEvent.playerStatusSwitch;
-                    carReceiver.ReceiveDisableSTate(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
-                }
-                break;
-            case NetworkPlayerStatus.ACTIVATE_CONFUSE:
-                {
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nConfuse: " + _networkPlayerEvent.playerStatusSwitch;
-                    carReceiver.ReceiveDisableSTate(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
-                }
-                break;
-            case NetworkPlayerStatus.SET_READY:
-                {
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nReady: " + _networkPlayerEvent.playerStatusSwitch;
-                    carReceiver.ReceiveDisableSTate(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
-                }
-                break;
-            case NetworkPlayerStatus.SET_START:
-                {
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nStart: " + _networkPlayerEvent.playerStatusSwitch;
-                    carReceiver.ReceiveDisableSTate(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
-                }
-                break;
+            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n"+_networkPlayerEvent.playerStatus.ToString()+": " + _networkPlayerEvent.playerStatusSwitch;
+            carReceiver.ReceiveDisableSTate(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
+        }
+        else if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_SHIELD)
+        {
+            carReceiver.ReceivePowerUpState(_networkPlayerEvent.playerStatusSwitch);
+        }
+        else if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_TRAIL)
+        {
+            carMovement._trailCollision.SetEmiision(_networkPlayerEvent.playerStatusSwitch);
         }
     }
     #endregion

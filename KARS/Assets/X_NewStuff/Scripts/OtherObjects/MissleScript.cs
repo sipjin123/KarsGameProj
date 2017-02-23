@@ -17,9 +17,7 @@ public class MissleScript : MonoBehaviour {
     {
         STUN,
         BLIND,
-        CONFUSE,
-        SLOW,
-        SILENCE
+        CONFUSE
     }
     public MISSLE_TYPE _missleType;
 
@@ -71,13 +69,13 @@ public class MissleScript : MonoBehaviour {
         }
 
 
-        if (_playerController_ID == GameSparkPacketHandler.Instance.GetPeerID())
+        if (_playerController_ID == GameSparkPacketReceiver.Instance.PeerID)
         {
             //Debug.LogError("missle is controlling");
             transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.blue;
             if (lockOnObject)
             {
-                if (Vector3.Distance(transform.position, objectToHit.transform.position) < 3)
+                if (Vector3.Distance(transform.position, objectToHit.transform.position) < 1)
                 {
                     SendToSErverTheCollision();
                 }
@@ -127,7 +125,7 @@ public class MissleScript : MonoBehaviour {
     {
         try
         {
-            GetRTSession = GameSparkPacketHandler.Instance.GetRTSession();
+            GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
             using (RTData data = RTData.Get())
             {
                 data.SetInt(1, missle_ID);
@@ -138,7 +136,7 @@ public class MissleScript : MonoBehaviour {
                 data.SetVector3(6, transform.eulerAngles);
                 data.SetInt(7, _var);
 
-                GetRTSession.SendData(OPCODE_CLASS.MissleOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                GetRTSession.SendData(115, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
             }
         }
         catch { }
@@ -161,7 +159,6 @@ public class MissleScript : MonoBehaviour {
         // Debug.LogError("locking on to object "+_obj.gameObject.name);
         transform.position = _sender.transform.position;
         transform.rotation = _sender.GetComponent<Car_Movement>().CarRotationObject.transform.rotation;
-        AudioManager.Instance.SpawnableAudio(transform.position, AUDIO_CLIP.MISSLE_ACTIVE);
         objectToHit = _obj;
         transform.SetParent(null);
         lockOnObject = true;
@@ -177,62 +174,63 @@ public class MissleScript : MonoBehaviour {
         gameObject.SetActive(false);
     }
     #endregion
-    void OnTriggerEnter(Collider hit)
-    {
-        if(hit.gameObject.tag == "Wall")
-        {
-            ResetMissle();
-        }
-        
-    }
     //================================================================================================================================
     void SendToSErverTheCollision()
     {
         try
         {
             Car_DataReceiver carReceiver = objectToHit.GetComponent<Car_DataReceiver>();
-            if (_playerController_ID != carReceiver.GetNetwork_ID())
+            if (_playerController_ID != carReceiver.Network_ID)
             {
                 if (carReceiver.GetShieldSwitch())
                 {
-                    carReceiver.ReceivePlayerSTate(false,NetworkPlayerStatus.ACTIVATE_SHIELD);
+                    carReceiver.ActiveShieldFromButton();
                     ResetMissle();
                     return;
                 }
 
-                switch (_missleType)
+                if (_missleType == MISSLE_TYPE.STUN)
                 {
-                    case MISSLE_TYPE.BLIND:
-                        {
-                            carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_BLIND);
-                            ResetMissle();
-                        }
-                        break;
-                    case MISSLE_TYPE.STUN:
-                        {
-                            carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_STUN);
-                            ResetMissle();
-                        }
-                        break;
-                    case MISSLE_TYPE.CONFUSE:
-                        {
-                            carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_CONFUSE);
-                            ResetMissle();
-                        }
-                        break;
-                    case MISSLE_TYPE.SLOW:
-                        {
-                            carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_SLOW);
-                            ResetMissle();
-                        }
-                        break;
-                    case MISSLE_TYPE.SILENCE:
-                        {
-                            carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_SILENCE);
-                            ResetMissle();
-                        }
-                        break;
+                    carReceiver.ActiveStunFromButton();
+                    GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+                    using (RTData data = RTData.Get())
+                    {
+                        data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
+                        data.SetInt(2, 1);
+                        data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_STUN);
+
+                        GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                    }
                 }
+                else if(_missleType == MISSLE_TYPE.BLIND)
+                {
+                    carReceiver.ActiveBlindFromButton();
+                    GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+                    using (RTData data = RTData.Get())
+                    {
+                        data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
+                        data.SetInt(2, 1);
+                        data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_BLIND);
+
+                        GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                    }
+                }
+                else if(_missleType == MISSLE_TYPE.CONFUSE)
+                {
+                    carReceiver.ActiveConfuseFromButton();
+                    GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+                    using (RTData data = RTData.Get())
+                    {
+                        data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
+                        data.SetInt(2, 1);
+                        data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_CONFUSE);
+
+                        GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                    }
+                }
+
+
+                ResetMissle();
             }
         }
         catch { }

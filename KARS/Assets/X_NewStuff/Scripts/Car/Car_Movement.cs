@@ -2,16 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Car_Movement : MonoBehaviour
-{
+public class Car_Movement : MonoBehaviour {
     //==========================================================================================================================
     #region VARIABLES
-    //NETWORK ACCESSIBLE
-    public Transform CarRotationObject;
-    public TrailCollision _trailCollision;
+    private float movementSpeed;
 
-    private bool StartGame;
-    private bool isREady;
+    CharacterController _characterController;
+
+    float currentRotation_Y;
+    float rotationSpeed;
+
+    public Transform CarRotationObject;
+
+    [SerializeField]
+    public TrailCollision _trailCollision;
+    public Camera myCam;
+
+    public
+    TronGameManager _tronGameManager;
+
+    Car_DataReceiver MyCarDataReceiver;
+    bool isDead;
+    public bool StartGame;
+    public bool isREady;
+
     public void SetStartGame(bool _switch)
     {
         StartGame = _switch;
@@ -20,113 +34,56 @@ public class Car_Movement : MonoBehaviour
     {
         isREady = _Switch;
     }
-    public bool GetReady()
-    {
-        return isREady;
-    }
-    private bool flipCarSwitch;
-    public bool FlipCarSwitch
-    {
-        get { return flipCarSwitch; }
-        set { flipCarSwitch = value; }
-    }
+
+    bool signalSent;
+    float DieTimer;
+
+    //SINGLE PLAYER
+    public float AIMode_HpBar;
+    public bool localShieldIsActive;
+    public GameObject localShield;
 
 
-    //LOCAL COMPONENTS
-    TronGameManager _tronGameManager;
-    Car_DataReceiver MyCarDataReceiver;
-    CharacterController _characterController;
-    Rigidbody myRigid;
-    
-    [SerializeField]
-    private AudioSource engineSounds;
-    [SerializeField]
-    private Camera_Behaviour _camBehaviour;
-    [SerializeField]
-    private Transform centerOfMass;
-    [SerializeField]
-    private Transform[] Wheels;
-
-
-
-    float WheelLerpSpeed = .5f;
-    private bool disableWheels;
-    public bool DisableWheels
-    {
-        get
-        {
-            return disableWheels;
-        }
-
-        set
-        {
-            disableWheels = value;
-        }
-    }
-    bool _moveLeft, _moveRight;
-
-
-
-    //PLAYER STATS
-    bool isDead;
-    private float movementSpeed;
-    float rotationSpeed;
-    
     float accelerationSpeed_Counter;
-    float accelerationTimer;
-    float accelerationSpeed_Max;
 
-    float NitrosSpeed;
+    float accelerationTimer ;
+    float accelerationSpeed_Max ;
 
-    //ROBERT STATS
-    float _currentTurningForce = 0;
+    float NitrosSpeed ;
+    public bool NitrosActive;
 
-    float turningRate = 5f;
-    float turningForce = 50;
-    float turningStraightDamping = 0.9f;
-
-    public float CurrentTurningForceRatio
-    {
-        get
-        {
-            return _currentTurningForce / turningForce;
-        }
-    }
-    float driftTimer;
-
+    public bool FlipSwitch;
     #endregion
     //==========================================================================================================================
     #region INIT
     void Awake()
     {
+        AIMode_HpBar = 5;
         _characterController = GetComponent<CharacterController>();
         MyCarDataReceiver = GetComponent<Car_DataReceiver>();
-        myRigid = GetComponent<Rigidbody>();
-        myRigid.centerOfMass = centerOfMass.localPosition;
+        currentRotation_Y = CarRotationObject.transform.eulerAngles.y;
     }
+
     void Start()
     {
         _tronGameManager = TronGameManager.Instance.GetComponent<TronGameManager>();
     }
     #endregion
     //==========================================================================================================================
-    #region MOVEMENT
-
-    float SlowThreshold()
+    #region SINGLE PLAYER SHIELD
+    public void ActiveShieldFromButton()
     {
-        float _finalValue = 1;
-
-        if (MyCarDataReceiver.GetSlowSwitch() == true)
-            _finalValue = .8f;
-        if (MyCarDataReceiver.GetStunSwitch() == true)
-            _finalValue = .1f;
-
-        return _finalValue;
+        ActiveLocalShield(!localShieldIsActive);
     }
-
+    public void ActiveLocalShield(bool _switch)
+    {
+        localShieldIsActive = _switch;
+        localShield.SetActive(_switch);
+    }
+    #endregion
+    //==========================================================================================================================
     void FixedUpdate()
     {
-        //COPY FROM TWEAKERS
         movementSpeed = _tronGameManager.MovementSpeed;
         rotationSpeed = _tronGameManager.rotationSpeed;
 
@@ -135,93 +92,135 @@ public class Car_Movement : MonoBehaviour
         accelerationTimer = _tronGameManager.accelerationTimerMax;
         accelerationSpeed_Max = _tronGameManager.accelerationSpeedMax;
 
-        myRigid.drag = _tronGameManager.Drag_Value;
-        myRigid.angularDrag = _tronGameManager.AngularDrag_Value;
-        myRigid.mass = _tronGameManager.Mass_Value;
 
-
-        if (!isDead && !disableWheels && NetworkCapable())
+        if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
-            if (accelerationSpeed_Counter < accelerationSpeed_Max)
+            if (MyCarDataReceiver.GetStunSwitch() == false)
             {
-                if (MyCarDataReceiver.GetNetwork_ID() == 1)
+                if(accelerationSpeed_Counter < accelerationSpeed_Max)
                 {
-                    UIManager.Instance.SpeedBar_1.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
-                    UIManager.Instance.SpeedTimeText_1.text = accelerationTimer.ToString();
-                    UIManager.Instance.SpeedMaxText_1.text = accelerationSpeed_Max.ToString();
-                    UIManager.Instance.SpeedTexT_1.text = accelerationSpeed_Counter.ToString();
+                    if (MyCarDataReceiver.Network_ID == 1)
+                    {
+                        UIManager.instance.SpeedBar_1.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
+                        UIManager.instance.SpeedTimeText_1.text = accelerationSpeed_Counter.ToString();
+                        UIManager.instance.SpeedMaxText_1.text = accelerationSpeed_Max.ToString();
+                        UIManager.instance.SpeedTexT_1.text = accelerationSpeed_Counter.ToString();
+                    }
+                    else
+                    {
+                        UIManager.instance.SpeedBar_2.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
+                        UIManager.instance.SpeedTimeText_2.text = accelerationSpeed_Counter.ToString();
+                        UIManager.instance.SpeedMaxText_2.text = accelerationSpeed_Max.ToString();
+                        UIManager.instance.SpeedText_2.text = accelerationSpeed_Counter.ToString();
+                    }
+                    accelerationSpeed_Counter += Time.fixedDeltaTime * ((accelerationSpeed_Max) /accelerationTimer);
                 }
-                else
+                if(NitrosActive == false)
                 {
-                    UIManager.Instance.SpeedBar_2.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
-                    UIManager.Instance.SpeedTimeText_2.text = accelerationTimer.ToString();
-                    UIManager.Instance.SpeedMaxText_2.text = accelerationSpeed_Max.ToString();
-                    UIManager.Instance.SpeedText_2.text = accelerationSpeed_Counter.ToString();
+                    NitrosSpeed = 0;
                 }
-                accelerationSpeed_Counter += Time.fixedDeltaTime * ((accelerationSpeed_Max) / accelerationTimer);
+                _characterController.Move(CarRotationObject.transform.forward * ((movementSpeed + accelerationSpeed_Counter + NitrosSpeed) * Time.fixedDeltaTime));
             }
-            engineSounds.pitch = (accelerationSpeed_Counter / accelerationSpeed_Max)*3;
-            //_characterController.Move(CarRotationObject.transform.forward * ((ComputedValues() * ReduceValues() )* Time.fixedDeltaTime));
-
-
-            if (MyCarDataReceiver.GetNitroSwitch() == true)
-                NitrosSpeed = _tronGameManager.nitroSpeed;
             else
-                NitrosSpeed = 0;
-
-            if (!Input.GetKey(KeyCode.S))
             {
-                myRigid.AddForce(CarRotationObject.transform.forward *
-                    ((_tronGameManager.Force_Value + NitrosSpeed + accelerationSpeed_Counter * Time.fixedDeltaTime) * SlowThreshold()));
-            }
-
-            if (MyCarDataReceiver.GetFlySwitch() == true)
-            {
-                if (transform.position.y < 6)
-                    myRigid.AddForce(transform.up * 25);
+                accelerationSpeed_Counter = 1;
+                if (NitrosActive == false)
+                {
+                    NitrosSpeed = 0;
+                }
+                _characterController.Move(CarRotationObject.transform.forward * ((movementSpeed + accelerationSpeed_Counter + NitrosSpeed) * Time.fixedDeltaTime));
             }
             InputSystem();
 
         }
+        else
+        {
+            if (isDead)
+            {
+                DieTimer += Time.fixedDeltaTime;
+                if (DieTimer > 1)
+                {
+                    if (!signalSent)
+                    {
+                        signalSent = true;
+                        if (MyCarDataReceiver.Network_ID == 1)
+                            transform.position = new Vector3(-5, 10, 0);
+                        if (MyCarDataReceiver.Network_ID == 2)
+                            transform.position = new Vector3(5, 10, 0);
+                        StopCoroutine("DelayRespawn");
+                        StartCoroutine("DelayRespawn");
+                        accelerationSpeed_Counter = 0;
+                    }
+                }
+            }
+        }
 
     }
-    #endregion
     //==========================================================================================================================
     #region INPUT
     void InputSystem()
     {
-        turningRate = _tronGameManager.turningRate;
-        turningForce = _tronGameManager.turningForce;
-        turningStraightDamping = _tronGameManager.turningStraightDamping;
-
-        if (_moveRight || Input.GetKey(KeyCode.D))
+        if (_moveRight)
+            MoveRight();
+        if (_moveLeft)
+            MoveLeft();
+        return;
+        if (Input.touchCount > 0)
         {
-            if (flipCarSwitch == false)
-                MoveRight();
-            else
-                MoveLeft();
-        }
-        else if (_moveLeft || Input.GetKey(KeyCode.A))
-        {
-            if (flipCarSwitch == false)
-                MoveLeft();
-            else
-                MoveRight();
-        }
-        else
-        {
-            driftTimer = 0;
-            _camBehaviour.ReturnToDefault();
-            for (int i = 0; i < Wheels.Length; i++)
+            if (Input.GetTouch(0).position.x > Screen.width * .5f)
             {
-                Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, 0, 90)), WheelLerpSpeed);
+                if (FlipSwitch)
+                    MoveLeft();
+                else
+                    MoveRight();
             }
-            _currentTurningForce *= turningStraightDamping;
+            else
+            {
+                if (FlipSwitch)
+                    MoveRight();
+                else
+                    MoveLeft();
+            }
         }
-
-        myRigid.AddRelativeTorque(Vector3.down * _currentTurningForce);
+        if (Input.GetKey(KeyCode.A))
+        {
+            if (FlipSwitch)
+                MoveRight();
+            else
+                MoveLeft();
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            if (FlipSwitch)
+                MoveLeft();
+            else
+                MoveRight();
+        }
+        if (Input.GetKey(KeyCode.X))
+        {
+            Die();
+        }
+        if (Input.GetKey(KeyCode.Mouse0))
+        {
+            if (Input.mousePosition.x > Screen.width * .5f)
+            {
+                if (FlipSwitch)
+                    MoveLeft();
+                else
+                    MoveRight();
+            }
+            else
+            {
+                if (FlipSwitch)
+                    MoveRight();
+                else
+                    MoveLeft();
+            }
+        }
     }
 
+
+    bool _moveLeft, _moveRight;
     public void HoldRight()
     {
         _moveRight = true;
@@ -229,7 +228,6 @@ public class Car_Movement : MonoBehaviour
     }
     public void ReleaseRight()
     {
-        driftTimer = 0;
         _moveRight = false;
     }
     public void HoldLeft()
@@ -239,120 +237,116 @@ public class Car_Movement : MonoBehaviour
     }
     public void ReleaseLeft()
     {
-        driftTimer = 0;
         _moveLeft = false;
     }
 
     void MoveRight()
     {
-        _camBehaviour.RotateLeft(1);
-        for (int i = 0; i < Wheels.Length; i++)
-        {
-            Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, 35, 90)), WheelLerpSpeed);
-        }
-        _currentTurningForce -= turningRate;
-        driftTimer += Time.deltaTime;
-        if(driftTimer > 1)
-            AudioManager.Instance.Play_Loop(AUDIO_CLIP.CAR_DRIFT);
-        
-        _currentTurningForce = Mathf.Clamp(_currentTurningForce, -turningForce, turningForce);
+        currentRotation_Y += rotationSpeed * Time.fixedDeltaTime;
+        CarRotationObject.transform.eulerAngles = new Vector3(0, currentRotation_Y, 0);
     }
     void MoveLeft()
     {
-        _camBehaviour.RotateRight(1);
-        for (int i = 0; i < Wheels.Length; i++)
-        {
-            Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, -35, 90)), WheelLerpSpeed);
-        }
-        _currentTurningForce += turningRate;
-        driftTimer += Time.deltaTime;
-        if (driftTimer > 1)
-            AudioManager.Instance.Play_Loop(AUDIO_CLIP.CAR_DRIFT);
-        _currentTurningForce = Mathf.Clamp(_currentTurningForce, -turningForce, turningForce);
+        currentRotation_Y -= rotationSpeed * Time.fixedDeltaTime;
+        CarRotationObject.transform.eulerAngles = new Vector3(0, currentRotation_Y, 0);
     }
     #endregion
-
     //==========================================================================================================================
-    #region COLLISION
     void OnTriggerEnter(Collider hit)
     {
-        if (!isDead && !disableWheels && NetworkCapable())
+        if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
-            if (hit.gameObject.tag == "Wall" || hit.gameObject.tag == "Trail" || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
+            UIManager.instance.GameUpdateText.text += "\nI WAS hit by: "+hit.gameObject.name;
+            /*
+            if (hit.gameObject.name.Contains("Missle"))
             {
+                MyCarDataReceiver.ActiveStunFromButton();
+            }*/
+            if (hit.gameObject.tag == "Wall" ||hit.gameObject.tag == "Trail" || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
+            {
+                if (!TronGameManager.Instance.NetworkStart)
+                {
+                    if (localShieldIsActive == false)
+                    {
+                        Die();
+                    }
+                    return;
+                }
+
                 if (MyCarDataReceiver.GetShieldSwitch() == false)
                 {
-                    MyCarDataReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_EXPLOSION);
-                    UIManager.Instance.SetExplosionPanel(true);
                     Die();
                 }
             }
-
         }
     }
-    #endregion
     //==========================================================================================================================
     #region PLAYER DEATH
     public void Die()
     {
-        if (NetworkCapable())
+        //if(MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID)
+        if ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart)
         {
-            if (!isDead)
+            isDead = true;
+
+            transform.position = new Vector3(transform.position.x, 10, transform.position.z);
+
+            if (_tronGameManager.NetworkStart == false)
             {
-                isDead = true;
-                myRigid.Sleep();
-                myRigid.useGravity = false;
-                transform.position = new Vector3(transform.position.x,  -2,  transform.position.z);
-
-                MyCarDataReceiver.SendNetworkStatus(false, NetworkPlayerStatus.ACTIVATE_TRAIL);
+                if (gameObject.name == "Car1")
+                {
+                    AIMode_HpBar -= 1;
+                    _tronGameManager.ReduceHPOfPlayer(1, AIMode_HpBar );
+                }
+                _trailCollision.SetEmiision(false);
+                try
+                {
+                    GetComponent<AI_Behaviour>().enabled = false;
+                }
+                catch
+                {
+                }
+            }
+            else
+            {
+                MyCarDataReceiver.ResetTrail(false);
                 MyCarDataReceiver.ReduceHealth();
-                engineSounds.mute = true;
-
-                StopCoroutine("DelayRespawn");
-                StartCoroutine("DelayRespawn");
-                accelerationSpeed_Counter = 0;
             }
         }
     }
-    bool NetworkCapable()
-    {
-        if ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.GetNetwork_ID() == GameSparkPacketHandler.Instance.GetPeerID()))
-        {
-            return true;
-        }
-        return false;
-    }
     IEnumerator DelayRespawn()
     {
-        yield return new WaitForSeconds(2);
-
-        UIManager.Instance.SetRespawnScreen(true);
-        UIManager.Instance.SetExplosionPanel(false);
-        UIManager.Instance.Set_Canvas_GameInit(false);
-
         yield return new WaitForSeconds(3);
-
-        MyCarDataReceiver.SendNetworkStatus(false, NetworkPlayerStatus.ACTIVATE_EXPLOSION);
-        MyCarDataReceiver.ReceivePlayerSTate(false, NetworkPlayerStatus.ACTIVATE_EXPLOSION);
-
-        if(MyCarDataReceiver.GetNetwork_ID() == 0)
-            transform.position = _tronGameManager.spawnPlayerPosition[0].position;
+        if (MyCarDataReceiver.Network_ID == 1)
+            transform.position = new Vector3(-5, 1, 0);
+        if (MyCarDataReceiver.Network_ID == 2)
+            transform.position = new Vector3(5, 1, 0);
         else
-            transform.position = _tronGameManager.spawnPlayerPosition[MyCarDataReceiver.GetNetwork_ID() - 1].position;
-        CarRotationObject.transform.localEulerAngles = Vector3.zero;
-        transform.localEulerAngles = Vector3.zero;
+            transform.position = new Vector3(0, 1, 0);
 
-        myRigid.useGravity = true;
-        engineSounds.mute = false;
+        CarRotationObject.transform.eulerAngles = Vector3.zero;
+        currentRotation_Y = 0;
         isDead = false;
+        signalSent = false;
+        DieTimer = 0;
+        yield return new WaitForSeconds(.5f);
+        try
+        {
+            MyCarDataReceiver.ResetTrail(true);
+        }
+        catch
+        {
+        }
 
-        MyCarDataReceiver.Access_ResetPowerups();
-        _moveLeft = false;
-        _moveRight= false;
-
-        UIManager.Instance.SetRespawnScreen(false);
-        UIManager.Instance.Set_Canvas_GameInit(false);
-        MyCarDataReceiver.SendNetworkStatus(true, NetworkPlayerStatus.ACTIVATE_TRAIL);
+        if(_tronGameManager.NetworkStart == false)
+        {
+            try
+            {
+                GetComponent<AI_Behaviour>().enabled = true;
+            }
+            catch { }
+            _trailCollision.SetEmiision(true);
+        }
     }
     #endregion
 }

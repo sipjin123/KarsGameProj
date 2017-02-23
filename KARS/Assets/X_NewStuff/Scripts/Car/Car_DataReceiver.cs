@@ -4,12 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Car_DataReceiver : MonoBehaviour {
+public class Car_DataReceiver : MonoBehaviour
+{
     //================================================================================================================================
     #region VARIABLES
     [SerializeField]
     Transform _objToTranslate, _objToRotate;
+    [SerializeField]
+    private Car_Movement _carMovement;
     float rotSpeed = .1f;
+
+    //NETWORK STUFF
     [SerializeField]
     public int Network_ID;
     [SerializeField]
@@ -22,11 +27,11 @@ public class Car_DataReceiver : MonoBehaviour {
 
     [SerializeField]
     private GameSparkPacketReceiver _gameSparkPacketReceiver;
-    [SerializeField]
-    private Car_Movement _carMovement;
 
+
+    //POWER UP AND DEBUFF
     private bool ShieldSwitch;
-    public bool GetShieldSwitch(){ return ShieldSwitch; }
+    public bool GetShieldSwitch() { return ShieldSwitch; }
     public GameObject ShieldObject;
 
 
@@ -34,7 +39,16 @@ public class Car_DataReceiver : MonoBehaviour {
     public bool GetStunSwitch() { return StunSwitch; }
     public GameObject StunObject;
 
+    private bool BlindSwitch;
+    public bool GetBlindSwitch() { return BlindSwitch; }
+    public GameObject BlindObjectBlocker;
+    public GameObject BlindObject;
+
+    private bool ConfuseSwitch;
+    public GameObject ConfuseObject;
+
     public float Health;
+    public GameObject[] AvatarList;
     #endregion
     //================================================================================================================================
     #region NETWORK INIT
@@ -91,7 +105,7 @@ public class Car_DataReceiver : MonoBehaviour {
     }
     void Test_Input()
     {
-        if(Input.GetKeyDown(KeyCode.Alpha5))
+        if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             ActiveStunFromButton();
         }
@@ -148,7 +162,7 @@ public class Car_DataReceiver : MonoBehaviour {
     public void ReduceHealth()
     {
         Health -= 1;
-        if(Network_ID == 1)
+        if (Network_ID == 1)
         {
             UIManager.instance.HealthBar_1.fillAmount = Health / 5;
             UIManager.instance.HealthText_1.text = Health.ToString();
@@ -172,7 +186,7 @@ public class Car_DataReceiver : MonoBehaviour {
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, Network_ID);
-            data.SetInt(2, _switch == true ? 1:0);
+            data.SetInt(2, _switch == true ? 1 : 0);
             data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_TRAIL);
 
             GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
@@ -274,7 +288,7 @@ public class Car_DataReceiver : MonoBehaviour {
             state.rot = _receivedRot;//state.rot = _packet.Data.GetVector3(5).Value;
             state.timestamp = _receivedTimeStamp;//state.timestamp = _packet.Data.GetDouble(7).Value;
             m_BufferedState[0] = state;
-            
+
             PlayerPing = _gameSparkPacketReceiver.gameTimeInt - state.timestamp;
             UIManager.instance.PingText.text = PlayerPing.ToString();
             // Increment state count but never exceed buffer size
@@ -293,6 +307,95 @@ public class Car_DataReceiver : MonoBehaviour {
         }
     }
     #endregion
+
+    //STUN
+    //-------------------------------------------
+    #region STUN FEATURE
+    public void ActiveStunFromButton()
+    {
+        if (StunSwitch == false)
+        {
+            StunSwitch = true;
+            StunObject.SetActive(StunSwitch);
+            SendNetworkDisable(StunSwitch, NetworkPlayerStatus.ACTIVATE_STUN);
+            StartCoroutine("StartStunTimer");
+        }
+    }
+    IEnumerator StartStunTimer()
+    {
+        yield return new WaitForSeconds(TronGameManager.Instance.const_StunDuration);
+        ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_STUN);
+
+        SendNetworkDisable(StunSwitch, NetworkPlayerStatus.ACTIVATE_STUN);
+    }
+    #endregion
+    //-------------------------------------------
+    //CONFUSE
+    #region CONFUSE FEATURE
+    public void ActiveConfuseFromButton()
+    {
+        if (ConfuseSwitch == false)
+        {
+            ConfuseSwitch = true;
+            ConfuseObject.SetActive(ConfuseSwitch);
+
+            SendNetworkDisable(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
+            StartCoroutine("StartConfuseTimer");
+        }
+    }
+    IEnumerator StartConfuseTimer()
+    {
+        yield return new WaitForSeconds(TronGameManager.Instance.ConfuseDuration);
+        ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_CONFUSE);
+        SendNetworkDisable(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
+    }
+    #endregion
+    //-------------------------------------------
+    //BLIND
+    #region BLIND FEATURE
+    public void ActiveBlindFromButton()
+    {
+        if (BlindSwitch == false)
+        {
+            BlindSwitch = true;
+            BlindObjectBlocker.SetActive(BlindSwitch);
+            BlindObject.SetActive(BlindSwitch);
+
+            SendNetworkDisable(BlindSwitch, NetworkPlayerStatus.ACTIVATE_BLIND);
+            StartCoroutine("StartBlindTimer");
+        }
+    }
+    IEnumerator StartBlindTimer()
+    {
+        yield return new WaitForSeconds(TronGameManager.Instance.BlindDuration);
+        ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_BLIND);
+        SendNetworkDisable(BlindSwitch, NetworkPlayerStatus.ACTIVATE_BLIND);
+    }
+    #endregion
+    //-------------------------------------------
+    private void SendNetworkDisable(bool _switch, NetworkPlayerStatus _status)
+    {
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, Network_ID);
+            if (_switch)
+                data.SetInt(2, 1);
+            else
+                data.SetInt(2, 0);
+
+            data.SetInt(3, (int)_status);
+            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+    }
+    public void SetCarAvatar(int _avatarNumber)
+    {
+        for (int i = 0; i < AvatarList.Length; i++)
+        {
+            AvatarList[i].SetActive(false);
+        }
+
+        AvatarList[_avatarNumber].SetActive(true);
+    }
     //================================================================================================================================
     //
     //                                                       EXTRAPOLATION/INTERPOLATION
@@ -347,11 +450,11 @@ public class Car_DataReceiver : MonoBehaviour {
             */
 
             //if (m_BufferedState[0].timestamp > interpolationTime)
-            
 
-            if( Mathf.Abs(Vector3.Distance( m_BufferedState[0].pos, m_BufferedState[1].pos )) > 10)
+
+            if (Mathf.Abs(Vector3.Distance(m_BufferedState[0].pos, m_BufferedState[1].pos)) > 10)
             {
-                interpolationTime = currentTime - (PlayerPing+ _gameSparkPacketReceiver.playerPingOffset);
+                interpolationTime = currentTime - (PlayerPing + _gameSparkPacketReceiver.playerPingOffset);
 
                 InterpolateObj.SetActive(true);
                 ExtrapoalteObj.SetActive(false);
@@ -433,12 +536,12 @@ public class Car_DataReceiver : MonoBehaviour {
                 // GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nZERO VAL: (" + m_BufferedState[0].pos.x+" : "+ m_BufferedState[0].pos.z + ") " + m_BufferedState[0].timestamp + "\n";
                 // GameObject.Find("GameUpdateText").GetComponent<Text>().text += "ZERO VAL:(" + m_BufferedState[1].pos.x + " : " + m_BufferedState[1].pos.z + ") " + m_BufferedState[1].timestamp + "\n";
             }
-            
+
             Vector3 SPEED = (m_BufferedState[0].pos - m_BufferedState[1].pos) / (float)timeDiff;
             double ELAPSED_TIME = interpolationTime - m_BufferedState[0].timestamp;
             Vector3 NEW_POS = m_BufferedState[0].pos + (SPEED * (float)ELAPSED_TIME);
 
-            if(Vector3.Distance(NEW_POS,m_BufferedState[0].pos) >55)
+            if (Vector3.Distance(NEW_POS, m_BufferedState[0].pos) > 55)
             {
                 //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nExceed: " + (Vector3.Distance(NEW_POS, m_BufferedState[0].pos) );
                 if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
@@ -453,110 +556,20 @@ public class Car_DataReceiver : MonoBehaviour {
 
             float lerpSpeed = .9f;
             _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, NEW_POS, lerpSpeed);
-             lerpSpeed = .8f;
+            lerpSpeed = .8f;
             _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(latest.rot), lerpSpeed);
         }
     }
     #endregion
     //================================================================================================================================
-    public void SetCarAvatar(int _avatarNumber)
-    {
-        for(int i = 0; i < AvatarList.Length; i++)
-        {
-            AvatarList[i].SetActive(false);
-        }
 
-        AvatarList[_avatarNumber].SetActive(true);
+    private float _TrailValue=5;
+    public float TrailValue()
+    {
+        return _TrailValue;
     }
-    public GameObject[] AvatarList;
-
-    private bool BlindSwitch;
-    public bool GetBlindSwitch() { return BlindSwitch; }
-    public GameObject BlindObjectBlocker;
-    public GameObject BlindObject;
-
-    private bool ConfuseSwitch;
-    public GameObject ConfuseObject;
-    
-
-
-    //STUN
-    //-------------------------------------------
-    public void ActiveStunFromButton()
+    public void ReceiveTrailVAlue(float _trailValue)
     {
-        if (StunSwitch == false)
-        {
-            StunSwitch = true;
-            StunObject.SetActive(StunSwitch);
-            SendNetworkDisable(StunSwitch, NetworkPlayerStatus.ACTIVATE_STUN);
-            StartCoroutine("StartStunTimer");
-        }
-    }
-    IEnumerator StartStunTimer()
-    {
-        yield return new WaitForSeconds(TronGameManager.Instance.const_StunDuration);
-        ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_STUN);
-
-        SendNetworkDisable(StunSwitch, NetworkPlayerStatus.ACTIVATE_STUN);
-    }
-
-
-    //-------------------------------------------
-    //CONFUSE
-    #region CONFUSE FEATURE
-    public void ActiveConfuseFromButton()
-    {
-        if (ConfuseSwitch == false)
-        {
-            ConfuseSwitch = true;
-            ConfuseObject.SetActive(ConfuseSwitch);
-
-            SendNetworkDisable(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
-            StartCoroutine("StartConfuseTimer");
-        }
-    }
-    IEnumerator StartConfuseTimer()
-    {
-        yield return new WaitForSeconds(TronGameManager.Instance.ConfuseDuration);
-        ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_CONFUSE);
-        SendNetworkDisable(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
-    }
-    #endregion
-    //-------------------------------------------
-    //BLIND
-    #region BLIND FEATURE
-    public void ActiveBlindFromButton()
-    {
-        if (BlindSwitch == false)
-        {
-            BlindSwitch = true;
-            BlindObjectBlocker.SetActive(BlindSwitch);
-            BlindObject.SetActive(BlindSwitch);
-
-            SendNetworkDisable(BlindSwitch, NetworkPlayerStatus.ACTIVATE_BLIND);
-            StartCoroutine("StartBlindTimer");
-        }
-    }
-    IEnumerator StartBlindTimer()
-    {
-        yield return new WaitForSeconds(TronGameManager.Instance.BlindDuration);
-        ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_BLIND);
-        SendNetworkDisable(BlindSwitch,NetworkPlayerStatus.ACTIVATE_BLIND);
-    }
-    #endregion
-    //-------------------------------------------
-    private void SendNetworkDisable(bool _switch , NetworkPlayerStatus _status)
-    {
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, Network_ID);
-            if (_switch)
-                data.SetInt(2, 1);
-            else
-                data.SetInt(2, 0);
-
-            data.SetInt(3, (int)_status);
-            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
+        _TrailValue = _trailValue;
     }
 }

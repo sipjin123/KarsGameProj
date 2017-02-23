@@ -12,11 +12,6 @@ public class TrailCollision : MonoBehaviour
 
     public Transform Guide;
     public Transform Guide2;
-    public Car_Movement _carMovement;
-    public Car_DataReceiver _carReceiveData;
-    TronGameManager _tronGameManager;
-
-    MeshCollider _meshCollider;
     MeshFilter _meshFilter;
     Mesh _mesh;
 
@@ -25,14 +20,23 @@ public class TrailCollision : MonoBehaviour
 
 
     List<Vector3> Node;
+    float currentRot;
+    float timer;
 
     public float TotalDistanceTrail;
     int recentVertex = 0;
-    float trailDistanceTotal;
-    float trailDistanceChid;
+    float trailDistanceTotal = 20;
+    float trailDistanceChid = 5;
 
+    MeshCollider _meshCollider;
     float lerpTimer = 0;
+
     bool _emitTrail;
+
+    public Car_Movement _carMovement;
+    public Car_DataReceiver _carReceiveData;
+
+    TronGameManager _tronGameManager;
     #endregion
     //=============================================================================================================================================================
     #region INITIALIZATION
@@ -50,6 +54,23 @@ public class TrailCollision : MonoBehaviour
         
         Node.Add(Guide.transform.position);
         Node.Add(Guide2.transform.position);
+
+        //_emitTrail = true;
+    }
+    #endregion
+    //=============================================================================================================================================================
+    #region TEST
+    void sdadaOnGUI()
+    {
+        GUI.Box(new Rect(0,0,300,30),"("+_mesh.vertexCount+" : "+_mesh.triangles.Length+") "+TotalDistanceTrail);
+        for(int i = 0; i < _mesh.vertexCount; i++)
+        {
+            GUI.Box(new Rect(0, 30 +(30* i), 200, 30), i+" : " + _mesh.vertices[i]);
+        }
+        for (int i = 0; i < _mesh.triangles.Length; i++)
+        {
+            GUI.Box(new Rect(200, 30 + (30 * i), 200, 30), i + " : " + _mesh.triangles[i]);
+        }
     }
     #endregion
     //=============================================================================================================================================================
@@ -68,6 +89,7 @@ public class TrailCollision : MonoBehaviour
         Node.Add(Guide2.transform.position);
         CurrentVertex += 2;
         CurrentTriangle += 6;
+
         _meshCollider.sharedMesh = _mesh;
     }
 
@@ -79,21 +101,18 @@ public class TrailCollision : MonoBehaviour
         CurrentTriangle -= 6;
         Node.Remove(Node[0]);
         Node.Remove(Node[0]);
-
     }
     #endregion
     //=============================================================================================================================================================
     void Update()
     {
+        //trailDistanceTotal = _tronGameManager.trailDistanceTotal;
+        trailDistanceTotal = _carReceiveData.TrailValue();
+        //trailDistanceChid = _tronGameManager.trailDistanceChild;
+        trailDistanceChid = trailDistanceTotal / 4;
+
         if (_emitTrail)
         {
-            float multiplier = 1;
-            if (_carReceiveData.GetExpandSwitch() == true)
-                multiplier = 2;
-
-            trailDistanceTotal = _carReceiveData.TrailValue() * multiplier;
-            trailDistanceChid = _carReceiveData.TrailValueDividend() / multiplier;
-
             _Render();
         }
         else
@@ -164,6 +183,14 @@ public class TrailCollision : MonoBehaviour
         }
         else
         {
+            try
+            {
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n" + _carMovement.GetComponent<Car_DataReceiver>().Network_ID + " :MESH DISABLING";
+            }
+            catch
+            {
+
+            }
             Reset_Mesh();
         }
     }
@@ -201,6 +228,11 @@ public class TrailCollision : MonoBehaviour
 
         if(TotalDistanceTrail > trailDistanceTotal)
         {
+            _mesh = new Mesh();
+            _meshFilter.mesh = _mesh;
+
+
+
             if (CurrentVertex > 4)
             {
                 if (Vector3.Distance(vertices[0], vertices[2]) > 0)
@@ -274,10 +306,10 @@ public class TrailCollision : MonoBehaviour
 
         try
         {
-            _mesh = new Mesh();
             _mesh.vertices = vertices;
             _mesh.triangles = tri;
-            _meshFilter.mesh = _mesh;
+            
+            //_mesh.normals = normals;
         }
         catch
         {

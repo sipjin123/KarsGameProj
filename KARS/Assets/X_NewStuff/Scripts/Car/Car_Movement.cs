@@ -82,6 +82,30 @@ public class Car_Movement : MonoBehaviour {
     }
     #endregion
     //==========================================================================================================================
+    #region MOVEMENT
+    float ComputedValues()
+    {
+        float _finalValue = 0;
+        if (MyCarDataReceiver.GetStunSwitch() == true)
+            return 1;
+
+
+
+        _finalValue = movementSpeed + accelerationSpeed_Counter + NitrosSpeed;
+        return _finalValue;
+    }
+
+    float ReduceValues()
+    {
+        float _finalValue = 100;
+
+        if (FlipSwitch)
+            _finalValue -= 50;
+        _finalValue = _finalValue / 100;
+        
+        return _finalValue;
+    }
+
     void FixedUpdate()
     {
         movementSpeed = _tronGameManager.MovementSpeed;
@@ -95,41 +119,30 @@ public class Car_Movement : MonoBehaviour {
 
         if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
-            if (MyCarDataReceiver.GetStunSwitch() == false)
+            if(accelerationSpeed_Counter < accelerationSpeed_Max)
             {
-                if(accelerationSpeed_Counter < accelerationSpeed_Max)
+                if (MyCarDataReceiver.Network_ID == 1)
                 {
-                    if (MyCarDataReceiver.Network_ID == 1)
-                    {
-                        UIManager.instance.SpeedBar_1.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
-                        UIManager.instance.SpeedTimeText_1.text = accelerationSpeed_Counter.ToString();
-                        UIManager.instance.SpeedMaxText_1.text = accelerationSpeed_Max.ToString();
-                        UIManager.instance.SpeedTexT_1.text = accelerationSpeed_Counter.ToString();
-                    }
-                    else
-                    {
-                        UIManager.instance.SpeedBar_2.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
-                        UIManager.instance.SpeedTimeText_2.text = accelerationSpeed_Counter.ToString();
-                        UIManager.instance.SpeedMaxText_2.text = accelerationSpeed_Max.ToString();
-                        UIManager.instance.SpeedText_2.text = accelerationSpeed_Counter.ToString();
-                    }
-                    accelerationSpeed_Counter += Time.fixedDeltaTime * ((accelerationSpeed_Max) /accelerationTimer);
+                    UIManager.instance.SpeedBar_1.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
+                    UIManager.instance.SpeedTimeText_1.text = accelerationTimer.ToString();
+                    UIManager.instance.SpeedMaxText_1.text = accelerationSpeed_Max.ToString();
+                    UIManager.instance.SpeedTexT_1.text = accelerationSpeed_Counter.ToString();
                 }
-                if(NitrosActive == false)
+                else
                 {
-                    NitrosSpeed = 0;
+                    UIManager.instance.SpeedBar_2.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
+                    UIManager.instance.SpeedTimeText_2.text = accelerationTimer.ToString();
+                    UIManager.instance.SpeedMaxText_2.text = accelerationSpeed_Max.ToString();
+                    UIManager.instance.SpeedText_2.text = accelerationSpeed_Counter.ToString();
                 }
-                _characterController.Move(CarRotationObject.transform.forward * ((movementSpeed + accelerationSpeed_Counter + NitrosSpeed) * Time.fixedDeltaTime));
+                accelerationSpeed_Counter += Time.fixedDeltaTime * ((accelerationSpeed_Max) /accelerationTimer);
             }
-            else
+            if(NitrosActive == false)
             {
-                accelerationSpeed_Counter = 1;
-                if (NitrosActive == false)
-                {
-                    NitrosSpeed = 0;
-                }
-                _characterController.Move(CarRotationObject.transform.forward * ((movementSpeed + accelerationSpeed_Counter + NitrosSpeed) * Time.fixedDeltaTime));
+                NitrosSpeed = 0;
             }
+            _characterController.Move(CarRotationObject.transform.forward * ((ComputedValues() * ReduceValues() )* Time.fixedDeltaTime));
+          
             InputSystem();
 
         }
@@ -156,6 +169,7 @@ public class Car_Movement : MonoBehaviour {
         }
 
     }
+    #endregion
     //==========================================================================================================================
     #region INPUT
     void InputSystem()
@@ -164,24 +178,6 @@ public class Car_Movement : MonoBehaviour {
             MoveRight();
         if (_moveLeft)
             MoveLeft();
-        return;
-        if (Input.touchCount > 0)
-        {
-            if (Input.GetTouch(0).position.x > Screen.width * .5f)
-            {
-                if (FlipSwitch)
-                    MoveLeft();
-                else
-                    MoveRight();
-            }
-            else
-            {
-                if (FlipSwitch)
-                    MoveRight();
-                else
-                    MoveLeft();
-            }
-        }
         if (Input.GetKey(KeyCode.A))
         {
             if (FlipSwitch)
@@ -195,27 +191,6 @@ public class Car_Movement : MonoBehaviour {
                 MoveLeft();
             else
                 MoveRight();
-        }
-        if (Input.GetKey(KeyCode.X))
-        {
-            Die();
-        }
-        if (Input.GetKey(KeyCode.Mouse0))
-        {
-            if (Input.mousePosition.x > Screen.width * .5f)
-            {
-                if (FlipSwitch)
-                    MoveLeft();
-                else
-                    MoveRight();
-            }
-            else
-            {
-                if (FlipSwitch)
-                    MoveRight();
-                else
-                    MoveLeft();
-            }
         }
     }
 
@@ -252,16 +227,11 @@ public class Car_Movement : MonoBehaviour {
     }
     #endregion
     //==========================================================================================================================
+    #region COLLISION
     void OnTriggerEnter(Collider hit)
     {
         if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
-            UIManager.instance.GameUpdateText.text += "\nI WAS hit by: "+hit.gameObject.name;
-            /*
-            if (hit.gameObject.name.Contains("Missle"))
-            {
-                MyCarDataReceiver.ActiveStunFromButton();
-            }*/
             if (hit.gameObject.tag == "Wall" ||hit.gameObject.tag == "Trail" || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
             {
                 if (!TronGameManager.Instance.NetworkStart)
@@ -280,6 +250,7 @@ public class Car_Movement : MonoBehaviour {
             }
         }
     }
+    #endregion
     //==========================================================================================================================
     #region PLAYER DEATH
     public void Die()

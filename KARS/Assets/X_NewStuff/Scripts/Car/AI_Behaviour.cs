@@ -127,13 +127,13 @@ public class AI_Behaviour : MonoBehaviour {
     //==========================================================================================================================================
     void OnTriggerEnter(Collider hit)
     {
-        return;
         if(TronGameManager.Instance.NetworkStart == false)
         if (hit.gameObject.tag == "Trail" || hit.gameObject.name.Contains("Wall") || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
         {
             if (!SHieldSwithc)
             {
                 AI_Health -= 1;
+                _tronGameManager.ReduceHPOfPlayer(2, AI_Health);
                 DIE();
             }
         }
@@ -143,11 +143,10 @@ public class AI_Behaviour : MonoBehaviour {
             {
                 if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.STUN)
                 {
-                    //GetComponent<Car_DataReceiver>().StunObject.SetActive(true);
+                    GetComponent<Car_DataReceiver>().StunObject.SetActive(true);
                     StartCoroutine("DElayRemoveDebuff");
                     ifstuneed = true;
                 }
-                /*
                 if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.CONFUSE)
                 {
                     GetComponent<Car_DataReceiver>().ConfuseObject.SetActive(true);
@@ -157,18 +156,18 @@ public class AI_Behaviour : MonoBehaviour {
                 {
                     GetComponent<Car_DataReceiver>().BlindObject.SetActive(true);
                     StartCoroutine("DElayRemoveDebuff");
-                }*/
+                }
             }
         }
     }
     IEnumerator DElayRemoveDebuff()
     {
         yield return new WaitForSeconds(3);
-        /*
-        //GetComponent<Car_DataReceiver>().StunObject.SetActive(false);
+
+        GetComponent<Car_DataReceiver>().StunObject.SetActive(false);
         GetComponent<Car_DataReceiver>().ConfuseObject.SetActive(false);
         GetComponent<Car_DataReceiver>().BlindObject.SetActive(false);
-        ifstuneed = false;*/
+        ifstuneed = false;
     }
 
     

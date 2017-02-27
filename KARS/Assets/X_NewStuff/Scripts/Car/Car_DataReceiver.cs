@@ -317,7 +317,9 @@ public class Car_DataReceiver : MonoBehaviour
         {
             StunSwitch = true;
             StunObject.SetActive(StunSwitch);
-            SendNetworkDisable(StunSwitch, NetworkPlayerStatus.ACTIVATE_STUN);
+
+            if (TronGameManager.Instance.NetworkStart == true)
+                SendNetworkDisable(StunSwitch, NetworkPlayerStatus.ACTIVATE_STUN);
             StartCoroutine("StartStunTimer");
         }
     }
@@ -339,7 +341,8 @@ public class Car_DataReceiver : MonoBehaviour
             ConfuseSwitch = true;
             ConfuseObject.SetActive(ConfuseSwitch);
 
-            SendNetworkDisable(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
+            if (TronGameManager.Instance.NetworkStart == true)
+                SendNetworkDisable(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
             StartCoroutine("StartConfuseTimer");
         }
     }
@@ -361,6 +364,7 @@ public class Car_DataReceiver : MonoBehaviour
             BlindObjectBlocker.SetActive(BlindSwitch);
             BlindObject.SetActive(BlindSwitch);
 
+            if(TronGameManager.Instance.NetworkStart == true)
             SendNetworkDisable(BlindSwitch, NetworkPlayerStatus.ACTIVATE_BLIND);
             StartCoroutine("StartBlindTimer");
         }
@@ -375,6 +379,8 @@ public class Car_DataReceiver : MonoBehaviour
     //-------------------------------------------
     private void SendNetworkDisable(bool _switch, NetworkPlayerStatus _status)
     {
+        if (TronGameManager.Instance.NetworkStart == false)
+            return;
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, Network_ID);

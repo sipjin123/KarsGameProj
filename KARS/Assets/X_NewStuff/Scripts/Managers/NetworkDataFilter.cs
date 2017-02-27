@@ -64,6 +64,20 @@ public class NetworkDataFilter : MonoBehaviour
             carMovement._trailCollision.SetEmiision(_networkPlayerEvent.playerStatusSwitch);
         }
     }
+
+    public void ReceivedNetworkPlayerVariable(NetworkPlayerVariables _networkPlayerVariables)
+    {
+        Car_DataReceiver carReceiver = new Car_DataReceiver();
+        for (int i = 0; i < Network_Data_Receiver.Length; i++)
+        {
+            if (Network_Data_Receiver[i].Network_ID == _networkPlayerVariables.playerID)
+            {
+                carReceiver = Network_Data_Receiver[i];
+            }
+        }
+
+
+    }
     #endregion
     //===================================================================================================================================================================================================
 }
@@ -85,6 +99,14 @@ public struct NetworkPlayerEvent
     internal NetworkPlayerStatus playerStatus;
     internal bool playerStatusSwitch; 
 }
+
+public struct NetworkPlayerVariables
+{
+    internal int playerID;
+    internal NetworkPlayerVariableList playerVariable;
+    internal float variableValue;
+}
+
 public enum NetworkPlayerStatus
 {
     NONE,
@@ -97,4 +119,12 @@ public enum NetworkPlayerStatus
     SET_READY,
     SET_START
 }
+
+public enum NetworkPlayerVariableList
+{
+    NONE,
+    HEALTH,
+    TRAIL,
+}
+
 #endregion

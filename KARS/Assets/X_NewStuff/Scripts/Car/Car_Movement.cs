@@ -176,29 +176,18 @@ public class Car_Movement : MonoBehaviour {
     {
         if (_moveRight)
         {
-            if (FlipSwitch)
-                MoveLeft();
             MoveRight();
         }
         if (_moveLeft)
         {
-            if (FlipSwitch)
-                MoveRight();
-            else
             MoveLeft();
         }
         if (Input.GetKey(KeyCode.A))
         {
-            if (FlipSwitch)
-                MoveRight();
-            else
                 MoveLeft();
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            if (FlipSwitch)
-                MoveLeft();
-            else
                 MoveRight();
         }
     }
@@ -226,12 +215,19 @@ public class Car_Movement : MonoBehaviour {
 
     void MoveRight()
     {
-        currentRotation_Y += rotationSpeed * Time.fixedDeltaTime;
+        if(!FlipSwitch)
+            currentRotation_Y += rotationSpeed * Time.fixedDeltaTime;
+        else
+            currentRotation_Y -= rotationSpeed * Time.fixedDeltaTime;
+
         CarRotationObject.transform.eulerAngles = new Vector3(0, currentRotation_Y, 0);
     }
     void MoveLeft()
     {
-        currentRotation_Y -= rotationSpeed * Time.fixedDeltaTime;
+        if (!FlipSwitch)
+            currentRotation_Y -= rotationSpeed * Time.fixedDeltaTime;
+        else
+            currentRotation_Y += rotationSpeed * Time.fixedDeltaTime;
         CarRotationObject.transform.eulerAngles = new Vector3(0, currentRotation_Y, 0);
     }
     #endregion

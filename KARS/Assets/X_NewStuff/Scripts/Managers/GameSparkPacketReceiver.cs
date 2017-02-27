@@ -398,6 +398,15 @@ public class GameSparkPacketReceiver : MonoBehaviour
     }
     #endregion
     //====================================================================================
+    public void ResetGameFromButton()
+    {
+        ResetGame();
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, 0);
+            GetRTSession().SendData(066, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+    }
     public void ResetGame()
     {
         FiveSecUpdateTime = 0;

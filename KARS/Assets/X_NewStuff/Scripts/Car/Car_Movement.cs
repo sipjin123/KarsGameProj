@@ -175,9 +175,18 @@ public class Car_Movement : MonoBehaviour {
     void InputSystem()
     {
         if (_moveRight)
+        {
+            if (FlipSwitch)
+                MoveLeft();
             MoveRight();
+        }
         if (_moveLeft)
+        {
+            if (FlipSwitch)
+                MoveRight();
+            else
             MoveLeft();
+        }
         if (Input.GetKey(KeyCode.A))
         {
             if (FlipSwitch)
@@ -230,6 +239,27 @@ public class Car_Movement : MonoBehaviour {
     #region COLLISION
     void OnTriggerEnter(Collider hit)
     {
+        if (!TronGameManager.Instance.NetworkStart)
+        {
+            if (hit.gameObject.name.Contains("Missle") && hit.GetComponent<MissleScript>().PlayerController_ID != 1)
+            {
+                if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.STUN)
+                {
+                    MyCarDataReceiver.ActiveStunFromButton();
+                }
+                if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.BLIND)
+                {
+                    MyCarDataReceiver.ActiveBlindFromButton();
+                }
+                if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.CONFUSE)
+                {
+                    MyCarDataReceiver.ActiveConfuseFromButton();
+                }
+            }
+        }
+
+
+
         if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
             if (hit.gameObject.tag == "Wall" ||hit.gameObject.tag == "Trail" || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
@@ -248,6 +278,7 @@ public class Car_Movement : MonoBehaviour {
                     Die();
                 }
             }
+            
         }
     }
     #endregion

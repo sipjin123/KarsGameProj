@@ -54,12 +54,35 @@ public class AI_Behaviour : MonoBehaviour {
     }
     #endregion
     //==========================================================================================================================================
+
+    float accelerationSpeed_Counter;
+
+    float accelerationTimer;
+    float accelerationSpeed_Max;
+
     void FixedUpdate ()
     {
         if (!ifStart || isDead)
             return;
 
         newRaycastFunc();
+
+        accelerationTimer = _tronGameManager.accelerationTimerMax;
+        accelerationSpeed_Max = _tronGameManager.accelerationSpeedMax;
+
+        if (accelerationSpeed_Counter < accelerationSpeed_Max)
+        {
+            accelerationSpeed_Counter += Time.fixedDeltaTime * ((accelerationSpeed_Max) / accelerationTimer);
+        }
+        movementSpeed = accelerationSpeed_Counter;
+        if (ifstuneed)
+            movementSpeed = 1;
+
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            PowerUpManager.Instance.LockOnTarget(2,_tronGameManager.PlayerObjects[0],MissleScript.MISSLE_TYPE.STUN);
+        }
 
         if (findNextPath == false)
         {
@@ -105,19 +128,54 @@ public class AI_Behaviour : MonoBehaviour {
     void OnTriggerEnter(Collider hit)
     {
         if(TronGameManager.Instance.NetworkStart == false)
-        if (hit.gameObject.tag == "Trail" || hit.gameObject.name.Contains("Missle")|| hit.gameObject.name.Contains("Wall") || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
+        if (hit.gameObject.tag == "Trail" || hit.gameObject.name.Contains("Wall") || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
         {
-                if (!SHieldSwithc)
+            if (!SHieldSwithc)
+            {
+                AI_Health -= 1;
+                _tronGameManager.ReduceHPOfPlayer(2, AI_Health);
+                DIE();
+            }
+        }
+        if (hit.gameObject.name.Contains ( "Missle") && hit.gameObject.name != gameObject.name)
+        {
+            if(hit.GetComponent<MissleScript>().PlayerController_ID != 2)
+            {
+                if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.STUN)
                 {
-                    AI_Health -= 1;
-                    _tronGameManager.ReduceHPOfPlayer(2, AI_Health);
-                    DIE();
+                    GetComponent<Car_DataReceiver>().StunObject.SetActive(true);
+                    StartCoroutine("DElayRemoveDebuff");
+                    ifstuneed = true;
                 }
+                if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.CONFUSE)
+                {
+                    GetComponent<Car_DataReceiver>().ConfuseObject.SetActive(true);
+                    StartCoroutine("DElayRemoveDebuff");
+                }
+                if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.BLIND)
+                {
+                    GetComponent<Car_DataReceiver>().BlindObject.SetActive(true);
+                    StartCoroutine("DElayRemoveDebuff");
+                }
+            }
         }
     }
+    IEnumerator DElayRemoveDebuff()
+    {
+        yield return new WaitForSeconds(3);
+
+        GetComponent<Car_DataReceiver>().StunObject.SetActive(false);
+        GetComponent<Car_DataReceiver>().ConfuseObject.SetActive(false);
+        GetComponent<Car_DataReceiver>().BlindObject.SetActive(false);
+        ifstuneed = false;
+    }
+
+    
     //==========================================================================================================================================
     public bool SHieldSwithc;
     public GameObject AIShield;
+
+    bool ifstuneed;
     public void ActivateAIShieldFromButton()
     {
         ActivateAIShield(!SHieldSwithc);

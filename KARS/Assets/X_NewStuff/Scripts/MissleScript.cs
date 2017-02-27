@@ -75,7 +75,7 @@ public class MissleScript : MonoBehaviour {
             transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.blue;
             if (lockOnObject)
             {
-                if (Vector3.Distance(transform.position, objectToHit.transform.position) < 1)
+                if (Vector3.Distance(transform.position, objectToHit.transform.position) < 3)
                 {
                     SendToSErverTheCollision();
                 }
@@ -188,7 +188,6 @@ public class MissleScript : MonoBehaviour {
                     ResetMissle();
                     return;
                 }
-
                 if (_missleType == MISSLE_TYPE.STUN)
                 {
                     carReceiver.ActiveStunFromButton();

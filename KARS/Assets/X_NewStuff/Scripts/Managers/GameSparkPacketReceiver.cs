@@ -299,6 +299,8 @@ public class GameSparkPacketReceiver : MonoBehaviour
                 {
                     int receivedPlayerToMove = _packet.Data.GetInt(1).Value;
                     float receivedTrailValue = _packet.Data.GetFloat(2).Value;
+                    float receivedTrailValueDividend = _packet.Data.GetFloat(3).Value;
+
 
                     for (int i = 0; i < _carPool.Count; i++)
                     {
@@ -307,7 +309,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
 
                         if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
                         {
-                            _GameSparks_DataSender.ReceiveTrailVAlue(receivedTrailValue);
+                            _GameSparks_DataSender.ReceiveTrailVAlue(receivedTrailValue, receivedTrailValueDividend);
                         }
                     }
                 }

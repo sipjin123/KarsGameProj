@@ -15,7 +15,7 @@ public class Car_Network_Interpolation : MonoBehaviour {
     float rotSpeed = .1f;
     [SerializeField]
     protected Transform _objToTranslate, _objToRotate;
-    protected GameSparkPacketHandler gameSparksPacketHandler;
+    protected GameSparkPacketReceiver _gameSparkPacketReceiver;
     #region STATE_UPDATER
     public struct State
     {
@@ -24,10 +24,6 @@ public class Car_Network_Interpolation : MonoBehaviour {
         internal Vector3 rot;
     }
 
-    public void ClearBufferState()
-    {
-        m_BufferedState = new State[20];
-    }
     public State[] m_BufferedState = new State[20];
     public int m_TimestampCount;
     public void ReceiveBufferState(double _receivedTimeStamp, Vector3 _receivedPos, Vector3 _receivedRot)//RTPacket _packet)
@@ -53,8 +49,8 @@ public class Car_Network_Interpolation : MonoBehaviour {
             state.timestamp = _receivedTimeStamp;//state.timestamp = _packet.Data.GetDouble(7).Value;
             m_BufferedState[0] = state;
 
-            PlayerPing = gameSparksPacketHandler.GetGameClockINT() - state.timestamp;
-            UIManager.Instance.PingText.text = PlayerPing.ToString();
+            PlayerPing = _gameSparkPacketReceiver.gameTimeInt - state.timestamp;
+            UIManager.instance.PingText.text = PlayerPing.ToString();
             // Increment state count but never exceed buffer size
             m_TimestampCount = Mathf.Min(m_TimestampCount + 1, m_BufferedState.Length);
 
@@ -62,14 +58,12 @@ public class Car_Network_Interpolation : MonoBehaviour {
             for (int w = 0; w < m_TimestampCount - 1; w++)
             {
                 if (m_BufferedState[w].timestamp < m_BufferedState[w + 1].timestamp)
-                {
-                    //Debug.Log("State inconsistent");
-                }
+                    Debug.Log("State inconsistent");
             }
         }
         catch
         {
-            //Debug.LogError("CANNOT UPDATE STATE");
+            Debug.LogError("CANNOT UPDATE STATE");
         }
     }
     #endregion
@@ -77,12 +71,16 @@ public class Car_Network_Interpolation : MonoBehaviour {
     {
         try
         {
+            if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
+            {
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
+            }
         }
         catch { }
 
         try
         {
-            double currentTime = gameSparksPacketHandler.GetGameClockINT();
+            double currentTime = _gameSparkPacketReceiver.gameTimeInt;
             interpolationTime = 0;
 
             //REFACTOR GAME TIME
@@ -116,7 +114,7 @@ public class Car_Network_Interpolation : MonoBehaviour {
 
             if (Mathf.Abs(Vector3.Distance(m_BufferedState[0].pos, m_BufferedState[1].pos)) > 10)
             {
-                interpolationTime = currentTime - (PlayerPing + gameSparksPacketHandler.playerPingOffset);
+                interpolationTime = currentTime - (PlayerPing + _gameSparkPacketReceiver.playerPingOffset);
 
                 InterpolateObj.SetActive(true);
                 ExtrapoalteObj.SetActive(false);
@@ -173,22 +171,22 @@ public class Car_Network_Interpolation : MonoBehaviour {
 
                 //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nT: " + t + "=" + (interpolationTime - lhs.timestamp) + "(" + interpolationTime + "-" + lhs.timestamp + ")/" +length +"("+rhs.timestamp+"-"+lhs.timestamp+")";
 
-                if (gameSparksPacketHandler._curMethod == MethodUsed.LINEAR)
+                if (_gameSparkPacketReceiver._curMethod == GameSparkPacketReceiver.MethodUsed.LINEAR)
                 {
                     _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, lhs.pos, t);
                     _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(lhs.rot), rotSpeed);
-                    //Debug.LogWarning("DOING LINEAR");
+                    Debug.LogWarning("DOING LINEAR");
                 }
             }
         }
     }
     void Extrapolate()
     {
-        double currentTime = gameSparksPacketHandler.GetGameClockINT();
+        double currentTime = _gameSparkPacketReceiver.gameTimeInt;
         interpolationTime = currentTime - 0.1f;
 
         State latest = m_BufferedState[0];
-        if (gameSparksPacketHandler._curMethod == MethodUsed.LINEAR)
+        if (_gameSparkPacketReceiver._curMethod == GameSparkPacketReceiver.MethodUsed.LINEAR)
         {
             double timeDiff = 0;
             timeDiff = (m_BufferedState[0].timestamp - m_BufferedState[1].timestamp);
@@ -206,6 +204,11 @@ public class Car_Network_Interpolation : MonoBehaviour {
             if (Vector3.Distance(NEW_POS, m_BufferedState[0].pos) > 55)
             {
                 //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nExceed: " + (Vector3.Distance(NEW_POS, m_BufferedState[0].pos) );
+                if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
+                {
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
+                }
+                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nExceed WILL ITNERPOALTE: " + (Vector3.Distance(NEW_POS, m_BufferedState[0].pos));
                 Interpolate();
                 return;
             }

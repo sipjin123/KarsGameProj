@@ -25,7 +25,6 @@ public class TronGameManager : GameStatsTweaker {
     public Image HealthBar1, HealthBar2;
     public Text Var_HP_1, Var_HP_2;
     
-    GameSparksRTUnity GetRTSession;
 
     #region TWEAKABLE VARIABLES
 
@@ -39,7 +38,6 @@ public class TronGameManager : GameStatsTweaker {
         Text_accelerationTimerMax.text = accelerationTimerMax.ToString("F1");
 
         Text_trailDistanceTotal.text = trailDistanceTotal.ToString("F1");
-        Text_trailDistanceChild.text = trailDistanceChild.ToString("F1");
 
         Text_const_StunDuration.text = const_StunDuration.ToString("F1");
         Text_BlindDuration.text = BlindDuration.ToString("F1");
@@ -53,6 +51,7 @@ public class TronGameManager : GameStatsTweaker {
 
 
         IncrementText.text = IncrementValue.ToString("F1");
+        DivisibleTrailText.text = DivisibleTrailValue.ToString("F1");
 
         BaseText_Speed.text = Base_Value_Speed.ToString("F1");
         BaseText_Acceleration.text = Base_Value_Acceleration.ToString("F1");
@@ -64,13 +63,20 @@ public class TronGameManager : GameStatsTweaker {
         IncrementText_Rotation.text = Increment_Value_Rotation.ToString("F1");
         IncrementText_Trail.text = Increment_Value_Trail.ToString("F1");
 
+
+        Force_Text.text = Force_Value.ToString("F1");
+        Torque_Text.text = Torque_Value.ToString("F1");
+        Drag_Text.text = Drag_Value.ToString("F1");
+        AngularDrag_Text.text = AngularDrag_Value.ToString("F1"); 
+
+
+
         PlayerPrefs.SetFloat(PrefKey_Movement, MovementSpeed);
         PlayerPrefs.SetFloat(PrefKey_Rotation, rotationSpeed);
         PlayerPrefs.SetFloat(PrefKey_AccelerationSpeedMax, accelerationSpeedMax);
         PlayerPrefs.SetFloat(PrefKey_AccelerationTimerMax, accelerationTimerMax);
         
         PlayerPrefs.SetFloat(PrefKey_TrailTotal, trailDistanceTotal);
-        PlayerPrefs.SetFloat(PrefKey_TrailCap, trailDistanceChild);
 
         PlayerPrefs.SetFloat(PrefKey_Stun, const_StunDuration);
         PlayerPrefs.SetFloat(PrefKey_Blind, BlindDuration);
@@ -112,8 +118,7 @@ public class TronGameManager : GameStatsTweaker {
 
         TweakMoveSpeed(0);
         TweakrotationSpeed(0);
-
-        Tweakconst_trailDistanceChild(0);
+        
         TweaktrailDistanceTotal(0);
 
         Tweakconst_StunDuration(0);
@@ -134,6 +139,10 @@ public class TronGameManager : GameStatsTweaker {
         Add_Stat_Acceleration(1);
         Add_Stat_Rotation(1);
         Add_Stat_Trail(1);
+
+
+
+
         UpdateTexts();
     }
     #endregion
@@ -241,7 +250,6 @@ public class TronGameManager : GameStatsTweaker {
         rotationSpeed =  (DefaultRotation);
 
         trailDistanceTotal = (DefaulttrailDistanceTotal);
-        trailDistanceChild = (DefaulttrailDistanceChild);
 
         const_StunDuration = (DefaultStun);
         BlindDuration = (DefaultBlind);
@@ -258,8 +266,7 @@ public class TronGameManager : GameStatsTweaker {
 
         TweakMoveSpeed(0);
         TweakrotationSpeed(0);
-
-        Tweakconst_trailDistanceChild(0);
+        
         TweaktrailDistanceTotal(0);
 
         Tweakconst_StunDuration(0);
@@ -301,7 +308,6 @@ public class TronGameManager : GameStatsTweaker {
         TweakMoveSpeed(0);
         TweakrotationSpeed(0);
 
-        Tweakconst_trailDistanceChild(0);
         TweaktrailDistanceTotal(0);
 
         Tweakconst_StunDuration(0);
@@ -422,27 +428,11 @@ public class TronGameManager : GameStatsTweaker {
             Trail_Stat += IncrementValue;
 
         trailDistanceTotal = Base_Value_Trail+ ((Trail_Stat- 1) * Increment_Value_Trail);
-        trailDistanceChild = trailDistanceTotal / 4;
 
-        if (GameSparkPacketReceiver.Instance.PeerID == 1)
-            PlayerObjects[0].GetComponent<Car_DataReceiver>().ReceiveTrailVAlue(trailDistanceTotal);
-        if (GameSparkPacketReceiver.Instance.PeerID == 2)
-            PlayerObjects[1].GetComponent<Car_DataReceiver>().ReceiveTrailVAlue(trailDistanceTotal);
-
-        try
-        {
-            GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
-            using (RTData data = RTData.Get())
-            {
-                data.SetInt(1, GameSparkPacketReceiver.Instance.PeerID);
-                data.SetFloat(2, trailDistanceTotal);
-                GetRTSession.SendData(116, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-            }
-        }
-        catch { }
+        SendTrailData();
     }
     #endregion
-
+    
     //==================================================================================================================================
     #region TEST INPUTS G,K,L
     void Update()

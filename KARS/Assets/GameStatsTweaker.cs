@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using GameSparks.RT;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class GameStatsTweaker : MonoBehaviour {
 
+    protected GameSparksRTUnity GetRTSession;
     public GameObject[] PlayerObjects;
 
     #region DEFAULT VALUES
@@ -68,9 +70,7 @@ public class GameStatsTweaker : MonoBehaviour {
     //TRAIL
     public Text Text_trailDistanceTotal;
     public float trailDistanceTotal;
-
-    public Text Text_trailDistanceChild;
-    public float trailDistanceChild;
+    
 
     //POWERUPS
     public Text Text_missleCooldown;
@@ -122,7 +122,6 @@ public class GameStatsTweaker : MonoBehaviour {
         rotationSpeed = PlayerPrefs.GetFloat(PrefKey_Rotation, DefaultRotation);
 
         trailDistanceTotal = PlayerPrefs.GetFloat(PrefKey_TrailTotal, DefaulttrailDistanceTotal);
-        trailDistanceChild = PlayerPrefs.GetFloat(PrefKey_TrailCap, DefaulttrailDistanceChild);
 
         const_StunDuration = PlayerPrefs.GetFloat(PrefKey_Stun, DefaultStun);
         BlindDuration = PlayerPrefs.GetFloat(PrefKey_Blind, DefaultBlind);
@@ -138,14 +137,66 @@ public class GameStatsTweaker : MonoBehaviour {
         accelerationSpeedMax = PlayerPrefs.GetFloat(PrefKey_AccelerationSpeedMax, DefaultAccelerationSpeedMax);
         accelerationTimerMax = PlayerPrefs.GetFloat(PrefKey_AccelerationTimerMax, DefaultAccelerationTimerMax);
 
-        Speed_Stat = 0;
-        Acceleration_Stat = 0;
-        Rotation_Stat = 0;
-        Rotation_Stat = 0;
+        Speed_Stat = 1;
+        Acceleration_Stat = 1;
+        Rotation_Stat = 1;
+        Rotation_Stat = 1;
+
+        IncrementValue = 1;
+        DivisibleTrailValue = 10;
 
 
+        Force_Value = 15;
+        Torque_Value = 2;
     }
 
+
+
+    public  Text IncrementText;
+    public float IncrementValue;
+    public void Tweak_IncrementValue(float _val)
+    {
+        IncrementValue += _val;
+    }
+
+    public GameObject Walls;
+    public void EnableDisalbeWalls()
+    {
+        Walls.SetActive(!Walls.activeInHierarchy);
+    }
+
+
+    public Text DivisibleTrailText;
+    public float DivisibleTrailValue;
+    public void Tweak_DivisibleTrailValue(float _val)
+    {
+        DivisibleTrailValue += _val;
+        SendTrailData();
+    }
+
+
+    public void SendTrailData()
+    {
+
+        if (GameSparkPacketReceiver.Instance.PeerID == 1)
+            PlayerObjects[0].GetComponent<Car_DataReceiver>().ReceiveTrailVAlue(trailDistanceTotal, DivisibleTrailValue);
+        if (GameSparkPacketReceiver.Instance.PeerID == 2)
+            PlayerObjects[1].GetComponent<Car_DataReceiver>().ReceiveTrailVAlue(trailDistanceTotal, DivisibleTrailValue);
+
+        try
+        {
+            GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, GameSparkPacketReceiver.Instance.PeerID);
+                data.SetFloat(2, trailDistanceTotal);
+                data.SetFloat(3, DivisibleTrailValue);
+                GetRTSession.SendData(116, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            }
+        }
+        catch { }
+    }
+    //--------------------------------------------------------------------------------------
     #region TWEAK RAW STATS
     //=========================MOVEMENT
     public void TweakMoveSpeed(float _var)
@@ -169,13 +220,11 @@ public class GameStatsTweaker : MonoBehaviour {
     public void TweaktrailDistanceTotal(float _var)
     {
         trailDistanceTotal += _var;
-    }
 
-    public void Tweakconst_trailDistanceChild(float _var)
-    {
-        trailDistanceChild += _var;
     }
-
+    
+    #endregion
+    //--------------------------------------------------------------------------------------
     //=========================POWERUPS
     public void Tweak_missleCooldown(float _var)
     {
@@ -217,29 +266,7 @@ public class GameStatsTweaker : MonoBehaviour {
     {
         ConfuseDuration += _var;
     }
-    #endregion
-
-
-
-    public  Text IncrementText;
-    public float IncrementValue;
-    public void Tweak_IncrementValue(float _val)
-    {
-        IncrementValue += _val;
-    }
-
-    public GameObject Walls;
-    public void EnableDisalbeWalls()
-    {
-        Walls.SetActive(!Walls.activeInHierarchy);
-    }
-
-
-
-
-
     //--------------------------------------------------------------------------------------
-
     public Text BaseText_Speed, BaseText_Acceleration, BaseText_Rotation, BaseText_Trail;
     public void Tweak_Base_Speed(float _val)
     {
@@ -299,6 +326,37 @@ public class GameStatsTweaker : MonoBehaviour {
         else
             Increment_Value_Trail += IncrementValue;
     }
+    //--------------------------------------------------------------------------------------
+    public float Force_Value, Torque_Value , Drag_Value, AngularDrag_Value;
+    public Text Force_Text, Torque_Text, Drag_Text, AngularDrag_Text;
 
+    public void Tweak_Force(float _val)
+    {
+        if (_val < 0)
+            Force_Value -= IncrementValue;
+        else
+            Force_Value += IncrementValue;
+    }
 
+    public void Tweak_Torque(float _val)
+    {
+        if (_val < 0)
+            Torque_Value-= IncrementValue;
+        else
+            Torque_Value += IncrementValue;
+    }
+    public void Tweak_Drag(float _val)
+    {
+        if (_val < 0)
+            Drag_Value -= IncrementValue;
+        else
+            Drag_Value += IncrementValue;
+    }
+    public void Tweak_AngularDrag(float _val)
+    {
+        if (_val < 0)
+            AngularDrag_Value -= IncrementValue;
+        else
+            AngularDrag_Value += IncrementValue;
+    }
 }

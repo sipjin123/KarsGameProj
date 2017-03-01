@@ -109,7 +109,7 @@ public class TrailCollision : MonoBehaviour
         //trailDistanceTotal = _tronGameManager.trailDistanceTotal;
         trailDistanceTotal = _carReceiveData.TrailValue();
         //trailDistanceChid = _tronGameManager.trailDistanceChild;
-        trailDistanceChid = trailDistanceTotal / 4;
+        trailDistanceChid =  _carReceiveData.TrailValueDividend();
 
         if (_emitTrail)
         {

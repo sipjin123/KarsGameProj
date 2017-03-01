@@ -53,6 +53,9 @@ public class Car_Movement : MonoBehaviour {
     public bool NitrosActive;
 
     public bool FlipSwitch;
+
+
+    Rigidbody myRigid;
     #endregion
     //==========================================================================================================================
     #region INIT
@@ -61,6 +64,7 @@ public class Car_Movement : MonoBehaviour {
         AIMode_HpBar = 5;
         _characterController = GetComponent<CharacterController>();
         MyCarDataReceiver = GetComponent<Car_DataReceiver>();
+        myRigid = GetComponent<Rigidbody>();
         currentRotation_Y = CarRotationObject.transform.eulerAngles.y;
     }
 
@@ -90,7 +94,10 @@ public class Car_Movement : MonoBehaviour {
             return 1;
 
 
-
+        if (NitrosActive == false)
+        {
+            NitrosSpeed = 0;
+        }
         _finalValue = movementSpeed + accelerationSpeed_Counter + NitrosSpeed;
         return _finalValue;
     }
@@ -119,7 +126,8 @@ public class Car_Movement : MonoBehaviour {
 
         if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
-            if(accelerationSpeed_Counter < accelerationSpeed_Max)
+
+            if (accelerationSpeed_Counter < accelerationSpeed_Max)
             {
                 if (MyCarDataReceiver.Network_ID == 1)
                 {
@@ -135,14 +143,9 @@ public class Car_Movement : MonoBehaviour {
                     UIManager.instance.SpeedMaxText_2.text = accelerationSpeed_Max.ToString();
                     UIManager.instance.SpeedText_2.text = accelerationSpeed_Counter.ToString();
                 }
-                accelerationSpeed_Counter += Time.fixedDeltaTime * ((accelerationSpeed_Max) /accelerationTimer);
+                accelerationSpeed_Counter += Time.fixedDeltaTime * ((accelerationSpeed_Max) / accelerationTimer);
             }
-            if(NitrosActive == false)
-            {
-                NitrosSpeed = 0;
-            }
-            _characterController.Move(CarRotationObject.transform.forward * ((ComputedValues() * ReduceValues() )* Time.fixedDeltaTime));
-          
+            //_characterController.Move(CarRotationObject.transform.forward * ((ComputedValues() * ReduceValues() )* Time.fixedDeltaTime));
             InputSystem();
 
         }
@@ -172,8 +175,27 @@ public class Car_Movement : MonoBehaviour {
     #endregion
     //==========================================================================================================================
     #region INPUT
+
     void InputSystem()
     {
+        myRigid.drag = _tronGameManager.Drag_Value;
+        myRigid.angularDrag = _tronGameManager.AngularDrag_Value;
+        if (Input.GetKey(KeyCode.W))
+        {
+            //Debug.LogError("forceee " + _tronGameManager.Force_Value);
+            //myRigid.AddForce(CarRotationObject.transform.forward * _tronGameManager.Force_Value);
+            myRigid.AddForce(CarRotationObject.transform.forward *(_tronGameManager.Force_Value +(ComputedValues() * ReduceValues()) * Time.fixedDeltaTime));
+        }
+        /*
+        if(FlipSwitch)
+            myRigid.angularVelocity = new Vector3(0, -Input.GetAxis("Horizontal") * tf, 0);
+        else
+            myRigid.angularVelocity = new Vector3(0, Input.GetAxis("Horizontal") * tf, 0);
+
+        
+        //refactoring using force
+        return;
+        */
         if (_moveRight)
         {
             MoveRight();
@@ -220,7 +242,8 @@ public class Car_Movement : MonoBehaviour {
         else
             currentRotation_Y -= rotationSpeed * Time.fixedDeltaTime;
 
-        CarRotationObject.transform.eulerAngles = new Vector3(0, currentRotation_Y, 0);
+        float tf = Mathf.Lerp(0, _tronGameManager.Torque_Value, myRigid.velocity.magnitude / 2);
+        myRigid.angularVelocity = new Vector3(0, 1 * tf, 0);
     }
     void MoveLeft()
     {
@@ -228,7 +251,9 @@ public class Car_Movement : MonoBehaviour {
             currentRotation_Y -= rotationSpeed * Time.fixedDeltaTime;
         else
             currentRotation_Y += rotationSpeed * Time.fixedDeltaTime;
-        CarRotationObject.transform.eulerAngles = new Vector3(0, currentRotation_Y, 0);
+
+        float tf = Mathf.Lerp(0, _tronGameManager.Torque_Value, myRigid.velocity.magnitude / 2);
+        myRigid.angularVelocity = new Vector3(0, -1 * tf, 0);
     }
     #endregion
     //==========================================================================================================================

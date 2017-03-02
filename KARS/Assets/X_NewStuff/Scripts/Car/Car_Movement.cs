@@ -56,6 +56,8 @@ public class Car_Movement : MonoBehaviour {
 
 
     Rigidbody myRigid;
+    [SerializeField]
+    Transform centerOfMass;
     #endregion
     //==========================================================================================================================
     #region INIT
@@ -66,6 +68,7 @@ public class Car_Movement : MonoBehaviour {
         MyCarDataReceiver = GetComponent<Car_DataReceiver>();
         myRigid = GetComponent<Rigidbody>();
         currentRotation_Y = CarRotationObject.transform.eulerAngles.y;
+        myRigid.centerOfMass = centerOfMass.localPosition;
     }
 
     void Start()
@@ -180,7 +183,8 @@ public class Car_Movement : MonoBehaviour {
     {
         myRigid.drag = _tronGameManager.Drag_Value;
         myRigid.angularDrag = _tronGameManager.AngularDrag_Value;
-        if (Input.GetKey(KeyCode.W))
+        myRigid.mass = _tronGameManager.Mass_Value;
+        //if (Input.GetKey(KeyCode.W))
         {
             //Debug.LogError("forceee " + _tronGameManager.Force_Value);
             //myRigid.AddForce(CarRotationObject.transform.forward * _tronGameManager.Force_Value);
@@ -196,6 +200,8 @@ public class Car_Movement : MonoBehaviour {
         //refactoring using force
         return;
         */
+
+
         if (_moveRight)
         {
             MoveRight();
@@ -237,23 +243,31 @@ public class Car_Movement : MonoBehaviour {
 
     void MoveRight()
     {
+        /*
         if(!FlipSwitch)
             currentRotation_Y += rotationSpeed * Time.fixedDeltaTime;
         else
-            currentRotation_Y -= rotationSpeed * Time.fixedDeltaTime;
+            currentRotation_Y -= rotationSpeed * Time.fixedDeltaTime;*/
 
         float tf = Mathf.Lerp(0, _tronGameManager.Torque_Value, myRigid.velocity.magnitude / 2);
-        myRigid.angularVelocity = new Vector3(0, 1 * tf, 0);
+        if (!FlipSwitch)
+            myRigid.angularVelocity = new Vector3(0, 1 * tf, 0);
+        else
+            myRigid.angularVelocity = new Vector3(0, -1 * tf, 0);
     }
     void MoveLeft()
     {
+        /*
         if (!FlipSwitch)
             currentRotation_Y -= rotationSpeed * Time.fixedDeltaTime;
         else
-            currentRotation_Y += rotationSpeed * Time.fixedDeltaTime;
+            currentRotation_Y += rotationSpeed * Time.fixedDeltaTime;*/
 
         float tf = Mathf.Lerp(0, _tronGameManager.Torque_Value, myRigid.velocity.magnitude / 2);
+        if(!FlipSwitch)
         myRigid.angularVelocity = new Vector3(0, -1 * tf, 0);
+        else
+            myRigid.angularVelocity = new Vector3(0, 1 * tf, 0);
     }
     #endregion
     //==========================================================================================================================

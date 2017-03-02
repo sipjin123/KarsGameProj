@@ -137,6 +137,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
     #region DATA_SENDING
     public void SendCarMovement(int _id, Vector3 _pos, Vector3 _rot)
     {
+        if(TronGameManager.Instance.NetworkStart)
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, _id);
@@ -150,7 +151,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
             GetRTSession.SendData(111, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
-    }
+    } 
 
     public void ReduceHealth()
     {
@@ -176,6 +177,8 @@ public class Car_DataReceiver : Car_Network_Interpolation
     public void ResetTrail(bool _switch)
     {
         _carMovement._trailCollision.SetEmiision(_switch);
+
+        if(TronGameManager.Instance.NetworkStart == true)
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, Network_ID);

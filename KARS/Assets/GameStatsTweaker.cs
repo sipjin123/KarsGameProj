@@ -145,8 +145,11 @@ public class GameStatsTweaker : MonoBehaviour {
         IncrementValue = 1;
         DivisibleTrailValue = 10;
 
+        Drag_Value = 0.1f;
+        AngularDrag_Value = 0.05f;
 
-        Force_Value = 15;
+        Mass_Value = 4;
+        Force_Value = 75;
         Torque_Value = 2;
     }
 
@@ -327,8 +330,8 @@ public class GameStatsTweaker : MonoBehaviour {
             Increment_Value_Trail += IncrementValue;
     }
     //--------------------------------------------------------------------------------------
-    public float Force_Value, Torque_Value , Drag_Value, AngularDrag_Value;
-    public Text Force_Text, Torque_Text, Drag_Text, AngularDrag_Text;
+    public float Force_Value, Torque_Value , Drag_Value, AngularDrag_Value,Mass_Value;
+    public Text Force_Text, Torque_Text, Drag_Text, AngularDrag_Text,Mass_Text;
 
     public void Tweak_Force(float _val)
     {
@@ -358,5 +361,12 @@ public class GameStatsTweaker : MonoBehaviour {
             AngularDrag_Value -= IncrementValue;
         else
             AngularDrag_Value += IncrementValue;
+    }
+    public void Tweak_Mass(float _val)
+    {
+        if (_val < 0)
+            Mass_Value -= IncrementValue;
+        else
+            Mass_Value += IncrementValue;
     }
 }

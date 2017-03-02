@@ -402,6 +402,14 @@ public class GameSparkPacketReceiver : MonoBehaviour
     //====================================================================================
     public void ResetGameFromButton()
     {
+
+        if (_tronGameManager.NetworkStart == false)
+        {
+            _tronGameManager.PlayerObjects[0].transform.position = new Vector3(UnityEngine.Random.RandomRange(-5,5), 3, UnityEngine.Random.RandomRange(-5, 5));
+            _tronGameManager.PlayerObjects[0].transform.eulerAngles = new Vector3(0, 0, 0);
+            _tronGameManager.PlayerObjects[0].GetComponent<Rigidbody>().Sleep();
+            return;
+        }
         ResetGame();
         using (RTData data = RTData.Get())
         {
@@ -411,6 +419,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
     }
     public void ResetGame()
     {
+
         FiveSecUpdateTime = 0;
 
         serverClock = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);

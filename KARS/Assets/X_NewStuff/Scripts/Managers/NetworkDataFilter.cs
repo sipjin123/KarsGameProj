@@ -57,7 +57,7 @@ public class NetworkDataFilter : MonoBehaviour
         }
         else if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_SHIELD)
         {
-            carReceiver.ReceivePowerUpState(_networkPlayerEvent.playerStatusSwitch);
+            carReceiver.ReceivePowerUpState(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
         }
         else if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_TRAIL)
         {

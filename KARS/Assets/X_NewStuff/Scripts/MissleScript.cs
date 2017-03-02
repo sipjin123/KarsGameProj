@@ -190,7 +190,7 @@ public class MissleScript : MonoBehaviour {
                 }
                 if (_missleType == MISSLE_TYPE.STUN)
                 {
-                    carReceiver.ActiveStunFromButton();
+                    carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_STUN);
                     GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
                     using (RTData data = RTData.Get())
                     {
@@ -203,7 +203,7 @@ public class MissleScript : MonoBehaviour {
                 }
                 else if(_missleType == MISSLE_TYPE.BLIND)
                 {
-                    carReceiver.ActiveBlindFromButton();
+                    carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_BLIND);
                     GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
                     using (RTData data = RTData.Get())
                     {
@@ -216,7 +216,7 @@ public class MissleScript : MonoBehaviour {
                 }
                 else if(_missleType == MISSLE_TYPE.CONFUSE)
                 {
-                    carReceiver.ActiveConfuseFromButton();
+                    carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_CONFUSE);
                     GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
                     using (RTData data = RTData.Get())
                     {

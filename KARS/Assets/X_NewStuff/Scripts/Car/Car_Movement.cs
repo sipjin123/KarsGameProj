@@ -280,15 +280,15 @@ public class Car_Movement : MonoBehaviour {
             {
                 if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.STUN)
                 {
-                    MyCarDataReceiver.ActiveStunFromButton();
+                    MyCarDataReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_STUN);
                 }
                 if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.BLIND)
                 {
-                    MyCarDataReceiver.ActiveBlindFromButton();
+                    MyCarDataReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_BLIND);
                 }
                 if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.CONFUSE)
                 {
-                    MyCarDataReceiver.ActiveConfuseFromButton();
+                    MyCarDataReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_CONFUSE);
                 }
             }
         }

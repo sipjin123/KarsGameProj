@@ -102,19 +102,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
         }
-
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            ShieldSwitch = true;
-            ShieldObject.SetActive(true);
-            SendNetworkPowerUp();
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            ShieldSwitch = false;
-            ShieldObject.SetActive(false);
-            SendNetworkPowerUp();
-        }
+        
 
         if (Input.GetKeyDown(KeyCode.Comma))
         {
@@ -192,9 +180,9 @@ public class Car_DataReceiver : Car_Network_Interpolation
     {
         ShieldSwitch = !ShieldSwitch;
         ShieldObject.SetActive(ShieldSwitch);
-        SendNetworkPowerUp();
+        SendNetworkPowerUp(NetworkPlayerStatus.ACTIVATE_SHIELD);
     }
-    private void SendNetworkPowerUp()
+    private void SendNetworkPowerUp(NetworkPlayerStatus _status)
     {
         using (RTData data = RTData.Get())
         {
@@ -204,7 +192,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
             else
                 data.SetInt(2, 0);
 
-            data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_SHIELD);
+            data.SetInt(3, (int)_status);
             GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
@@ -214,35 +202,6 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             ShieldObject.SetActive(_switch);
             ShieldSwitch = _switch;
-        }
-    }
-
-    public void ReceiveDisableSTate(bool _switch, NetworkPlayerStatus _netStatus)
-    {
-        if (_netStatus == NetworkPlayerStatus.ACTIVATE_STUN)
-        {
-            StunObject.SetActive(_switch);
-            StunSwitch = _switch;
-        }
-        if (_netStatus == NetworkPlayerStatus.ACTIVATE_BLIND)
-        {
-            BlindObjectBlocker.SetActive(_switch);
-            BlindObject.SetActive(_switch);
-            BlindSwitch = _switch;
-        }
-        if (_netStatus == NetworkPlayerStatus.ACTIVATE_CONFUSE)
-        {
-            ConfuseObject.SetActive(_switch);
-            ConfuseSwitch = _switch;
-            _carMovement.FlipSwitch = _switch;
-        }
-        if (_netStatus == NetworkPlayerStatus.SET_READY)
-        {
-            _carMovement.SetReady(_switch);
-        }
-        if (_netStatus == NetworkPlayerStatus.SET_START)
-        {
-            _carMovement.SetStartGame(_switch);
         }
     }
     #endregion
@@ -300,9 +259,12 @@ public class Car_DataReceiver : Car_Network_Interpolation
         }
     }
 
-    //STUN
-    //-------------------------------------------
-    #region STUN FEATURE
+    IEnumerator StartConfuseTimer()
+    {
+        yield return new WaitForSeconds(TronGameManager.Instance.ConfuseDuration);
+        ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_CONFUSE);
+        SendNetworkDisable(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
+    }
     IEnumerator StartStunTimer()
     {
         yield return new WaitForSeconds(TronGameManager.Instance.const_StunDuration);
@@ -310,27 +272,44 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
         SendNetworkDisable(StunSwitch, NetworkPlayerStatus.ACTIVATE_STUN);
     }
-    #endregion
-    //-------------------------------------------
-    //CONFUSE
-    #region CONFUSE FEATURE
-    IEnumerator StartConfuseTimer()
-    {
-        yield return new WaitForSeconds(TronGameManager.Instance.ConfuseDuration);
-        ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_CONFUSE);
-        SendNetworkDisable(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
-    }
-    #endregion
-    //-------------------------------------------
-    //BLIND
-    #region BLIND FEATURE
     IEnumerator StartBlindTimer()
     {
         yield return new WaitForSeconds(TronGameManager.Instance.BlindDuration);
         ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_BLIND);
         SendNetworkDisable(BlindSwitch, NetworkPlayerStatus.ACTIVATE_BLIND);
     }
-    #endregion
+
+
+
+    public void ReceiveDisableSTate(bool _switch, NetworkPlayerStatus _netStatus)
+    {
+        if (_netStatus == NetworkPlayerStatus.ACTIVATE_STUN)
+        {
+            StunObject.SetActive(_switch);
+            StunSwitch = _switch;
+        }
+        if (_netStatus == NetworkPlayerStatus.ACTIVATE_BLIND)
+        {
+            BlindObjectBlocker.SetActive(_switch);
+            BlindObject.SetActive(_switch);
+            BlindSwitch = _switch;
+        }
+        if (_netStatus == NetworkPlayerStatus.ACTIVATE_CONFUSE)
+        {
+            ConfuseObject.SetActive(_switch);
+            ConfuseSwitch = _switch;
+            _carMovement.FlipSwitch = _switch;
+        }
+        if (_netStatus == NetworkPlayerStatus.SET_READY)
+        {
+            _carMovement.SetReady(_switch);
+        }
+        if (_netStatus == NetworkPlayerStatus.SET_START)
+        {
+            _carMovement.SetStartGame(_switch);
+        }
+    }
+
     //-------------------------------------------
     private void SendNetworkDisable(bool _switch, NetworkPlayerStatus _status)
     {

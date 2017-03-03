@@ -245,10 +245,6 @@ public class PowerUpManager : MonoBehaviour {
 
                     NitroCooldownTimer_Switch = true;
                     NitroCooldownTimer_Timer = 0;
-                    if (ServerPeerID == 1)
-                        Player1.GetComponent<Car_Movement>().NitrosActive = false;
-                    else
-                        Player2.GetComponent<Car_Movement>().NitrosActive = false;
                 }
             }
             if(NitroCooldownTimer_Switch)
@@ -313,10 +309,6 @@ public class PowerUpManager : MonoBehaviour {
         NitroActiveTimer_Switch = true;
         NitroActiveTimer_Timer = 0;
 
-        if (ServerPeerID == 1)
-            Player1.GetComponent<Car_Movement>().NitrosActive = true;
-        else
-            Player2.GetComponent<Car_Movement>().NitrosActive = true;
 
     }
 

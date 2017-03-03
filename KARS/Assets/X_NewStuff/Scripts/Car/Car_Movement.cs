@@ -50,7 +50,6 @@ public class Car_Movement : MonoBehaviour {
     float accelerationSpeed_Max ;
 
     float NitrosSpeed ;
-    public bool NitrosActive;
 
     public bool FlipSwitch;
 
@@ -90,20 +89,6 @@ public class Car_Movement : MonoBehaviour {
     #endregion
     //==========================================================================================================================
     #region MOVEMENT
-    float ComputedValues()
-    {
-        float _finalValue = 0;
-        if (MyCarDataReceiver.GetStunSwitch() == true)
-            return 1;
-
-
-        if (NitrosActive == false)
-        {
-            NitrosSpeed = 0;
-        }
-        _finalValue = movementSpeed + accelerationSpeed_Counter + NitrosSpeed;
-        return _finalValue;
-    }
 
     float ReduceValues()
     {
@@ -151,9 +136,27 @@ public class Car_Movement : MonoBehaviour {
                 accelerationSpeed_Counter += Time.fixedDeltaTime * ((accelerationSpeed_Max) / accelerationTimer);
             }
             //_characterController.Move(CarRotationObject.transform.forward * ((ComputedValues() * ReduceValues() )* Time.fixedDeltaTime));
-      
+
+
+
+            if (MyCarDataReceiver.GetNitroSwitch() == true)
+            {
+                NitrosSpeed = _tronGameManager.nitroSpeed;
+                Debug.LogError("NITROS IS ACTIVTE!");
+            }
+            else
+            {
+                NitrosSpeed = 0;
+            }
+
             myRigid.AddForce(CarRotationObject.transform.forward *
-                ((_tronGameManager.Force_Value + ComputedValues() * Time.fixedDeltaTime) * ReduceValues()));
+                ((_tronGameManager.Force_Value + NitrosSpeed + accelerationSpeed_Counter  * Time.fixedDeltaTime) * ReduceValues()));
+            
+            if (MyCarDataReceiver.GetFlySwitch() == true)
+            {
+                if (transform.position.y < 6)
+                    myRigid.AddForce(transform.up * 25);
+            }
             InputSystem();
 
         }
@@ -270,7 +273,6 @@ public class Car_Movement : MonoBehaviour {
     #region COLLISION
     void OnTriggerEnter(Collider hit)
     {
-        return;
         if (!TronGameManager.Instance.NetworkStart)
         {
             if (hit.gameObject.name.Contains("Missle") && hit.GetComponent<MissleScript>().PlayerController_ID != 1)
@@ -318,6 +320,7 @@ public class Car_Movement : MonoBehaviour {
     #region PLAYER DEATH
     public void Die()
     {
+        myRigid.Sleep();
         //if(MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID)
         if ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart)
         {

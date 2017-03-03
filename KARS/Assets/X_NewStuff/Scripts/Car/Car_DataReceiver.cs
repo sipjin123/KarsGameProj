@@ -24,10 +24,23 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
     //POWER UP AND DEBUFF
 
+    //NITROS---------
+    private bool NitroSwitch;
+    public bool GetNitroSwitch() { return NitroSwitch; }
     //SHIELD---------
     private bool ShieldSwitch;
     public bool GetShieldSwitch() { return ShieldSwitch; }
     public GameObject ShieldObject;
+
+    //FLY---------
+    private bool FlySwitch;
+    public bool GetFlySwitch() { return FlySwitch; }
+    public GameObject FlyObject;
+
+    //EXPAND---------
+    private bool ExpandSwitch;
+    public bool GetExpandSwitch() { return ExpandSwitch; }
+    public GameObject ExpandObject;
 
 
     //STUN---------
@@ -178,52 +191,6 @@ public class Car_DataReceiver : Car_Network_Interpolation
         }
     }
 
-    public void ResetTrail(bool _switch)
-    {
-        _carMovement._trailCollision.SetEmiision(_switch);
-
-        if(TronGameManager.Instance.NetworkStart == true)
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, Network_ID);
-            data.SetInt(2, _switch == true ? 1 : 0);
-            data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_TRAIL);
-
-            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-    }
-
-
-    //SHIELD
-    //-------------------------------------------
-    public void ActiveShieldFromButton()
-    {
-        ShieldSwitch = !ShieldSwitch;
-        ShieldObject.SetActive(ShieldSwitch);
-        SendNetworkPowerUp(NetworkPlayerStatus.ACTIVATE_SHIELD);
-    }
-    private void SendNetworkPowerUp(NetworkPlayerStatus _status)
-    {
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, Network_ID);
-            if (ShieldSwitch)
-                data.SetInt(2, 1);
-            else
-                data.SetInt(2, 0);
-
-            data.SetInt(3, (int)_status);
-            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-    }
-    public void ReceivePowerUpState(bool _switch, NetworkPlayerStatus _netStatus)
-    {
-        if (_netStatus == NetworkPlayerStatus.ACTIVATE_SHIELD)
-        {
-            ShieldObject.SetActive(_switch);
-            ShieldSwitch = _switch;
-        }
-    }
     #endregion
     //================================================================================================================================
     //
@@ -300,7 +267,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 break;
         }
     }
-
+    #region COUNTDOWN TIMERS
     IEnumerator StartConfuseTimer()
     {
         yield return new WaitForSeconds(TronGameManager.Instance.ConfuseDuration);
@@ -336,7 +303,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
         ReceiveDisableSTate(SilenceSwitch, NetworkPlayerStatus.ACTIVATE_SILENCE);
         SendNetworkDisable(SilenceSwitch, NetworkPlayerStatus.ACTIVATE_SILENCE);
     }
-
+    #endregion
 
 
     public void ReceiveDisableSTate(bool _switch, NetworkPlayerStatus _netStatus)
@@ -380,6 +347,23 @@ public class Car_DataReceiver : Car_Network_Interpolation
     }
 
     //-------------------------------------------
+
+    #region TRAILS
+    public void ResetTrail(bool _switch)
+    {
+        _carMovement._trailCollision.SetEmiision(_switch);
+
+        if (TronGameManager.Instance.NetworkStart == true)
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, Network_ID);
+                data.SetInt(2, _switch == true ? 1 : 0);
+                data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_TRAIL);
+
+                GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            }
+    }
+
     private void SendNetworkDisable(bool _switch, NetworkPlayerStatus _status)
     {
         if (TronGameManager.Instance.NetworkStart == false)
@@ -420,5 +404,128 @@ public class Car_DataReceiver : Car_Network_Interpolation
     {
         _TrailValue = _trailValue;
         _TrailValueDividend = _trailValueDividend;
+    }
+    #endregion
+
+
+
+    public void ActivatePowerUpFromButton(int _val)
+    {
+        NetworkPlayerStatus _netStat = NetworkPlayerStatus.ACTIVATE_SHIELD;
+        switch (_val)
+        {
+            case 0:
+                _netStat = NetworkPlayerStatus.ACTIVATE_SHIELD;
+                break;
+            case 1:
+                _netStat = NetworkPlayerStatus.ACTIVATE_FLY;
+                break;
+            case 2:
+                _netStat = NetworkPlayerStatus.ACTIVATE_EXPAND;
+                break;
+            case 3:
+                _netStat = NetworkPlayerStatus.ACTIVATE_NITRO;
+                break;
+        }
+
+        switch(_netStat)
+        {
+            case NetworkPlayerStatus.ACTIVATE_SHIELD:
+                {
+                    ShieldSwitch = true;
+                    ShieldObject.SetActive(true);
+                    SendNetworkPowerUp(true, NetworkPlayerStatus.ACTIVATE_SHIELD);
+                    StartCoroutine(CoolDown_Shield());
+                }
+                break;
+            case NetworkPlayerStatus.ACTIVATE_FLY:
+                {
+                    FlySwitch = true;
+                    FlyObject.SetActive(true);
+                    SendNetworkPowerUp(true, NetworkPlayerStatus.ACTIVATE_FLY);
+                    StartCoroutine(CoolDown_Fly());
+                }
+                break;
+            case NetworkPlayerStatus.ACTIVATE_EXPAND:
+                {
+                    ExpandSwitch = true;
+                    ExpandObject.SetActive(true);
+                    SendNetworkPowerUp(true, NetworkPlayerStatus.ACTIVATE_EXPAND);
+                    StartCoroutine(CoolDown_Expand());
+                }
+                break;
+            case NetworkPlayerStatus.ACTIVATE_GHOST:
+                {
+
+                }
+                break;
+            case NetworkPlayerStatus.ACTIVATE_NITRO:
+                {
+                    NitroSwitch = true;
+                    StartCoroutine(CoolDown_Nitro());
+                }
+                break;
+        }
+    }
+    IEnumerator CoolDown_Shield()
+    {
+        yield return new WaitForSeconds(5);
+        ShieldSwitch = false;
+        ShieldObject.SetActive(false);
+        SendNetworkPowerUp(false, NetworkPlayerStatus.ACTIVATE_SHIELD);
+    }
+    IEnumerator CoolDown_Fly()
+    {
+        yield return new WaitForSeconds(5);
+        FlySwitch = false;
+        FlyObject.SetActive(false);
+        SendNetworkPowerUp(false, NetworkPlayerStatus.ACTIVATE_FLY);
+    }
+    IEnumerator CoolDown_Expand()
+    {
+        yield return new WaitForSeconds(5);
+        ExpandSwitch = false;
+        ExpandObject.SetActive(false);
+        SendNetworkPowerUp(false, NetworkPlayerStatus.ACTIVATE_EXPAND);
+    }
+    IEnumerator CoolDown_Nitro()
+    {
+        yield return new WaitForSeconds(5);
+        NitroSwitch = false;
+    }
+
+
+
+    private void SendNetworkPowerUp(bool _switch,NetworkPlayerStatus _status)
+    {
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, Network_ID);
+            if (_switch)
+                data.SetInt(2, 1);
+            else
+                data.SetInt(2, 0);
+
+            data.SetInt(3, (int)_status);
+            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+    }
+    public void ReceivePowerUpState(bool _switch, NetworkPlayerStatus _netStatus)
+    {
+        if (_netStatus == NetworkPlayerStatus.ACTIVATE_SHIELD)
+        {
+            ShieldObject.SetActive(_switch);
+            ShieldSwitch = _switch;
+        }
+        if (_netStatus == NetworkPlayerStatus.ACTIVATE_FLY)
+        {
+            FlyObject.SetActive(_switch);
+            FlySwitch = _switch;
+        }
+        if (_netStatus == NetworkPlayerStatus.ACTIVATE_EXPAND)
+        {
+            ExpandObject.SetActive(_switch);
+            ExpandSwitch = _switch;
+        }
     }
 }

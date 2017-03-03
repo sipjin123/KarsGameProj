@@ -22,7 +22,7 @@ public class GameStatsTweaker : MonoBehaviour {
     public static float DefaultShieldCooldown = 5;
 
     public static float DefaultNitroCooldown = 5;
-    public static float DefaultNitroSpeed = 20;
+    public static float DefaultNitroSpeed = 50;
     public static float DefaultNitroDuration = 5;
 
     public static float DefaultAccelerationSpeedMax = 10;
@@ -148,7 +148,7 @@ public class GameStatsTweaker : MonoBehaviour {
         Drag_Value = 1f;
         AngularDrag_Value = 10f;
 
-        Mass_Value = 1;
+        Mass_Value = 2;
         Force_Value = 50;
         Torque_Value = 2;
     }

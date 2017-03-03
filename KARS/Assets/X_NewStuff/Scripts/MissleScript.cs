@@ -186,7 +186,7 @@ public class MissleScript : MonoBehaviour {
             {
                 if (carReceiver.GetShieldSwitch())
                 {
-                    carReceiver.ActiveShieldFromButton();
+                    carReceiver.ReceivePowerUpState(false,NetworkPlayerStatus.ACTIVATE_SHIELD);
                     ResetMissle();
                     return;
                 }

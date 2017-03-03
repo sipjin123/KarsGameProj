@@ -126,10 +126,12 @@ public class Car_Movement : MonoBehaviour {
         accelerationTimer = _tronGameManager.accelerationTimerMax;
         accelerationSpeed_Max = _tronGameManager.accelerationSpeedMax;
 
+        myRigid.drag = _tronGameManager.Drag_Value;
+        myRigid.angularDrag = _tronGameManager.AngularDrag_Value;
+        myRigid.mass = _tronGameManager.Mass_Value;
 
         if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
-
             if (accelerationSpeed_Counter < accelerationSpeed_Max)
             {
                 if (MyCarDataReceiver.Network_ID == 1)
@@ -149,9 +151,7 @@ public class Car_Movement : MonoBehaviour {
                 accelerationSpeed_Counter += Time.fixedDeltaTime * ((accelerationSpeed_Max) / accelerationTimer);
             }
             //_characterController.Move(CarRotationObject.transform.forward * ((ComputedValues() * ReduceValues() )* Time.fixedDeltaTime));
-            myRigid.drag = _tronGameManager.Drag_Value;
-            myRigid.angularDrag = _tronGameManager.AngularDrag_Value;
-            myRigid.mass = _tronGameManager.Mass_Value;
+      
             myRigid.AddForce(CarRotationObject.transform.forward *
                 ((_tronGameManager.Force_Value + ComputedValues() * Time.fixedDeltaTime) * ReduceValues()));
             InputSystem();
@@ -184,28 +184,44 @@ public class Car_Movement : MonoBehaviour {
     //==========================================================================================================================
     #region INPUT
 
-    void InputSystem()
+    float _currentTurningForce = 0;
+
+    public float turningRate = 5f;
+    public float turningForce = 50;
+    public float turningStraightDamping = 0.9f;
+
+    public float CurrentTurningForceRatio
     {
-        if (_moveRight)
+        get
         {
-            MoveRight();
-        }
-        if (_moveLeft)
-        {
-            MoveLeft();
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-                MoveLeft();
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-                MoveRight();
+            return _currentTurningForce / turningForce;
         }
     }
-
-
     bool _moveLeft, _moveRight;
+    void InputSystem()
+    {
+        turningRate = _tronGameManager.turningRate;
+        turningForce = _tronGameManager.turningForce;
+        turningStraightDamping = _tronGameManager.turningStraightDamping;
+
+        if (_moveRight || Input.GetKey(KeyCode.D))
+        {
+            _currentTurningForce = Mathf.Clamp(_currentTurningForce - turningRate, -turningForce, turningForce);
+            //MoveRight();
+        }
+        else if (_moveLeft || Input.GetKey(KeyCode.A))
+        {
+            _currentTurningForce = Mathf.Clamp(_currentTurningForce + turningRate, -turningForce, turningForce);
+            //MoveLeft();
+        }
+        else
+        {
+            _currentTurningForce *= turningStraightDamping;
+        }
+
+        myRigid.AddRelativeTorque(Vector3.down * _currentTurningForce);
+    }
+
     public void HoldRight()
     {
         _moveRight = true;
@@ -225,15 +241,13 @@ public class Car_Movement : MonoBehaviour {
         _moveLeft = false;
     }
 
+
     void MoveRight()
     {
-        /*
-        if(!FlipSwitch)
-            currentRotation_Y += rotationSpeed * Time.fixedDeltaTime;
-        else
-            currentRotation_Y -= rotationSpeed * Time.fixedDeltaTime;*/
+        float torqer = _tronGameManager.Torque_Value;
+        torqer = _currentTurningForce;
+        float tf = Mathf.Lerp(0, torqer, myRigid.velocity.magnitude / 2);
 
-        float tf = Mathf.Lerp(0, _tronGameManager.Torque_Value, myRigid.velocity.magnitude / 2);
         if (!FlipSwitch)
             myRigid.angularVelocity = new Vector3(0, 1 * tf, 0);
         else
@@ -241,15 +255,12 @@ public class Car_Movement : MonoBehaviour {
     }
     void MoveLeft()
     {
-        /*
-        if (!FlipSwitch)
-            currentRotation_Y -= rotationSpeed * Time.fixedDeltaTime;
-        else
-            currentRotation_Y += rotationSpeed * Time.fixedDeltaTime;*/
+        float torqer = _tronGameManager.Torque_Value;
+        torqer = _currentTurningForce;
+        float tf = Mathf.Lerp(0, torqer, myRigid.velocity.magnitude / 2);
 
-        float tf = Mathf.Lerp(0, _tronGameManager.Torque_Value, myRigid.velocity.magnitude / 2);
         if(!FlipSwitch)
-        myRigid.angularVelocity = new Vector3(0, -1 * tf, 0);
+            myRigid.angularVelocity = new Vector3(0, -1 * tf, 0);
         else
             myRigid.angularVelocity = new Vector3(0, 1 * tf, 0);
     }

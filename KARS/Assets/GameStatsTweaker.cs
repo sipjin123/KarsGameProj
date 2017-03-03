@@ -145,11 +145,11 @@ public class GameStatsTweaker : MonoBehaviour {
         IncrementValue = 1;
         DivisibleTrailValue = 10;
 
-        Drag_Value = 0.1f;
-        AngularDrag_Value = 0.05f;
+        Drag_Value = 1f;
+        AngularDrag_Value = 10f;
 
-        Mass_Value = 4;
-        Force_Value = 75;
+        Mass_Value = 1;
+        Force_Value = 50;
         Torque_Value = 2;
     }
 
@@ -225,9 +225,10 @@ public class GameStatsTweaker : MonoBehaviour {
         trailDistanceTotal += _var;
 
     }
-    
+
     #endregion
     //--------------------------------------------------------------------------------------
+    #region DISABLES AND PWOERUPS
     //=========================POWERUPS
     public void Tweak_missleCooldown(float _var)
     {
@@ -269,7 +270,9 @@ public class GameStatsTweaker : MonoBehaviour {
     {
         ConfuseDuration += _var;
     }
+    #endregion
     //--------------------------------------------------------------------------------------
+    #region STAT BASE
     public Text BaseText_Speed, BaseText_Acceleration, BaseText_Rotation, BaseText_Trail;
     public void Tweak_Base_Speed(float _val)
     {
@@ -299,7 +302,9 @@ public class GameStatsTweaker : MonoBehaviour {
         else
             Base_Value_Trail += IncrementValue;
     }
+    #endregion
     //--------------------------------------------------------------------------------------
+    #region STAT INCREMENTS
     public Text IncrementText_Speed, IncrementText_Acceleration, IncrementText_Rotation, IncrementText_Trail;
     public void Tweak_Increment_Speed(float _val)
     {
@@ -329,7 +334,9 @@ public class GameStatsTweaker : MonoBehaviour {
         else
             Increment_Value_Trail += IncrementValue;
     }
+    #endregion
     //--------------------------------------------------------------------------------------
+    #region PHYSICS
     public float Force_Value, Torque_Value , Drag_Value, AngularDrag_Value,Mass_Value;
     public Text Force_Text, Torque_Text, Drag_Text, AngularDrag_Text,Mass_Text;
 
@@ -369,4 +376,39 @@ public class GameStatsTweaker : MonoBehaviour {
         else
             Mass_Value += IncrementValue;
     }
+    #endregion
+    //--------------------------------------------------------------------------------------
+    #region DESIGNER PHYSICS
+
+    public float turningRate = 5f;
+    public float turningForce = 50;
+    public float turningStraightDamping = 0.9f;
+
+    public Text TextturningRate ;
+    public Text TextturningForce ;
+    public Text TextturningStraightDamping;
+
+    public void Adjust_TurningRate(float _val)
+    {
+        if (_val < 0)
+            turningRate -= IncrementValue;
+        else
+            turningRate += IncrementValue;
+    }
+    public void Adjust_turningForce(float _val)
+    {
+        if (_val < 0)
+            turningForce -= IncrementValue;
+        else
+            turningForce += IncrementValue;
+    }
+    public void Adjust_turningStraightDamping(float _val)
+    {
+        if (_val < 0)
+            turningStraightDamping -= IncrementValue;
+        else
+            turningStraightDamping += IncrementValue;
+    }
+
+    #endregion
 }

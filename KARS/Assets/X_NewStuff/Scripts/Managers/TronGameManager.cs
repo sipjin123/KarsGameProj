@@ -70,6 +70,9 @@ public class TronGameManager : GameStatsTweaker {
         AngularDrag_Text.text = AngularDrag_Value.ToString("F1");
         Mass_Text.text = Mass_Value.ToString("F1");
 
+        TextturningRate.text = turningRate.ToString("F1");
+        TextturningForce.text = turningForce.ToString("F1");
+        TextturningStraightDamping.text = turningStraightDamping.ToString("F1");
 
         PlayerPrefs.SetFloat(PrefKey_Movement, MovementSpeed);
         PlayerPrefs.SetFloat(PrefKey_Rotation, rotationSpeed);

@@ -52,7 +52,7 @@ public class NetworkDataFilter : MonoBehaviour
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.SET_START ||
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.SET_READY)
         {
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\n"+_networkPlayerEvent.playerStatus.ToString()+": " + _networkPlayerEvent.playerStatusSwitch;
+            //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nDisable: "+_networkPlayerEvent.playerStatus.ToString()+": " + _networkPlayerEvent.playerStatusSwitch;
             carReceiver.ReceiveDisableSTate(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
         }
         else if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_SHIELD)

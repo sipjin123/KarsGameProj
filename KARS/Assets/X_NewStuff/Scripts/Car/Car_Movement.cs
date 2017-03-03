@@ -274,6 +274,7 @@ public class Car_Movement : MonoBehaviour {
     #region COLLISION
     void OnTriggerEnter(Collider hit)
     {
+        return;
         if (!TronGameManager.Instance.NetworkStart)
         {
             if (hit.gameObject.name.Contains("Missle") && hit.GetComponent<MissleScript>().PlayerController_ID != 1)

@@ -49,6 +49,8 @@ public class NetworkDataFilter : MonoBehaviour
         if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_STUN ||
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_BLIND ||
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_CONFUSE ||
+            _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_SLOW ||
+            _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_SILENCE ||
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.SET_START ||
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.SET_READY)
         {
@@ -116,6 +118,9 @@ public enum NetworkPlayerStatus
     ACTIVATE_STUN,
     ACTIVATE_BLIND,
     ACTIVATE_CONFUSE,
+    ACTIVATE_SLOW,
+    ACTIVATE_SILENCE,
+    ACTIVATE_GHOST,
     SET_READY,
     SET_START
 }

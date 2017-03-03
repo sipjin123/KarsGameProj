@@ -17,7 +17,9 @@ public class MissleScript : MonoBehaviour {
     {
         STUN,
         BLIND,
-        CONFUSE
+        CONFUSE,
+        SLOW,
+        SILENCE
     }
     public MISSLE_TYPE _missleType;
 
@@ -193,22 +195,31 @@ public class MissleScript : MonoBehaviour {
                 {
                     case MISSLE_TYPE.BLIND:
                         {
-                            UIManager.instance.GameTimeText.text += "\nBlind Intact";
                             carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_BLIND);
                             ResetMissle();
                         }
                         break;
                     case MISSLE_TYPE.STUN:
                         {
-                            UIManager.instance.GameTimeText.text += "\nStun Intact";
                             carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_STUN);
                             ResetMissle();
                         }
                         break;
                     case MISSLE_TYPE.CONFUSE:
                         {
-                            UIManager.instance.GameTimeText.text += "\nConfuse Intact";
                             carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_CONFUSE);
+                            ResetMissle();
+                        }
+                        break;
+                    case MISSLE_TYPE.SLOW:
+                        {
+                            carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_SLOW);
+                            ResetMissle();
+                        }
+                        break;
+                    case MISSLE_TYPE.SILENCE:
+                        {
+                            carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_SILENCE);
                             ResetMissle();
                         }
                         break;

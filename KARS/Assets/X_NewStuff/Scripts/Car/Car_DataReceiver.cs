@@ -23,23 +23,42 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
 
     //POWER UP AND DEBUFF
+
+    //SHIELD---------
     private bool ShieldSwitch;
     public bool GetShieldSwitch() { return ShieldSwitch; }
     public GameObject ShieldObject;
 
 
+    //STUN---------
     private bool StunSwitch;
     public bool GetStunSwitch() { return StunSwitch; }
     [SerializeField]
     private GameObject StunObject;
 
+    //BLIND---------
     private bool BlindSwitch;
     public bool GetBlindSwitch() { return BlindSwitch; }
     public GameObject BlindObjectBlocker;
     public GameObject BlindObject;
 
+    //CONFUSE---------
     private bool ConfuseSwitch;
     public GameObject ConfuseObject;
+
+    //SLOW---------
+    private bool SlowSwitch;
+    public bool GetSlowSwitch() { return SlowSwitch; }
+    [SerializeField]
+    private GameObject SlowObject;
+
+    //SILENCE---------
+    private bool SilenceSwitch;
+    public bool GetSilenceSwitch() { return SilenceSwitch; }
+    [SerializeField]
+    private GameObject SilenceObject;
+    [SerializeField]
+    private GameObject SilenceBlocker;
 
     public float Health;
     public GameObject[] AvatarList;
@@ -219,48 +238,63 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             case NetworkPlayerStatus.ACTIVATE_BLIND:
                 {
-                    if (BlindSwitch == true)
-                        return;
                     if (BlindSwitch == false)
                     {
                         BlindSwitch = true;
-                        BlindObjectBlocker.SetActive(BlindSwitch);
-                        BlindObject.SetActive(BlindSwitch);
+                        BlindObjectBlocker.SetActive(true);
+                        BlindObject.SetActive(true);
 
                         SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_BLIND);
                         StartCoroutine("StartBlindTimer");
-                        UIManager.instance.GameUpdateText.text += "\nActivateFromButton: " + _status + ": True";
                     }
                 }
                 break;
             case NetworkPlayerStatus.ACTIVATE_STUN:
                 {
-                    if (StunSwitch == true)
-                        return;
                     if (StunSwitch == false)
                     {
                         StunSwitch = true;
-                        StunObject.SetActive(StunSwitch);
+                        StunObject.SetActive(true);
 
                         SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_STUN);
                         StartCoroutine("StartStunTimer");
-                        UIManager.instance.GameUpdateText.text += "\nActivateFromButton: " + _status + ": True";
                     }
                 }
                 break;
             case NetworkPlayerStatus.ACTIVATE_CONFUSE:
                 {
-                    if (ConfuseSwitch == true)
-                        return;
-
                     if (ConfuseSwitch == false)
                     {
                         ConfuseSwitch = true;
-                        ConfuseObject.SetActive(ConfuseSwitch);
+                        ConfuseObject.SetActive(true);
                         
                         SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_CONFUSE);
                         StartCoroutine("StartConfuseTimer");
-                        UIManager.instance.GameUpdateText.text += "\nActivateFromButton: " + _status + ": True";
+                    }
+                }
+                break;
+            case NetworkPlayerStatus.ACTIVATE_SLOW:
+                {
+                    if (SlowSwitch == false)
+                    {
+                        SlowSwitch = true;
+                        SlowObject.SetActive(true);
+
+                        SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_SLOW);
+                        StartCoroutine("StartSlowTimer");
+                    }
+                }
+                break;
+            case NetworkPlayerStatus.ACTIVATE_SILENCE:
+                {
+                    if (SilenceSwitch == false)
+                    {
+                        SilenceSwitch = true;
+                        SilenceObject.SetActive(true);
+                        SilenceBlocker.SetActive(true);
+
+                        SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_SILENCE);
+                        StartCoroutine("StartSilenceTimer");
                     }
                 }
                 break;
@@ -288,6 +322,20 @@ public class Car_DataReceiver : Car_Network_Interpolation
         ReceiveDisableSTate(BlindSwitch, NetworkPlayerStatus.ACTIVATE_BLIND);
         SendNetworkDisable(BlindSwitch, NetworkPlayerStatus.ACTIVATE_BLIND);
     }
+    IEnumerator StartSlowTimer()
+    {
+        yield return new WaitForSeconds(TronGameManager.Instance.BlindDuration);
+        SlowSwitch = false;
+        ReceiveDisableSTate(SlowSwitch, NetworkPlayerStatus.ACTIVATE_SLOW);
+        SendNetworkDisable(SlowSwitch, NetworkPlayerStatus.ACTIVATE_SLOW);
+    }
+    IEnumerator StartSilenceTimer()
+    {
+        yield return new WaitForSeconds(TronGameManager.Instance.BlindDuration);
+        SilenceSwitch = false;
+        ReceiveDisableSTate(SilenceSwitch, NetworkPlayerStatus.ACTIVATE_SILENCE);
+        SendNetworkDisable(SilenceSwitch, NetworkPlayerStatus.ACTIVATE_SILENCE);
+    }
 
 
 
@@ -295,23 +343,31 @@ public class Car_DataReceiver : Car_Network_Interpolation
     {
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_STUN)
         {
-            UIManager.instance.GameUpdateText.text += "\nDisableState: " + _netStatus+" "+_switch;
             StunObject.SetActive(_switch);
             StunSwitch = _switch;
         }
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_BLIND)
         {
-            UIManager.instance.GameUpdateText.text += "\nDisableState: " + _netStatus + " " + _switch;
             BlindObjectBlocker.SetActive(_switch);
             BlindObject.SetActive(_switch);
             BlindSwitch = _switch;
         }
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_CONFUSE)
         {
-            UIManager.instance.GameUpdateText.text += "\nDisableState: " + _netStatus + " " + _switch;
             ConfuseObject.SetActive(_switch);
             ConfuseSwitch = _switch;
             _carMovement.FlipSwitch = _switch;
+        }
+        if (_netStatus == NetworkPlayerStatus.ACTIVATE_SLOW)
+        {
+            SlowObject.SetActive(_switch);
+            SlowSwitch = _switch;
+        }
+        if (_netStatus == NetworkPlayerStatus.ACTIVATE_SILENCE)
+        {
+            SilenceObject.SetActive(_switch);
+            SilenceBlocker.SetActive(_switch);
+            SilenceSwitch = _switch;
         }
         if (_netStatus == NetworkPlayerStatus.SET_READY)
         {

@@ -148,7 +148,7 @@ public class GameStatsTweaker : MonoBehaviour {
         Drag_Value = 0.1f;
         AngularDrag_Value = 0.05f;
 
-        Mass_Value = 6;
+        Mass_Value = 4;
         Force_Value = 75;
         Torque_Value = 2;
     }

@@ -107,12 +107,12 @@ public class Car_Movement : MonoBehaviour {
 
     float ReduceValues()
     {
-        float _finalValue = 100;
+        float _finalValue = 1;
 
-        if (FlipSwitch)
-            _finalValue -= 50;
-        _finalValue = _finalValue / 100;
-        
+        if (MyCarDataReceiver.GetSlowSwitch() == true)
+            _finalValue = .8f;
+
+
         return _finalValue;
     }
 
@@ -149,6 +149,11 @@ public class Car_Movement : MonoBehaviour {
                 accelerationSpeed_Counter += Time.fixedDeltaTime * ((accelerationSpeed_Max) / accelerationTimer);
             }
             //_characterController.Move(CarRotationObject.transform.forward * ((ComputedValues() * ReduceValues() )* Time.fixedDeltaTime));
+            myRigid.drag = _tronGameManager.Drag_Value;
+            myRigid.angularDrag = _tronGameManager.AngularDrag_Value;
+            myRigid.mass = _tronGameManager.Mass_Value;
+            myRigid.AddForce(CarRotationObject.transform.forward *
+                ((_tronGameManager.Force_Value + ComputedValues() * Time.fixedDeltaTime) * ReduceValues()));
             InputSystem();
 
         }
@@ -181,27 +186,6 @@ public class Car_Movement : MonoBehaviour {
 
     void InputSystem()
     {
-        myRigid.drag = _tronGameManager.Drag_Value;
-        myRigid.angularDrag = _tronGameManager.AngularDrag_Value;
-        myRigid.mass = _tronGameManager.Mass_Value;
-        //if (Input.GetKey(KeyCode.W))
-        {
-            //Debug.LogError("forceee " + _tronGameManager.Force_Value);
-            //myRigid.AddForce(CarRotationObject.transform.forward * _tronGameManager.Force_Value);
-            myRigid.AddForce(CarRotationObject.transform.forward *(_tronGameManager.Force_Value +(ComputedValues() * ReduceValues()) * Time.fixedDeltaTime));
-        }
-        /*
-        if(FlipSwitch)
-            myRigid.angularVelocity = new Vector3(0, -Input.GetAxis("Horizontal") * tf, 0);
-        else
-            myRigid.angularVelocity = new Vector3(0, Input.GetAxis("Horizontal") * tf, 0);
-
-        
-        //refactoring using force
-        return;
-        */
-
-
         if (_moveRight)
         {
             MoveRight();
@@ -270,6 +254,7 @@ public class Car_Movement : MonoBehaviour {
             myRigid.angularVelocity = new Vector3(0, 1 * tf, 0);
     }
     #endregion
+
     //==========================================================================================================================
     #region COLLISION
     void OnTriggerEnter(Collider hit)

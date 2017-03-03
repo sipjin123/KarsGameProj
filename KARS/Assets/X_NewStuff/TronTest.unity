@@ -24674,7 +24674,6 @@ GameObject:
   m_Component:
   - component: {fileID: 875766999}
   - component: {fileID: 875766998}
-  - component: {fileID: 875767000}
   - component: {fileID: 875767001}
   - component: {fileID: 875766996}
   - component: {fileID: 875767002}
@@ -24748,23 +24747,6 @@ Transform:
   m_Father: {fileID: 734822463}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!143 &875767000
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 875766995}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Height: 0.1
-  m_Radius: 0.1
-  m_SlopeLimit: 45
-  m_StepOffset: 0
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: -0.4, z: 0}
 --- !u!114 &875767001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48351,11 +48333,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1764330674}
   - component: {fileID: 1764330673}
-  - component: {fileID: 1764330671}
   - component: {fileID: 1764330670}
   - component: {fileID: 1764330675}
-  - component: {fileID: 1764330672}
   - component: {fileID: 1764330669}
+  - component: {fileID: 1764330672}
   - component: {fileID: 1764330676}
   m_Layer: 2
   m_Name: Car2
@@ -48402,23 +48383,6 @@ MonoBehaviour:
   NitrosActive: 0
   FlipSwitch: 0
   centerOfMass: {fileID: 1905180851}
---- !u!143 &1764330671
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1764330668}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Height: 0.1
-  m_Radius: 0.1
-  m_SlopeLimit: 45
-  m_StepOffset: 0
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: -0.4, z: 0}
 --- !u!65 &1764330672
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -50292,7 +50256,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1821506303}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
@@ -51766,6 +51730,14 @@ Prefab:
     - target: {fileID: 490014, guid: 323169e9766db69459a435e10f3feed0, type: 2}
       propertyPath: m_RootOrder
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11490014, guid: 323169e9766db69459a435e10f3feed0, type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 190014, guid: 323169e9766db69459a435e10f3feed0, type: 2}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 323169e9766db69459a435e10f3feed0, type: 2}

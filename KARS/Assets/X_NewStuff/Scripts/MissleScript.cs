@@ -188,48 +188,45 @@ public class MissleScript : MonoBehaviour {
                     ResetMissle();
                     return;
                 }
-                if (_missleType == MISSLE_TYPE.STUN)
-                {
-                    carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_STUN);
-                    GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
-                    using (RTData data = RTData.Get())
-                    {
-                        data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
-                        data.SetInt(2, 1);
-                        data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_STUN);
 
-                        GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                    }
-                }
-                else if(_missleType == MISSLE_TYPE.BLIND)
+                switch (_missleType)
                 {
-                    carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_BLIND);
-                    GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
-                    using (RTData data = RTData.Get())
-                    {
-                        data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
-                        data.SetInt(2, 1);
-                        data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_BLIND);
-
-                        GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                    }
-                }
-                else if(_missleType == MISSLE_TYPE.CONFUSE)
-                {
-                    carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_CONFUSE);
-                    GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
-                    using (RTData data = RTData.Get())
-                    {
-                        data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
-                        data.SetInt(2, 1);
-                        data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_CONFUSE);
-
-                        GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                    }
+                    case MISSLE_TYPE.BLIND:
+                        {
+                            UIManager.instance.GameTimeText.text += "\nBlind Intact";
+                            carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_BLIND);
+                            ResetMissle();
+                        }
+                        break;
+                    case MISSLE_TYPE.STUN:
+                        {
+                            UIManager.instance.GameTimeText.text += "\nStun Intact";
+                            carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_STUN);
+                            ResetMissle();
+                        }
+                        break;
+                    case MISSLE_TYPE.CONFUSE:
+                        {
+                            UIManager.instance.GameTimeText.text += "\nConfuse Intact";
+                            carReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_CONFUSE);
+                            ResetMissle();
+                        }
+                        break;
                 }
 
 
-                ResetMissle();
+                /*
+                GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+                using (RTData data = RTData.Get())
+                {
+                    data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
+                    data.SetInt(2, 1);
+                    data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_STUN);
+
+                    GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                }*/
+
+
             }
         }
         catch { }

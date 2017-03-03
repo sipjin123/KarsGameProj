@@ -229,6 +229,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     _netPlayerEvent.playerStatus = (NetworkPlayerStatus)_packet.Data.GetInt(3).Value;
 
 
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nData Translation for Disable"+_netPlayerEvent.playerStatus;
                     NetworkDataFilter.Instance.ReceiveNetworkPlayerEvent(_netPlayerEvent);
                     #endregion
                 }

@@ -30,7 +30,8 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
     private bool StunSwitch;
     public bool GetStunSwitch() { return StunSwitch; }
-    public GameObject StunObject;
+    [SerializeField]
+    private GameObject StunObject;
 
     private bool BlindSwitch;
     public bool GetBlindSwitch() { return BlindSwitch; }
@@ -218,41 +219,48 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             case NetworkPlayerStatus.ACTIVATE_BLIND:
                 {
+                    if (BlindSwitch == true)
+                        return;
                     if (BlindSwitch == false)
                     {
                         BlindSwitch = true;
                         BlindObjectBlocker.SetActive(BlindSwitch);
                         BlindObject.SetActive(BlindSwitch);
 
-                        if (TronGameManager.Instance.NetworkStart == true)
-                            SendNetworkDisable(BlindSwitch, NetworkPlayerStatus.ACTIVATE_BLIND);
+                        SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_BLIND);
                         StartCoroutine("StartBlindTimer");
+                        UIManager.instance.GameUpdateText.text += "\nActivateFromButton: " + _status + ": True";
                     }
                 }
                 break;
             case NetworkPlayerStatus.ACTIVATE_STUN:
                 {
+                    if (StunSwitch == true)
+                        return;
                     if (StunSwitch == false)
                     {
                         StunSwitch = true;
                         StunObject.SetActive(StunSwitch);
 
-                        if (TronGameManager.Instance.NetworkStart == true)
-                            SendNetworkDisable(StunSwitch, NetworkPlayerStatus.ACTIVATE_STUN);
+                        SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_STUN);
                         StartCoroutine("StartStunTimer");
+                        UIManager.instance.GameUpdateText.text += "\nActivateFromButton: " + _status + ": True";
                     }
                 }
                 break;
             case NetworkPlayerStatus.ACTIVATE_CONFUSE:
                 {
+                    if (ConfuseSwitch == true)
+                        return;
+
                     if (ConfuseSwitch == false)
                     {
                         ConfuseSwitch = true;
                         ConfuseObject.SetActive(ConfuseSwitch);
-
-                        if (TronGameManager.Instance.NetworkStart == true)
-                            SendNetworkDisable(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
+                        
+                        SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_CONFUSE);
                         StartCoroutine("StartConfuseTimer");
+                        UIManager.instance.GameUpdateText.text += "\nActivateFromButton: " + _status + ": True";
                     }
                 }
                 break;
@@ -262,20 +270,22 @@ public class Car_DataReceiver : Car_Network_Interpolation
     IEnumerator StartConfuseTimer()
     {
         yield return new WaitForSeconds(TronGameManager.Instance.ConfuseDuration);
-        ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_CONFUSE);
+        ConfuseSwitch = false;
+        ReceiveDisableSTate(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
         SendNetworkDisable(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
     }
     IEnumerator StartStunTimer()
     {
         yield return new WaitForSeconds(TronGameManager.Instance.const_StunDuration);
-        ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_STUN);
-
+        StunSwitch = false;
+        ReceiveDisableSTate(StunSwitch, NetworkPlayerStatus.ACTIVATE_STUN);
         SendNetworkDisable(StunSwitch, NetworkPlayerStatus.ACTIVATE_STUN);
     }
     IEnumerator StartBlindTimer()
     {
         yield return new WaitForSeconds(TronGameManager.Instance.BlindDuration);
-        ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_BLIND);
+        BlindSwitch = false;
+        ReceiveDisableSTate(BlindSwitch, NetworkPlayerStatus.ACTIVATE_BLIND);
         SendNetworkDisable(BlindSwitch, NetworkPlayerStatus.ACTIVATE_BLIND);
     }
 
@@ -285,17 +295,20 @@ public class Car_DataReceiver : Car_Network_Interpolation
     {
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_STUN)
         {
+            UIManager.instance.GameUpdateText.text += "\nDisableState: " + _netStatus+" "+_switch;
             StunObject.SetActive(_switch);
             StunSwitch = _switch;
         }
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_BLIND)
         {
+            UIManager.instance.GameUpdateText.text += "\nDisableState: " + _netStatus + " " + _switch;
             BlindObjectBlocker.SetActive(_switch);
             BlindObject.SetActive(_switch);
             BlindSwitch = _switch;
         }
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_CONFUSE)
         {
+            UIManager.instance.GameUpdateText.text += "\nDisableState: " + _netStatus + " " + _switch;
             ConfuseObject.SetActive(_switch);
             ConfuseSwitch = _switch;
             _carMovement.FlipSwitch = _switch;

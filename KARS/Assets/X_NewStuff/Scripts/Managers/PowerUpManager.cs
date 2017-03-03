@@ -298,20 +298,7 @@ public class PowerUpManager : MonoBehaviour {
             LockOnTarget(0,Player2, (MissleScript.MISSLE_TYPE)_misNum);
         }
     }
-
-    internal void LaunchMissle()
-    {
-        if (GameSparkPacketReceiver.Instance.PeerID == 2)
-        {
-         //   LockOnTarget(2, Player1, (MissleScript.MISSLE_TYPE)_misNum);
-        }
-        else if (GameSparkPacketReceiver.Instance.PeerID == 1)
-        {
-         //   LockOnTarget(1, Player2, (MissleScript.MISSLE_TYPE)_misNum);
-        }
-    }
-
-
+    
     bool NitroActiveTimer_Switch;
     float NitroActiveTimer_Timer;
 

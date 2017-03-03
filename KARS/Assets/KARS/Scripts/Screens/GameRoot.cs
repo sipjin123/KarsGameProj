@@ -194,7 +194,7 @@ namespace Synergy88 {
             {
                 case PowerupType.MISSLE:
                     Debug.LogError("Launch Missle");
-                    Player[0].LaunchMissile();
+                    //Player[0].LaunchMissile();
                     break;
                 case PowerupType.TNT:
                     Debug.LogError("Drop TNT");

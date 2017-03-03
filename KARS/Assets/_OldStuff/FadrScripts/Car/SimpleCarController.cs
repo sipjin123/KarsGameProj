@@ -606,12 +606,7 @@ namespace Synergy88
             PowerUpManager.Instance.DropTNT();
 
         }
-
-        internal void LaunchMissile()
-        {
-            PowerUpManager.Instance.LaunchMissle();
-        }
-
+        
         private Vector3 CarMovement()
         {
             Vector3 carVelocity = Vector3.zero;

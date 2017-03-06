@@ -350,5 +350,4 @@ public class PowerUpManager : MonoBehaviour {
             SetUpTNT(1, Player1.transform.position, true);
         }
     }
-
 }

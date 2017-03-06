@@ -6,8 +6,79 @@ using UnityEngine.UI;
 
 public class TronGameManager : GameStatsTweaker {
 
+
+    NetworkPlayerStatus SkillSlot1, SkillSlot2;
+
+    string[] skillStringList = new string[]
+    {
+        "Shield",
+        "Stun",
+        "Blind",
+        "Confuse",
+        "Slow",
+        "Silence",
+        "Fly",
+        "Nitros",
+        "Extend",
+    };
+
+    public Transform SkillButtonParent;
+    public GameObject SkillButton;
+
+    public void InitSkillList()
+    {
+        Debug.LogError(skillStringList.Length);
+        for (int i = 0; i < skillStringList.Length; i++)
+        {
+            GameObject temp = Instantiate(SkillButton, transform.position, Quaternion.identity) as GameObject;
+            temp.transform.SetParent(SkillButtonParent);
+            temp.transform.localScale = Vector3.one;
+
+            temp.GetComponent<Image>().sprite = SpriteManager.Instance.SkillIcons[i].GetComponent<Image>().sprite;
+            temp.SetActive(true);
+
+            temp.transform.GetChild(0).GetComponent<Text>().text = skillStringList[i];
+            temp.GetComponent<Button>().onClick.AddListener(() => {
+                SelectThisSkill(temp);
+            });
+
+        }
+    }
+
+    int currentSlotIndex;
+    public Image[] currentSlotImage;
+    public Text[] currentSlotText;
+
+
+    public void SelectSkillSlot(int _val)
+    {
+        currentSlotIndex = _val;
+    }
+    public void SelectThisSkill(GameObject _obj)
+    {
+        if (currentSlotText[0].text == _obj.transform.GetChild(0).GetComponent<Text>().text || currentSlotText[1].text == _obj.transform.GetChild(0).GetComponent<Text>().text)
+            return;
+            currentSlotImage[currentSlotIndex].sprite = _obj.GetComponent<Image>().sprite;
+        currentSlotText[currentSlotIndex].text = _obj.transform.GetChild(0).GetComponent<Text>().text;
+    }
+
+
+
+
+
+
+
+
+
+
+
     private static TronGameManager _instance;
     public static TronGameManager Instance { get { return _instance; } }
+
+
+
+
+
     //==================================================================================================================================
     #region VARIABLES
     public bool NetworkStart;
@@ -74,7 +145,7 @@ public class TronGameManager : GameStatsTweaker {
         TextturningForce.text = turningForce.ToString("F2");
         TextturningStraightDamping.text = turningStraightDamping.ToString("F2");
 
-        StatTextPanel.text = _statPanel.ToString();
+       // StatTextPanel.text = _statPanel.ToString();
 
 
         PlayerPrefs.SetFloat(PrefKey_Movement, MovementSpeed);
@@ -119,7 +190,6 @@ public class TronGameManager : GameStatsTweaker {
         base.Initer();
 
 
-
         _instance = this;
 
         TweakMoveSpeed(0);
@@ -150,6 +220,11 @@ public class TronGameManager : GameStatsTweaker {
 
 
         UpdateTexts();
+    }
+    void Start()
+    {
+        InitSkillList();
+
     }
     #endregion
     //==================================================================================================================================
@@ -291,26 +366,6 @@ public class TronGameManager : GameStatsTweaker {
     }
     public void StartGame()
     {
-        /*
-        switch (carMeshIndex)
-        {
-            case 0:
-                MovementSpeed = 3;
-                rotationSpeed = 55;
-                const_StunDuration = 5;
-                break;
-            case 1:
-                MovementSpeed = 6;
-                rotationSpeed = 55;
-                const_StunDuration = 5;
-                break;
-            case 2:
-                MovementSpeed = 3;
-                rotationSpeed = 75;
-                const_StunDuration = 5;
-                break;
-        }*/
-
         TweakMoveSpeed(0);
         TweakrotationSpeed(0);
 
@@ -438,16 +493,4 @@ public class TronGameManager : GameStatsTweaker {
         SendTrailData();
     }
     #endregion
-    
-    //==================================================================================================================================
-    #region TEST INPUTS G,K,L
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            StartCoroutine("delaydeath");
-        }
-    }
-    #endregion
-    //==================================================================================================================================
 }

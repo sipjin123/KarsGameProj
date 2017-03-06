@@ -401,6 +401,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
     }
     #endregion
     //====================================================================================
+    #region RESET GAME
     public void ResetGameFromButton()
     {
 
@@ -448,20 +449,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
         }
         GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nGAME RESET";
     }
-    
-    void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Z))
-        {
-            ResetGame();
-
-            using (RTData data = RTData.Get())
-            {
-                data.SetInt(1, 0);
-                GetRTSession().SendData(066, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-            }
-        }
-    }
+    #endregion
     //=========================================================================================================================================================================
     //
     //                                                               NON GAME SPARKS RELATED

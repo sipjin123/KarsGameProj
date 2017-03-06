@@ -397,12 +397,8 @@ public class GameStatsTweaker : MonoBehaviour {
     }
 
     #endregion
-
-
-
-
-
-
+    //--------------------------------------------------------------------------------------
+    #region STATS PANEL
     public enum STAT_PANEL
     {
         STATS,
@@ -471,5 +467,6 @@ public class GameStatsTweaker : MonoBehaviour {
     {
         Walls.SetActive(!Walls.activeInHierarchy);
     }
-
+    #endregion
+    //--------------------------------------------------------------------------------------
 }

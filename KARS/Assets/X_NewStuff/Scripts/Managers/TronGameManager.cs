@@ -31,48 +31,51 @@ public class TronGameManager : GameStatsTweaker {
 
     public void UpdateTexts()
     {
-        Text_MovementSpeed.text = MovementSpeed.ToString("F1");
-        Text_rotationSpeed.text = rotationSpeed.ToString("F1");
+        Text_MovementSpeed.text = MovementSpeed.ToString("F2");
+        Text_rotationSpeed.text = rotationSpeed.ToString("F2");
 
-        Text_accelerationSpeedMax.text = accelerationSpeedMax.ToString("F1");
-        Text_accelerationTimerMax.text = accelerationTimerMax.ToString("F1");
+        Text_accelerationSpeedMax.text = accelerationSpeedMax.ToString("F2");
+        Text_accelerationTimerMax.text = accelerationTimerMax.ToString("F2");
 
-        Text_trailDistanceTotal.text = trailDistanceTotal.ToString("F1");
+        Text_trailDistanceTotal.text = trailDistanceTotal.ToString("F2");
 
-        Text_const_StunDuration.text = const_StunDuration.ToString("F1");
-        Text_BlindDuration.text = BlindDuration.ToString("F1");
-        Text_ConfuseDuration.text = ConfuseDuration.ToString("F1");
+        Text_const_StunDuration.text = const_StunDuration.ToString("F2");
+        Text_BlindDuration.text = BlindDuration.ToString("F2");
+        Text_ConfuseDuration.text = ConfuseDuration.ToString("F2");
 
-        Text_missleCooldown.text = missleCooldown.ToString("F1");
-        Text_shieldCooldown.text = shieldCooldown.ToString("F1");
-        Text_nitroCooldown.text = nitroCooldown.ToString("F1");
-        Text_nitroSpeed.text = nitroSpeed.ToString("F1");
-        Text_nitroDuration.text = nitroDuration.ToString("F1");
-
-
-        IncrementText.text = IncrementValue.ToString("F1");
-        DivisibleTrailText.text = DivisibleTrailValue.ToString("F1");
-
-        BaseText_Speed.text = Base_Value_Speed.ToString("F1");
-        BaseText_Acceleration.text = Base_Value_Acceleration.ToString("F1");
-        BaseText_Rotation.text = Base_Value_Rotation.ToString("F1");
-        BaseText_Trail.text = Base_Value_Trail.ToString("F1");
-
-        IncrementText_Speed.text = Increment_Value_Speed.ToString("F1");
-        IncrementText_Acceleration.text = Increment_Value_Acceleration.ToString("F1");
-        IncrementText_Rotation.text = Increment_Value_Rotation.ToString("F1");
-        IncrementText_Trail.text = Increment_Value_Trail.ToString("F1");
+        Text_missleCooldown.text = missleCooldown.ToString("F2");
+        Text_shieldCooldown.text = shieldCooldown.ToString("F2");
+        Text_nitroCooldown.text = nitroCooldown.ToString("F2");
+        Text_nitroSpeed.text = nitroSpeed.ToString("F2");
+        Text_nitroDuration.text = nitroDuration.ToString("F2");
 
 
-        Force_Text.text = Force_Value.ToString("F1");
-        Torque_Text.text = Torque_Value.ToString("F1");
-        Drag_Text.text = Drag_Value.ToString("F1");
-        AngularDrag_Text.text = AngularDrag_Value.ToString("F1");
-        Mass_Text.text = Mass_Value.ToString("F1");
+        IncrementText.text = IncrementValue.ToString("F2");
+        DivisibleTrailText.text = DivisibleTrailValue.ToString("F2");
 
-        TextturningRate.text = turningRate.ToString("F1");
-        TextturningForce.text = turningForce.ToString("F1");
-        TextturningStraightDamping.text = turningStraightDamping.ToString("F1");
+        BaseText_Speed.text = Base_Value_Speed.ToString("F2");
+        BaseText_Acceleration.text = Base_Value_Acceleration.ToString("F2");
+        BaseText_Rotation.text = Base_Value_Rotation.ToString("F2");
+        BaseText_Trail.text = Base_Value_Trail.ToString("F2");
+
+        IncrementText_Speed.text = Increment_Value_Speed.ToString("F2");
+        IncrementText_Acceleration.text = Increment_Value_Acceleration.ToString("F2");
+        IncrementText_Rotation.text = Increment_Value_Rotation.ToString("F2");
+        IncrementText_Trail.text = Increment_Value_Trail.ToString("F2");
+
+
+        Force_Text.text = Force_Value.ToString("F2");
+        Torque_Text.text = Torque_Value.ToString("F2");
+        Drag_Text.text = Drag_Value.ToString("F2");
+        AngularDrag_Text.text = AngularDrag_Value.ToString("F2");
+        Mass_Text.text = Mass_Value.ToString("F2");
+
+        TextturningRate.text = turningRate.ToString("F2");
+        TextturningForce.text = turningForce.ToString("F2");
+        TextturningStraightDamping.text = turningStraightDamping.ToString("F2");
+
+        StatTextPanel.text = _statPanel.ToString();
+
 
         PlayerPrefs.SetFloat(PrefKey_Movement, MovementSpeed);
         PlayerPrefs.SetFloat(PrefKey_Rotation, rotationSpeed);

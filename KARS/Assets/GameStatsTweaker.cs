@@ -155,20 +155,6 @@ public class GameStatsTweaker : MonoBehaviour {
 
 
 
-    public  Text IncrementText;
-    public float IncrementValue;
-    public void Tweak_IncrementValue(float _val)
-    {
-        IncrementValue += _val;
-    }
-
-    public GameObject Walls;
-    public void EnableDisalbeWalls()
-    {
-        Walls.SetActive(!Walls.activeInHierarchy);
-    }
-
-
     public Text DivisibleTrailText;
     public float DivisibleTrailValue;
     public void Tweak_DivisibleTrailValue(float _val)
@@ -411,4 +397,79 @@ public class GameStatsTweaker : MonoBehaviour {
     }
 
     #endregion
+
+
+
+
+
+
+    public enum STAT_PANEL
+    {
+        STATS,
+        BASE_STATS,
+        INC_STATS,
+        RAW,
+        BUFFS,
+        FORCE
+    }
+    public STAT_PANEL _statPanel;
+    public Text StatTextPanel;
+    public void SelectPanel(int _panel)
+    {
+        _statPanel = (STAT_PANEL)_panel;
+
+
+        Stat_Panel.SetActive(false);
+        BaseStat_Panel.SetActive(false);
+        IncSTat_Panel.SetActive(false);
+        Force_Panel.SetActive(false);
+        Buff_Panel.SetActive(false);
+        Raw_Panel.SetActive(false);
+
+        switch (_statPanel)
+        {
+            case STAT_PANEL.STATS:
+                Stat_Panel.SetActive(true);
+                break;
+            case STAT_PANEL.BASE_STATS:
+                BaseStat_Panel.SetActive(true);
+                break;
+            case STAT_PANEL.INC_STATS:
+                IncSTat_Panel.SetActive(true);
+                break;
+            case STAT_PANEL.RAW:
+                Raw_Panel.SetActive(true);
+                break;
+            case STAT_PANEL.BUFFS:
+                Buff_Panel.SetActive(true);
+                break;
+            case STAT_PANEL.FORCE:
+                Force_Panel.SetActive(true);
+                break;
+        }
+    }
+
+    public GameObject Stat_Panel, BaseStat_Panel, IncSTat_Panel, Force_Panel, Buff_Panel, Raw_Panel;
+
+    public float ValueOfIncrement;
+
+    public void SelectValueOfIncrement(float _val)
+    {
+        ValueOfIncrement = _val;
+        Tweak_IncrementValue(ValueOfIncrement);
+    }
+
+    public Text IncrementText;
+    public float IncrementValue;
+    public void Tweak_IncrementValue(float _val)
+    {
+        IncrementValue = ValueOfIncrement;
+    }
+
+    public GameObject Walls;
+    public void EnableDisalbeWalls()
+    {
+        Walls.SetActive(!Walls.activeInHierarchy);
+    }
+
 }

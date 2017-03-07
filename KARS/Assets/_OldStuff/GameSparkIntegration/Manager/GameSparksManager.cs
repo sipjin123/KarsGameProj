@@ -90,7 +90,6 @@ public class GameSparksManager : MonoBehaviour {
         Debug.Log("GSM| Player Disconnected, " + _peerId);
         GetRTSession().Disconnect();
         GS.Disconnect();
-        Application.Quit();
     }
 
     private void OnRTReady(bool _isReady)

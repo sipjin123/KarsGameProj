@@ -17,8 +17,6 @@ public class GameSparkPacketReceiver : MonoBehaviour
     public static GameSparkPacketReceiver Instance { get { return _instance; } }
 
 
-    public GameObject StartPanel;
-    public GameObject RegisterCanvas;
 
     public TronGameManager _tronGameManager;
 
@@ -58,9 +56,6 @@ public class GameSparkPacketReceiver : MonoBehaviour
     public RTSessionInfo sessionInfo;
     public void StartNewRTSession(RTSessionInfo _info)
     {
-        RegisterCanvas.SetActive(false);
-        StartPanel.SetActive(false);
-
 
         Debug.Log("GSM| Creating New RT Session Instance...");
         sessionInfo = _info;
@@ -89,7 +84,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
             (ready) => { OnRTReady(ready); },
             (packet) => { OnPacketReceived(packet); });
         gameSparksRTUnity.Connect(); // when the config is set, connect the game
-
+        _tronGameManager.ReceiveSignalToStartGame();
     }
 
     private void OnPlayerConnectedToGame(int _peerId)
@@ -102,7 +97,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
         Debug.Log("GSM| Player Disconnected, " + _peerId);
         GetRTSession().Disconnect();
         GS.Disconnect();
-        Application.Quit();
+        TronGameManager.Instance.ResetGameToMenu();
     }
 
     private void OnRTReady(bool _isReady)
@@ -228,8 +223,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     _netPlayerEvent.playerStatusSwitch = _packet.Data.GetInt(2).Value == 1 ? true : false;
                     _netPlayerEvent.playerStatus = (NetworkPlayerStatus)_packet.Data.GetInt(3).Value;
 
-
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nData Translation for Disable"+_netPlayerEvent.playerStatus;
+                    //UIManager.instance.GameUpdateText.text += "\nData Translation for Disable"+_netPlayerEvent.playerStatus;
                     NetworkDataFilter.Instance.ReceiveNetworkPlayerEvent(_netPlayerEvent);
                     #endregion
                 }
@@ -340,11 +334,11 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     {
                         if (receivedPlayerHealth <= 0)
                         {
-                            ResetGame();
+                            ResultScreen();
                             using (RTData data = RTData.Get())
                             {
                                 data.SetInt(1, 0);
-                                GetRTSession().SendData(066, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                                GetRTSession().SendData(067, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
                             }
                         }
                     }
@@ -372,6 +366,11 @@ public class GameSparkPacketReceiver : MonoBehaviour
             case 066:
                 {
                     ResetGame();
+                }
+                break;
+            case 067:
+                {
+                    ResultScreen();
                 }
                 break;
             case 131:
@@ -402,9 +401,20 @@ public class GameSparkPacketReceiver : MonoBehaviour
     #endregion
     //====================================================================================
     #region RESET GAME
+    public void LocalREset()
+    {
+        ResetGame();
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, 0);
+            GetRTSession().SendData(066, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+    }
+
     public void ResetGameFromButton()
     {
 
+        UIManager.instance.SetResultScreen(false);
         if (_tronGameManager.NetworkStart == false)
         {
             _tronGameManager.PlayerObjects[0].transform.position = new Vector3(UnityEngine.Random.RandomRange(-5,5), 3, UnityEngine.Random.RandomRange(-5, 5));
@@ -421,7 +431,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
     }
     public void ResetGame()
     {
-
+        UIManager.instance.SetResultScreen(false);
         FiveSecUpdateTime = 0;
 
         serverClock = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
@@ -438,14 +448,6 @@ public class GameSparkPacketReceiver : MonoBehaviour
             _GameSparks_DataSender.InitCam();
             _GameSparks_DataSender.Health = 6;
             _carMovement.Die();
-            if (i == 0)
-            {
-                _obj.transform.position = new Vector3(-5, 1, 0);
-            }
-            else
-            {
-                _obj.transform.position = new Vector3(5, 1, 0);
-            }
         }
         GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nGAME RESET";
     }
@@ -478,16 +480,6 @@ public class GameSparkPacketReceiver : MonoBehaviour
         {
 
             GameObject.Find("GameUpdateText").GetComponent<Text>().text="";
-        }
-    }
-
-    public void LocalREset()
-    {
-        ResetGame();
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, 0);
-            GetRTSession().SendData(066, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
 
@@ -538,6 +530,28 @@ public class GameSparkPacketReceiver : MonoBehaviour
     }
     #endregion
     //====================================================================================
+
+
+    void Update()
+    { 
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            BackToMainMenu();
+        }
+
+    }
+
+    public void BackToMainMenu()
+    {
+        UIManager.instance.SetResultScreen(false);
+        GetRTSession().Disconnect();
+        GS.Disconnect();
+        TronGameManager.Instance.ResetGameToMenu();
+    }
+    public void ResultScreen()
+    {
+        UIManager.instance.SetResultScreen(true);
+    }
 }
 
 

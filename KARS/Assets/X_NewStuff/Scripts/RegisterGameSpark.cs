@@ -23,7 +23,7 @@ public class RegisterGameSpark : MonoBehaviour {
     
     public int PeerID;
 
-    public GameObject Canvas_GameType,
+    public GameObject 
         Canvas_Login;
 
     [SerializeField]
@@ -64,7 +64,6 @@ public class RegisterGameSpark : MonoBehaviour {
     {
         AuthenticateUser(UserName.text, "test", OnRegistration, OnAuthentication);
         Canvas_Login.SetActive(true);
-        Canvas_GameType.SetActive(false);
     }
     #endregion
     //===========================================================================================

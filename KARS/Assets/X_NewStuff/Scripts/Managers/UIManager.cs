@@ -27,4 +27,17 @@ public class UIManager : MonoBehaviour {
     public Image ShieldBar_1, ShieldBar_2;
     public Image NitrosBar_1, NitrosBar_2;
 
+    public GameObject Player1_SkillsParent, Player2_SkillsParent;
+
+    [SerializeField]
+    private GameObject RespawningScreen,ResultScreen;
+
+    public void SetRespawnScreen(bool _switch)
+    {
+        RespawningScreen.SetActive(_switch);
+    }
+    public void SetResultScreen(bool _switch)
+    {
+        ResultScreen.SetActive(_switch);
+    }
 }

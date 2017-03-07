@@ -7,6 +7,12 @@ public class GameStatsTweaker : MonoBehaviour {
     protected GameSparksRTUnity GetRTSession;
     public GameObject[] PlayerObjects;
 
+    public GameObject testPanelView;
+    public void FlipTest_Panel()
+    {
+        testPanelView.SetActive(!testPanelView.activeInHierarchy);
+    }
+
     #region DEFAULT VALUES
     public static float DefaultMovement = 1;
     public static float DefaultRotation = 40;
@@ -115,6 +121,116 @@ public class GameStatsTweaker : MonoBehaviour {
     public Text Speed_Text, Acceleration_Text, Rotation_Text, Trail_Text;
     #endregion
 
+    public void UpdateTexts()
+    {
+        Text_MovementSpeed.text = MovementSpeed.ToString("F2");
+        Text_rotationSpeed.text = rotationSpeed.ToString("F2");
+
+        Text_accelerationSpeedMax.text = accelerationSpeedMax.ToString("F2");
+        Text_accelerationTimerMax.text = accelerationTimerMax.ToString("F2");
+
+        Text_trailDistanceTotal.text = trailDistanceTotal.ToString("F2");
+
+        Text_const_StunDuration.text = const_StunDuration.ToString("F2");
+        Text_BlindDuration.text = BlindDuration.ToString("F2");
+        Text_ConfuseDuration.text = ConfuseDuration.ToString("F2");
+
+        Text_missleCooldown.text = missleCooldown.ToString("F2");
+        Text_shieldCooldown.text = shieldCooldown.ToString("F2");
+        Text_nitroCooldown.text = nitroCooldown.ToString("F2");
+        Text_nitroSpeed.text = nitroSpeed.ToString("F2");
+        Text_nitroDuration.text = nitroDuration.ToString("F2");
+
+
+        IncrementText.text = IncrementValue.ToString("F2");
+        DivisibleTrailText.text = DivisibleTrailValue.ToString("F2");
+
+        BaseText_Speed.text = Base_Value_Speed.ToString("F2");
+        BaseText_Acceleration.text = Base_Value_Acceleration.ToString("F2");
+        BaseText_Rotation.text = Base_Value_Rotation.ToString("F2");
+        BaseText_Trail.text = Base_Value_Trail.ToString("F2");
+
+        IncrementText_Speed.text = Increment_Value_Speed.ToString("F2");
+        IncrementText_Acceleration.text = Increment_Value_Acceleration.ToString("F2");
+        IncrementText_Rotation.text = Increment_Value_Rotation.ToString("F2");
+        IncrementText_Trail.text = Increment_Value_Trail.ToString("F2");
+
+
+        Force_Text.text = Force_Value.ToString("F2");
+        Torque_Text.text = Torque_Value.ToString("F2");
+        Drag_Text.text = Drag_Value.ToString("F2");
+        AngularDrag_Text.text = AngularDrag_Value.ToString("F2");
+        Mass_Text.text = Mass_Value.ToString("F2");
+
+        TextturningRate.text = turningRate.ToString("F2");
+        TextturningForce.text = turningForce.ToString("F2");
+        TextturningStraightDamping.text = turningStraightDamping.ToString("F2");
+
+        // StatTextPanel.text = _statPanel.ToString();
+
+
+        PlayerPrefs.SetFloat(PrefKey_Movement, MovementSpeed);
+        PlayerPrefs.SetFloat(PrefKey_Rotation, rotationSpeed);
+        PlayerPrefs.SetFloat(PrefKey_AccelerationSpeedMax, accelerationSpeedMax);
+        PlayerPrefs.SetFloat(PrefKey_AccelerationTimerMax, accelerationTimerMax);
+
+        PlayerPrefs.SetFloat(PrefKey_TrailTotal, trailDistanceTotal);
+
+        PlayerPrefs.SetFloat(PrefKey_Stun, const_StunDuration);
+        PlayerPrefs.SetFloat(PrefKey_Blind, BlindDuration);
+        PlayerPrefs.SetFloat(PrefKey_Confuse, ConfuseDuration);
+
+        PlayerPrefs.SetFloat(PrefKey_MissleCooldown, missleCooldown);
+        PlayerPrefs.SetFloat(PrefKey_ShieldCooldown, shieldCooldown);
+        PlayerPrefs.SetFloat(PrefKey_NitroCooldown, nitroCooldown);
+        PlayerPrefs.SetFloat(PrefKey_NitroSpeed, nitroSpeed);
+        PlayerPrefs.SetFloat(PrefKey_NitroDuration, nitroDuration);
+
+        Speed_Text.text = Speed_Stat.ToString();
+        Acceleration_Text.text = Acceleration_Stat.ToString();
+        Rotation_Text.text = Rotation_Stat.ToString();
+        Trail_Text.text = Trail_Stat.ToString();
+    }
+
+    public void ReturnStatsToDefault()
+    {
+        MovementSpeed = (DefaultMovement);
+        rotationSpeed = (DefaultRotation);
+
+        trailDistanceTotal = (DefaulttrailDistanceTotal);
+
+        const_StunDuration = (DefaultStun);
+        BlindDuration = (DefaultBlind);
+        ConfuseDuration = (DefaultConfuse);
+
+        missleCooldown = (DefaultMissleCooldown);
+        shieldCooldown = (DefaultShieldCooldown);
+
+        nitroCooldown = (DefaultNitroCooldown);
+        nitroSpeed = (DefaultNitroSpeed);
+        nitroDuration = (DefaultNitroDuration);
+
+
+
+        TweakMoveSpeed(0);
+        TweakrotationSpeed(0);
+
+        TweaktrailDistanceTotal(0);
+
+        Tweakconst_StunDuration(0);
+        Tweakconst_BlindDuration(0);
+        Tweakconst_ConfuseDuration(0);
+
+        Tweak_missleCooldown(0);
+        Tweak_shieldCooldown(0);
+
+        Tweak_nitroCooldown(0);
+        Tweak_nitroSpeed(0);
+        Tweak_nitroDuration(0);
+
+        Tweak_accelerationSpeedMax(0);
+        Tweak_accelerationTimerMax(0);
+    }
     public virtual void Initer()
     {
 
@@ -151,6 +267,35 @@ public class GameStatsTweaker : MonoBehaviour {
         Mass_Value = 2;
         Force_Value = 50;
         Torque_Value = 2;
+
+
+
+        TweakMoveSpeed(0);
+        TweakrotationSpeed(0);
+
+        TweaktrailDistanceTotal(0);
+
+        Tweakconst_StunDuration(0);
+        Tweakconst_BlindDuration(0);
+        Tweakconst_ConfuseDuration(0);
+
+        Tweak_missleCooldown(0);
+        Tweak_shieldCooldown(0);
+
+        Tweak_nitroCooldown(0);
+        Tweak_nitroSpeed(0);
+        Tweak_nitroDuration(0);
+
+        Tweak_accelerationSpeedMax(0);
+        Tweak_accelerationTimerMax(0);
+
+        Add_Stat_Speed(1);
+        Add_Stat_Acceleration(1);
+        Add_Stat_Rotation(1);
+        Add_Stat_Trail(1);
+
+
+        UpdateTexts();
     }
 
 
@@ -469,4 +614,49 @@ public class GameStatsTweaker : MonoBehaviour {
     }
     #endregion
     //--------------------------------------------------------------------------------------
+
+
+
+
+    //--------------------------------------------------------------------------------------
+    #region GAME STATS TWEAKER
+    public void Add_Stat_Speed(int _stat)
+    {
+        if (_stat < 0)
+            Speed_Stat -= IncrementValue;
+        else
+            Speed_Stat += IncrementValue;
+
+        accelerationSpeedMax = Base_Value_Speed + ((Speed_Stat - 1) * Increment_Value_Speed);
+    }
+    public void Add_Stat_Acceleration(int _stat)
+    {
+        if (_stat < 0)
+            Acceleration_Stat -= IncrementValue;
+        else
+            Acceleration_Stat += IncrementValue;
+
+        accelerationTimerMax = Base_Value_Acceleration + ((Acceleration_Stat - 1) * Increment_Value_Acceleration);
+    }
+    public void Add_Stat_Rotation(int _stat)
+    {
+        if (_stat < 0)
+            Rotation_Stat -= IncrementValue;
+        else
+            Rotation_Stat += IncrementValue;
+
+        rotationSpeed = Base_Value_Rotation + ((Rotation_Stat - 1) * Increment_Value_Rotation);
+    }
+    public void Add_Stat_Trail(int _stat)
+    {
+        if (_stat < 0)
+            Trail_Stat -= IncrementValue;
+        else
+            Trail_Stat += IncrementValue;
+
+        trailDistanceTotal = Base_Value_Trail + ((Trail_Stat - 1) * Increment_Value_Trail);
+
+        SendTrailData();
+    }
+    #endregion
 }

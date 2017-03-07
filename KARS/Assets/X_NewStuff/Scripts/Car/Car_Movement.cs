@@ -321,13 +321,18 @@ public class Car_Movement : MonoBehaviour {
     public void Die()
     {
         myRigid.Sleep();
+        myRigid.useGravity = false;
         //if(MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID)
         if ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart)
         {
             isDead = true;
 
-            transform.position = new Vector3(transform.position.x, 10, transform.position.z);
+            if(MyCarDataReceiver.Network_ID == 1)
+            transform.position = new Vector3(_tronGameManager.spawnPlayerPosition[0].position.x, 10, _tronGameManager.spawnPlayerPosition[0].position.z);
+            else
+                transform.position = new Vector3(_tronGameManager.spawnPlayerPosition[1].position.x, 10, _tronGameManager.spawnPlayerPosition[1].position.z);
 
+            UIManager.instance.SetRespawnScreen(true);
             if (_tronGameManager.NetworkStart == false)
             {
                 if (gameObject.name == "Car1")
@@ -355,13 +360,19 @@ public class Car_Movement : MonoBehaviour {
     {
         yield return new WaitForSeconds(3);
         if (MyCarDataReceiver.Network_ID == 1)
-            transform.position = new Vector3(-5, 1, 0);
+            transform.position = _tronGameManager.spawnPlayerPosition[0].position;
         if (MyCarDataReceiver.Network_ID == 2)
-            transform.position = new Vector3(5, 1, 0);
+            transform.position = _tronGameManager.spawnPlayerPosition[1].position;
         else
-            transform.position = new Vector3(0, 1, 0);
+            transform.position = _tronGameManager.spawnPlayerPosition[0].position;
 
-        CarRotationObject.transform.eulerAngles = Vector3.zero;
+        UIManager.instance.SetRespawnScreen(false);
+
+        CarRotationObject.transform.localEulerAngles = Vector3.zero;
+        transform.localEulerAngles = Vector3.zero;
+
+        myRigid.useGravity = true;
+
         currentRotation_Y = 0;
         isDead = false;
         signalSent = false;

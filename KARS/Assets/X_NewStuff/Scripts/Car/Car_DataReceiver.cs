@@ -6,6 +6,11 @@ using UnityEngine.UI;
 
 public class Car_DataReceiver : Car_Network_Interpolation
 {
+    public GameObject _testPanel;
+    public void FlipTestPanel()
+    {
+        _testPanel.SetActive(!_testPanel.activeInHierarchy);
+    }
     //================================================================================================================================
     #region VARIABLES
     private Car_Movement _carMovement;
@@ -14,8 +19,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
     //NETWORK STUFF
     [SerializeField]
     public int Network_ID;
-    [SerializeField]
-    private bool ifMy_Network_Player;
+    public bool ifMy_Network_Player;
 
     [SerializeField]
     private Camera NetworkCam;
@@ -90,6 +94,8 @@ public class Car_DataReceiver : Car_Network_Interpolation
         GetRTSession = _gameSparkPacketReceiver.GetRTSession();
         if (Network_ID == _gameSparkPacketReceiver.PeerID)
         {
+            if (Network_ID == 0)
+                return;
             NetworkCam.enabled = true;
             ifMy_Network_Player = true;
 
@@ -131,12 +137,8 @@ public class Car_DataReceiver : Car_Network_Interpolation
     }
     void Test_Input()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
-        }
-        
-
+        if (Input.GetKeyDown(KeyCode.Minus))
+            ReduceHealth();
         if (Input.GetKeyDown(KeyCode.Comma))
         {
             ResetTrail(true);
@@ -201,6 +203,8 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
     public void Activate_StateFromButton(NetworkPlayerStatus _status)
     {
+        if (Network_ID == 0)
+            return;
         switch (_status)
         {
             case NetworkPlayerStatus.ACTIVATE_BLIND:
@@ -338,12 +342,36 @@ public class Car_DataReceiver : Car_Network_Interpolation
         }
         if (_netStatus == NetworkPlayerStatus.SET_READY)
         {
-            _carMovement.SetReady(_switch);
+            try
+            {
+                UIManager.instance.GameUpdateText.text += "\nsuccessfully READY THIS PLAYER";
+                _carMovement.SetReady(_switch);
+            }
+            catch
+            {
+                UIManager.instance.GameUpdateText.text += "\nFAILED TO READY THIS PLAYER";
+                StartCoroutine(delayRestartReady(_switch, _netStatus));
+            }
         }
         if (_netStatus == NetworkPlayerStatus.SET_START)
         {
-            _carMovement.SetStartGame(_switch);
+            try
+            {
+                UIManager.instance.GameUpdateText.text += "\nsuccessfully start THIS PLAYER";
+                _carMovement.SetStartGame(_switch);
+                _gameSparkPacketReceiver.ResetGameFromButton();
+            }
+            catch
+            {
+                UIManager.instance.GameUpdateText.text += "\nFAILED TO STARTY THIS PLAYER";
+                StartCoroutine(delayRestartReady(_switch, _netStatus));
+            }
         }
+    }
+    IEnumerator delayRestartReady(bool _switch, NetworkPlayerStatus _netstatus)
+    {
+        yield return new WaitForSeconds(2);
+        ReceiveDisableSTate(_switch, _netstatus);
     }
 
     //-------------------------------------------

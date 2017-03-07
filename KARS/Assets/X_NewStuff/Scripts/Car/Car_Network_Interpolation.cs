@@ -24,6 +24,10 @@ public class Car_Network_Interpolation : MonoBehaviour {
         internal Vector3 rot;
     }
 
+    public void ClearBufferState()
+    {
+        m_BufferedState = new State[20];
+    }
     public State[] m_BufferedState = new State[20];
     public int m_TimestampCount;
     public void ReceiveBufferState(double _receivedTimeStamp, Vector3 _receivedPos, Vector3 _receivedRot)//RTPacket _packet)
@@ -71,10 +75,6 @@ public class Car_Network_Interpolation : MonoBehaviour {
     {
         try
         {
-            if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
-            {
-                GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
-            }
         }
         catch { }
 
@@ -204,11 +204,6 @@ public class Car_Network_Interpolation : MonoBehaviour {
             if (Vector3.Distance(NEW_POS, m_BufferedState[0].pos) > 55)
             {
                 //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nExceed: " + (Vector3.Distance(NEW_POS, m_BufferedState[0].pos) );
-                if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
-                {
-                    GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
-                }
-                GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nExceed WILL ITNERPOALTE: " + (Vector3.Distance(NEW_POS, m_BufferedState[0].pos));
                 Interpolate();
                 return;
             }

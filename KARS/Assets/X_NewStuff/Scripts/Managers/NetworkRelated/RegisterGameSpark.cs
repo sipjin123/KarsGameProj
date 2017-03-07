@@ -23,6 +23,9 @@ public class RegisterGameSpark : MonoBehaviour {
     
     public int PeerID;
 
+    public GameObject 
+        Canvas_Login;
+
     [SerializeField]
     TronGameManager _tronGameManager;
     #endregion
@@ -54,12 +57,13 @@ public class RegisterGameSpark : MonoBehaviour {
         MatchFoundMessage.Listener += OnMatchFound;
 
         UserName.text = DateTime.UtcNow.Second.ToString() + DateTime.UtcNow.Millisecond.ToString() + UnityEngine.Random.Range(0, 1000);
+
     }
 
-    public void Access_LoginAuthentication()
+    public void LoginButton()
     {
         AuthenticateUser(UserName.text, "test", OnRegistration, OnAuthentication);
-        UIManager.Instance.SetMatchCancelButton(true);
+        Canvas_Login.SetActive(true);
     }
     #endregion
     //===========================================================================================
@@ -119,13 +123,9 @@ public class RegisterGameSpark : MonoBehaviour {
         yield return new WaitForSeconds(3);
         FindPlayers();
     }
-    void FindPlayers()
+    public void FindPlayers()
     {
-        if(_tronGameManager.BlockMatchFinding == true)
-        {
-            UIManager.Instance.GameUpdateText.text += "\n\t\t-BLOCKED MATCH FINDING";
-            return;
-        }
+
 
         Debug.LogError("Attempting Matchmaking...");
         new MatchmakingRequest()
@@ -139,18 +139,10 @@ public class RegisterGameSpark : MonoBehaviour {
                 }
             });
     }
-    public void Access_StopFindingPlayers()
-    {
-        StopCoroutine("DelayFindPlayer");
-    }
 
     private void OnMatchFound(MatchFoundMessage _message)
     {
-        if (_tronGameManager.BlockMatchFinding == true)
-        {
-            UIManager.Instance.GameUpdateText.text += "\n\t\t-BLOCKED MATCH FINDING";
-            return;
-        }
+
         //NOTES
         /*
         _message.Host
@@ -167,7 +159,7 @@ public class RegisterGameSpark : MonoBehaviour {
 
         foreach (MatchFoundMessage._Participant player in _message.Participants)
         {
-            GameSparkPacketHandler.Instance.Access_PlayerSpawn(int.Parse( player.PeerId.ToString())); 
+            SpawnPlayers(int.Parse( player.PeerId.ToString() ) );
             if (_message.JSONData["playerId"].ToString() == player.Id)
             {
                 PeerID = int.Parse(player.PeerId.ToString());
@@ -178,8 +170,9 @@ public class RegisterGameSpark : MonoBehaviour {
         RTSessionInfo sessionInfo = new RTSessionInfo(_message);
         Debug.LogError("Writen builder: " + sessionInfo);
 
+        
 
-        GameSparkPacketHandler.Instance.StartNewRTSession(sessionInfo);
+        GameSparkPacketReceiver.Instance.StartNewRTSession(sessionInfo);
 
     }
     #endregion
@@ -206,16 +199,33 @@ public class RegisterGameSpark : MonoBehaviour {
 
     private void OnRegistration(RegistrationResponse _resp)
     {
-        StartCoroutine("DelayFindPlayer");
-
         ConnectionStatus.text += "Registered " + _resp.UserId;
+        StartCoroutine("DelayFindPlayer");
     }
     private void OnAuthentication(AuthenticationResponse _resp)
     {
-        StartCoroutine("DelayFindPlayer");
-
         ConnectionStatus.text += "Authenticated " + _resp.UserId;
+        StartCoroutine("DelayFindPlayer");
     }
     #endregion
     //===========================================================================================
+
+
+    void SpawnPlayers(int _peerID)
+    {
+        Car_DataReceiver _obj = null;
+        if (_peerID == 1)
+        {
+            _obj = GameObject.Find("Car1").GetComponent<Car_DataReceiver>();
+            _obj.SetNetworkObject( _peerID );
+            _obj.GetComponent<Car_Movement>().enabled = true;
+        }
+
+        if (_peerID == 2)
+        {
+            _obj = GameObject.Find("Car2").GetComponent<Car_DataReceiver>();
+            _obj.SetNetworkObject(_peerID);
+            _obj.GetComponent<Car_Movement>().enabled = true;
+        }
+    }
 }

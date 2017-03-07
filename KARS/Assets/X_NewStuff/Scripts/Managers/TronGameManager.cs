@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class TronGameManager : GameStatsTweaker {
 
-
+    public GameObject InGame_PANEL, Debug_PANEL, Waiting_PANEL;
     NetworkPlayerStatus SkillSlot1, SkillSlot2;
 
     string[] skillStringList = new string[]
@@ -18,7 +18,7 @@ public class TronGameManager : GameStatsTweaker {
         "Slow",
         "Silence",
         "Fly",
-        "Nitros",
+        "Nitro",
         "Extend",
     };
 
@@ -27,7 +27,6 @@ public class TronGameManager : GameStatsTweaker {
 
     public void InitSkillList()
     {
-        Debug.LogError(skillStringList.Length);
         for (int i = 0; i < skillStringList.Length; i++)
         {
             GameObject temp = Instantiate(SkillButton, transform.position, Quaternion.identity) as GameObject;
@@ -41,28 +40,45 @@ public class TronGameManager : GameStatsTweaker {
             temp.GetComponent<Button>().onClick.AddListener(() => {
                 SelectThisSkill(temp);
             });
-
         }
+        SelectThisSkill(SkillButtonParent.GetChild(0).gameObject);
+        SelectSkillSlot(1);
+        SelectThisSkill(SkillButtonParent.GetChild(1).gameObject);
+        SelectSkillSlot(0);
     }
 
     int currentSlotIndex;
-    public Image[] currentSlotImage;
-    public Text[] currentSlotText;
+    public Image[] selected_currentSkill_Image;
+    public Text[] selected_currentSkill_Text;
 
-
+    public GameObject[] slotIndicator;
+    public GameObject[] skillSlotIndicator;
     public void SelectSkillSlot(int _val)
     {
         currentSlotIndex = _val;
+
+        skillSlotIndicator[0].SetActive(false);
+        skillSlotIndicator[1].SetActive(false);
+
+        skillSlotIndicator[_val].SetActive(true);
     }
     public void SelectThisSkill(GameObject _obj)
     {
-        if (currentSlotText[0].text == _obj.transform.GetChild(0).GetComponent<Text>().text || currentSlotText[1].text == _obj.transform.GetChild(0).GetComponent<Text>().text)
+        if (selected_currentSkill_Text[0].text == _obj.transform.GetChild(0).GetComponent<Text>().text || selected_currentSkill_Text[1].text == _obj.transform.GetChild(0).GetComponent<Text>().text)
             return;
-            currentSlotImage[currentSlotIndex].sprite = _obj.GetComponent<Image>().sprite;
-        currentSlotText[currentSlotIndex].text = _obj.transform.GetChild(0).GetComponent<Text>().text;
+
+        slotIndicator[currentSlotIndex].transform.position = _obj.transform.position;
+        
+
+        selected_currentSkill_Image[currentSlotIndex].sprite = _obj.GetComponent<Image>().sprite;
+        selected_currentSkill_Text[currentSlotIndex].text = _obj.transform.GetChild(0).GetComponent<Text>().text;
     }
 
-
+    public GameObject SkillPanel;
+    public void ToggleSkillSelection()
+    {
+        SkillPanel.SetActive(!SkillPanel.activeInHierarchy);
+    }
 
 
 
@@ -97,133 +113,30 @@ public class TronGameManager : GameStatsTweaker {
     public Text Var_HP_1, Var_HP_2;
     
 
-    #region TWEAKABLE VARIABLES
-
-
-    public void UpdateTexts()
-    {
-        Text_MovementSpeed.text = MovementSpeed.ToString("F2");
-        Text_rotationSpeed.text = rotationSpeed.ToString("F2");
-
-        Text_accelerationSpeedMax.text = accelerationSpeedMax.ToString("F2");
-        Text_accelerationTimerMax.text = accelerationTimerMax.ToString("F2");
-
-        Text_trailDistanceTotal.text = trailDistanceTotal.ToString("F2");
-
-        Text_const_StunDuration.text = const_StunDuration.ToString("F2");
-        Text_BlindDuration.text = BlindDuration.ToString("F2");
-        Text_ConfuseDuration.text = ConfuseDuration.ToString("F2");
-
-        Text_missleCooldown.text = missleCooldown.ToString("F2");
-        Text_shieldCooldown.text = shieldCooldown.ToString("F2");
-        Text_nitroCooldown.text = nitroCooldown.ToString("F2");
-        Text_nitroSpeed.text = nitroSpeed.ToString("F2");
-        Text_nitroDuration.text = nitroDuration.ToString("F2");
-
-
-        IncrementText.text = IncrementValue.ToString("F2");
-        DivisibleTrailText.text = DivisibleTrailValue.ToString("F2");
-
-        BaseText_Speed.text = Base_Value_Speed.ToString("F2");
-        BaseText_Acceleration.text = Base_Value_Acceleration.ToString("F2");
-        BaseText_Rotation.text = Base_Value_Rotation.ToString("F2");
-        BaseText_Trail.text = Base_Value_Trail.ToString("F2");
-
-        IncrementText_Speed.text = Increment_Value_Speed.ToString("F2");
-        IncrementText_Acceleration.text = Increment_Value_Acceleration.ToString("F2");
-        IncrementText_Rotation.text = Increment_Value_Rotation.ToString("F2");
-        IncrementText_Trail.text = Increment_Value_Trail.ToString("F2");
-
-
-        Force_Text.text = Force_Value.ToString("F2");
-        Torque_Text.text = Torque_Value.ToString("F2");
-        Drag_Text.text = Drag_Value.ToString("F2");
-        AngularDrag_Text.text = AngularDrag_Value.ToString("F2");
-        Mass_Text.text = Mass_Value.ToString("F2");
-
-        TextturningRate.text = turningRate.ToString("F2");
-        TextturningForce.text = turningForce.ToString("F2");
-        TextturningStraightDamping.text = turningStraightDamping.ToString("F2");
-
-       // StatTextPanel.text = _statPanel.ToString();
-
-
-        PlayerPrefs.SetFloat(PrefKey_Movement, MovementSpeed);
-        PlayerPrefs.SetFloat(PrefKey_Rotation, rotationSpeed);
-        PlayerPrefs.SetFloat(PrefKey_AccelerationSpeedMax, accelerationSpeedMax);
-        PlayerPrefs.SetFloat(PrefKey_AccelerationTimerMax, accelerationTimerMax);
-        
-        PlayerPrefs.SetFloat(PrefKey_TrailTotal, trailDistanceTotal);
-
-        PlayerPrefs.SetFloat(PrefKey_Stun, const_StunDuration);
-        PlayerPrefs.SetFloat(PrefKey_Blind, BlindDuration);
-        PlayerPrefs.SetFloat(PrefKey_Confuse, ConfuseDuration);
-
-        PlayerPrefs.SetFloat(PrefKey_MissleCooldown, missleCooldown);
-        PlayerPrefs.SetFloat(PrefKey_ShieldCooldown, shieldCooldown);
-        PlayerPrefs.SetFloat(PrefKey_NitroCooldown, nitroCooldown);
-        PlayerPrefs.SetFloat(PrefKey_NitroSpeed, nitroSpeed);
-        PlayerPrefs.SetFloat(PrefKey_NitroDuration, nitroDuration);
-
-        Speed_Text.text = Speed_Stat.ToString();
-        Acceleration_Text.text = Acceleration_Stat.ToString();
-        Rotation_Text.text = Rotation_Stat.ToString();
-        Trail_Text.text = Trail_Stat.ToString();
-    }
-    
-    public GameObject _testPanel;
-    public void FlipTestPanel()
-    {
-        _testPanel.SetActive(!_testPanel.activeInHierarchy);
-    }
-    #endregion
     
     #endregion
     //==================================================================================================================================
     #region INITALIZATION
     void Awake()
     {
+        _instance = this;
         Initer();
     }
     public override void Initer()
     {
         base.Initer();
-
-
-        _instance = this;
-
-        TweakMoveSpeed(0);
-        TweakrotationSpeed(0);
-        
-        TweaktrailDistanceTotal(0);
-
-        Tweakconst_StunDuration(0);
-        Tweakconst_BlindDuration(0);
-        Tweakconst_ConfuseDuration(0);
-
-        Tweak_missleCooldown(0);
-        Tweak_shieldCooldown(0);
-
-        Tweak_nitroCooldown(0);
-        Tweak_nitroSpeed(0);
-        Tweak_nitroDuration(0);
-
-        Tweak_accelerationSpeedMax(0);
-        Tweak_accelerationTimerMax(0);
-
-        Add_Stat_Speed(1);
-        Add_Stat_Acceleration(1);
-        Add_Stat_Rotation(1);
-        Add_Stat_Trail(1);
-
-
-
-
-        UpdateTexts();
     }
     void Start()
     {
         InitSkillList();
+
+        for (int i = 0; i < PlayerObjects.Length; i++)
+        {
+            PlayerObjects[i].GetComponent<Car_DataReceiver>().ClearBufferState();
+            PlayerObjects[i].SetActive(true);
+            PlayerObjects[i].GetComponent<Car_Movement>().CarRotationObject.eulerAngles = Vector3.zero;
+        }
+        UIManager.instance.SetRespawnScreen(true);
 
     }
     #endregion
@@ -269,6 +182,7 @@ public class TronGameManager : GameStatsTweaker {
             for (int i = 0; i < PlayerObjects.Length; i++)
                 PlayerObjects[i].SetActive(true);
         }
+        /*
         else if (!_switch)//SINGLE PLAYER
         {
             for (int i = 0; i < NetworkCanvas.Length; i++)
@@ -286,8 +200,7 @@ public class TronGameManager : GameStatsTweaker {
             DEbugUI.gameObject.SetActive(true);
             singlePlayerUI.SetActive(true);
             //UIManager.instance.Player1Panel.SetActive(true);
-        }
-        OpenCharacterSelect(true);
+        }*/
     }
 
     public void OpenCharacterSelect(bool _switch)
@@ -325,47 +238,10 @@ public class TronGameManager : GameStatsTweaker {
         carMeshList[carMeshIndex].SetActive(true);
         StatList[carMeshIndex].SetActive(true);
     }
-    public void ReturnStatsToDefault()
+    
+    public void ReceiveSignalToStartGame()
     {
-        MovementSpeed = (DefaultMovement);
-        rotationSpeed =  (DefaultRotation);
 
-        trailDistanceTotal = (DefaulttrailDistanceTotal);
-
-        const_StunDuration = (DefaultStun);
-        BlindDuration = (DefaultBlind);
-        ConfuseDuration = (DefaultConfuse);
-
-        missleCooldown = (DefaultMissleCooldown);
-        shieldCooldown = (DefaultShieldCooldown);
-
-        nitroCooldown = (DefaultNitroCooldown);
-        nitroSpeed = (DefaultNitroSpeed);
-        nitroDuration = (DefaultNitroDuration);
-
-
-
-        TweakMoveSpeed(0);
-        TweakrotationSpeed(0);
-        
-        TweaktrailDistanceTotal(0);
-
-        Tweakconst_StunDuration(0);
-        Tweakconst_BlindDuration(0);
-        Tweakconst_ConfuseDuration(0);
-
-        Tweak_missleCooldown(0);
-        Tweak_shieldCooldown(0);
-
-        Tweak_nitroCooldown(0);
-        Tweak_nitroSpeed(0);
-        Tweak_nitroDuration(0);
-
-        Tweak_accelerationSpeedMax(0);
-        Tweak_accelerationTimerMax(0);
-    }
-    public void StartGame()
-    {
         TweakMoveSpeed(0);
         TweakrotationSpeed(0);
 
@@ -385,14 +261,50 @@ public class TronGameManager : GameStatsTweaker {
 
         OpenCharacterSelect(false);
 
+        NetworkStart = true;
+
         if (NetworkStart)
         {
+            if (GameSparkPacketReceiver.Instance.PeerID == 0)
+            {
+                StartCoroutine(RetryToSTart());
+                return;
+            }
             ReadyPlayer(GameSparkPacketReceiver.Instance.PeerID);
+         
+            Transform skillParent;
+            if (GameSparkPacketReceiver.Instance.PeerID == 1)
+                skillParent = UIManager.instance.Player1_SkillsParent.transform;
+            else
+                skillParent = UIManager.instance.Player2_SkillsParent.transform;
+            
+            foreach (Transform T in skillParent)
+            {
+                if (T.gameObject.name == selected_currentSkill_Text[0].text || T.gameObject.name == selected_currentSkill_Text[1].text)
+                {
+                    T.gameObject.SetActive(true);
+                }
+            }
+            Debug_PANEL.SetActive(true);
+            InGame_PANEL.SetActive(true);
+            Waiting_PANEL.SetActive(false);
+            UIManager.instance.SetResultScreen(false);
         }
         else
         {
 
         }
+    }
+    IEnumerator RetryToSTart()
+    {
+        yield return new WaitForSeconds(2);
+        ReceiveSignalToStartGame();
+    }
+    public void StartGame()
+    {
+        Waiting_PANEL.SetActive(true);
+        RegisterGameSpark.Instance.LoginButton();
+
     }
     #endregion
     //==================================================================================================================================
@@ -407,6 +319,7 @@ public class TronGameManager : GameStatsTweaker {
         yield return new WaitForSeconds(3);
         GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
 
+        //READY LOCAL PLAYER 
         PlayerObjects[_player - 1].GetComponent<Car_Movement>().SetReady(true);
         using (RTData data = RTData.Get())
         {
@@ -416,7 +329,7 @@ public class TronGameManager : GameStatsTweaker {
             GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
 
-
+        //SET LOCAL CAR MESH
         PlayerObjects[_player-1].GetComponent<Car_DataReceiver>().SetCarAvatar(carMeshIndex);
         using (RTData data = RTData.Get())
         {
@@ -425,7 +338,7 @@ public class TronGameManager : GameStatsTweaker {
             GetRTSession.SendData(114, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
 
-
+        //2 PLAYERS READY
         if (PlayerObjects[0].GetComponent<Car_Movement>().isREady && PlayerObjects[1].GetComponent<Car_Movement>().isREady)
         {
             for (int i = 0; i < PlayerObjects.Length; i++)
@@ -441,56 +354,83 @@ public class TronGameManager : GameStatsTweaker {
                 }
             }
         }
+        else
+        {
+            StartCoroutine(DelayRetryReadyPlayers(_player));
+        }
+    }
+    IEnumerator DelayRetryReadyPlayers(int val)
+    {
+        yield return new WaitForSeconds(2);
+        //2 PLAYERS READY
+        if (PlayerObjects[0].GetComponent<Car_Movement>().isREady && PlayerObjects[1].GetComponent<Car_Movement>().isREady)
+        {
+            for (int i = 0; i < PlayerObjects.Length; i++)
+            {
+
+                PlayerObjects[i].GetComponent<Car_Movement>().SetStartGame(true);
+                using (RTData data = RTData.Get())
+                {
+                    data.SetInt(1, i + 1);
+                    data.SetInt(2, 1);
+                    data.SetInt(3, (int)NetworkPlayerStatus.SET_START);
+                    GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                }
+            }
+        }
+        else
+        {
+            StartCoroutine(DelayRetryReadyPlayers(val));
+        }
     }
     #endregion
     //==================================================================================================================================
 
 
-
-
-
-
-
-
-    //--------------------------------------------------------------------------------------
-    #region GAME STATS TWEAKER
-    public void Add_Stat_Speed(int _stat)
+    public GameObject GameSparksObject;
+    public GameObject CurrentGameSparksObject;
+    public void ResetGameToMenu()
     {
-        if (_stat < 0)
-            Speed_Stat -= IncrementValue;
-        else
-            Speed_Stat += IncrementValue;
+        UIManager.instance.SetRespawnScreen(false);
+        Destroy(CurrentGameSparksObject);
+        CurrentGameSparksObject = Instantiate(GameSparksObject, transform.position, Quaternion.identity);
 
-        accelerationSpeedMax = Base_Value_Speed + ( (Speed_Stat-1) * Increment_Value_Speed);
+        UIManager.instance.GameUpdateText.text += "\nRESETING MENU PANELS";
+        InGame_PANEL.SetActive(false);
+        Debug_PANEL.SetActive(false);
+        CharacterSelectPanel.SetActive(true);
+        PlayerObjects[0].GetComponent<Car_DataReceiver>().ifMy_Network_Player = false;
+        PlayerObjects[1].GetComponent<Car_DataReceiver>().ifMy_Network_Player = false;
+        PlayerObjects[0].GetComponent<Car_DataReceiver>().Network_ID = 0;
+        PlayerObjects[1].GetComponent<Car_DataReceiver>().Network_ID = 0;
+
+        PlayerObjects[0].GetComponent<Car_Movement>().SetReady(false);
+        PlayerObjects[1].GetComponent<Car_Movement>().SetReady(false);
+
+        PlayerObjects[0].GetComponent<Car_Movement>().SetStartGame(false);
+        PlayerObjects[1].GetComponent<Car_Movement>().SetStartGame(false);
+        
+
+        UIManager.instance.Player1Panel.SetActive(false);
+        UIManager.instance.Player2Panel.SetActive(false);
+
+        foreach(Transform t in UIManager.instance.Player1_SkillsParent.transform)
+        {
+            t.gameObject.SetActive(false);
+        }
+        foreach (Transform t in UIManager.instance.Player2_SkillsParent.transform)
+        {
+            t.gameObject.SetActive(false);
+        }
     }
-    public void Add_Stat_Acceleration(int _stat)
-    {
-        if (_stat < 0)
-            Acceleration_Stat -= IncrementValue;
-        else
-            Acceleration_Stat += IncrementValue;
 
-        accelerationTimerMax = Base_Value_Acceleration + ( (Acceleration_Stat-1) * Increment_Value_Acceleration);
-    }
-    public void Add_Stat_Rotation(int _stat)
-    {
-        if (_stat < 0)
-            Rotation_Stat -= IncrementValue;
-        else
-            Rotation_Stat += IncrementValue;
+    public Transform[] spawnPlayerPosition;
 
-        rotationSpeed = Base_Value_Rotation + ((Rotation_Stat - 1) * Increment_Value_Rotation);
-    }
-    public void Add_Stat_Trail(int _stat)
-    {
-        if (_stat < 0)
-            Trail_Stat -= IncrementValue;
-        else
-            Trail_Stat += IncrementValue;
 
-        trailDistanceTotal = Base_Value_Trail+ ((Trail_Stat- 1) * Increment_Value_Trail);
 
-        SendTrailData();
-    }
-    #endregion
+
+
+
+
+    
 }

@@ -1,44 +1,34 @@
-﻿using GameSparks.Api.Responses;
-using GameSparks.Core;
-using GameSparks.RT;
-using System;
+﻿using GameSparks.RT;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using GameSparks.Core;
+using GameSparks.Api.Responses;
+using System.Collections.Generic;
+using Synergy88;
+using System;
 
-public class GameSparkPacketReceiver : MonoBehaviour
-{
-
+public class GameSparksManager : MonoBehaviour {
     //=========================================================================================================================================================================
     //VARIABLES
     #region VARIABLES
-    private static GameSparkPacketReceiver _instance;
-    public static GameSparkPacketReceiver Instance { get { return _instance; } }
+    private static GameSparksManager _instance;
+    public static GameSparksManager Instance { get { return _instance; } }
 
-
-
-    public TronGameManager _tronGameManager;
-
-    public enum MethodUsed
-    {
-        LINEAR,
-        CUBIC,
-        INSTANT,
-    }
-    public MethodUsed _curMethod;
-    public int PeerID = 0;
-
-    public List<Car_DataReceiver> _carPool;
     void Awake()
     {
         _instance = this;
-       // _carPool = new List<Car_DataReceiver>();
-        _curMethod = MethodUsed.LINEAR;
+        tankPool = new List<GameObject>();
+        _curMethod = CurrentMethod.LINEAR;
     }
 
-    float FiveSecUpdateTime;
-    bool InitiateNetwork;
+
+    public GameObject StartPanel;
+    public GameObject RegisterCanvas;
+
+    public string PeerID = "0";
+
+    public List<GameObject> tankPool;
     #endregion
     //=========================================================================================================================================================================
     //
@@ -56,6 +46,9 @@ public class GameSparkPacketReceiver : MonoBehaviour
     public RTSessionInfo sessionInfo;
     public void StartNewRTSession(RTSessionInfo _info)
     {
+        RegisterCanvas.SetActive(false);
+        StartPanel.SetActive(true);
+        
 
         Debug.Log("GSM| Creating New RT Session Instance...");
         sessionInfo = _info;
@@ -84,7 +77,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
             (ready) => { OnRTReady(ready); },
             (packet) => { OnPacketReceived(packet); });
         gameSparksRTUnity.Connect(); // when the config is set, connect the game
-        _tronGameManager.ReceiveSignalToStartGame();
+        
     }
 
     private void OnPlayerConnectedToGame(int _peerId)
@@ -97,45 +90,35 @@ public class GameSparkPacketReceiver : MonoBehaviour
         Debug.Log("GSM| Player Disconnected, " + _peerId);
         GetRTSession().Disconnect();
         GS.Disconnect();
-        TronGameManager.Instance.ResetGameToMenu();
     }
 
     private void OnRTReady(bool _isReady)
     {
         if (_isReady)
         {
-
-
-            //NETWORKTEST
-            UIManager.instance.GameUpdateText.text += "\n Netowrk Ready";
-
             Debug.Log("GSM| RT Session Connected...");
-            PeerID = RegisterGameSpark.Instance.PeerID;
+            PeerID = RegistrationSparks.Instance.PeerID;
             StartCoroutine(SendTimeStamp());
-
-
-
-
-            _tronGameManager.SetNetworkStart(true);
         }
     }
     #endregion
     //====================================================================================
 
+    bool InitiateNetwork;
 
     #region CLOCK SYNC
     private IEnumerator SendTimeStamp()
     {
-
+        
         using (RTData data = RTData.Get())
         {
-            data.SetLong(1, (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds);
+            data.SetLong(1, (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds); 
             GetRTSession().SendData(101, GameSparksRT.DeliveryIntent.UNRELIABLE, data, new int[] { 0 });
         }
         yield return new WaitForSeconds(0f);
         StartCoroutine(SendTimeStamp());
     }
-     DateTime serverClock;
+    DateTime serverClock;
     private int timeDelta, latency, roundTrip;
 
     /// <summary>
@@ -153,18 +136,8 @@ public class GameSparkPacketReceiver : MonoBehaviour
 
     public void SyncClock(RTPacket _packet)
     {
-        DateTime dateNow = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc); // get the current time
-        serverClock = dateNow.AddMilliseconds(_packet.Data.GetLong(1).Value).ToLocalTime();
-        //serverClock = dateNow.AddMilliseconds(_packet.Data.GetLong(1).Value + timeDelta).ToLocalTime(); // adjust current time to match clock from server
-
-        /*
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nServer Clock: " + serverClock+" : : "+ _packet.Data.GetLong(1).Value;
-
-        if (GameObject.Find("GameUpdateText").GetComponent<Text>().text.Length > 3000)
-        {
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
-        }
-        */
+        DateTime dateNow = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc); // get the current time
+        serverClock = dateNow.AddMilliseconds(_packet.Data.GetLong(1).Value + timeDelta).ToLocalTime(); // adjust current time to match clock from server
     }
     #endregion
     #region DATA RECEIVE
@@ -172,80 +145,85 @@ public class GameSparkPacketReceiver : MonoBehaviour
     {
         switch (_packet.OpCode)
         {
-            #region SERVER TIME
             case 101:
-                {
-                    CalculateTimeDelta(_packet);
-                }
+                CalculateTimeDelta(_packet);
                 break;
             case 102:
                 {
-                    
-
-
-                    FiveSecUpdateTime += 5;
-                    UIManager.instance.GameTimeText.text = FiveSecUpdateTime.ToString();
-                    SyncClock(_packet);
                     //UPDATES GAME TIME EVERY 5 SECONDS
+                    #region SERVER TIME
                     if (!InitiateNetwork)
                     {
                         PowerUpManager.Instance.StartNetwork();
-                        for (int i = 0; i < _carPool.Count; i++)
+                        for (int i = 0; i < tankPool.Count; i++)
                         {
-                            _carPool[i].InitCam();
+                            tankPool[i].GetComponent<SimpleCarController>().StartNetwork();
                         }
                         InitiateNetwork = true;
                     }
+                    SyncClock(_packet);
+                    #endregion
                 }
                 break;
-            #endregion
             case 111:
                 {
                     //UPDATES PLAYER MOVEMENT
                     #region MOVEMENT
-                    
-                    NetworkPlayerData netPlayerData;
-                    netPlayerData.playerID = _packet.Data.GetInt(1).Value;
-                    netPlayerData.playerPos = new Vector3(_packet.Data.GetFloat(2).Value, _packet.Data.GetFloat(3).Value, _packet.Data.GetFloat(4).Value);
-                    netPlayerData.playerRot = _packet.Data.GetVector3(5).Value;
-                    netPlayerData.timeStamp = _packet.Data.GetDouble(7).Value;
+                    int receivedPlayerToMove = 0;
+                    receivedPlayerToMove = _packet.Data.GetInt(1).Value;
+                    for (int i = 0; i < tankPool.Count; i++)
+                    {
+                        GameObject _obj = tankPool[i];
+                        GameSparks_DataSender _GameSparks_DataSender = _obj.GetComponent<GameSparks_DataSender>();
 
-                    NetworkDataFilter.instance.ReceiveNetworkPlayerData(netPlayerData);
+                        if (_GameSparks_DataSender.NetworkID == receivedPlayerToMove)
+                        {
+                            _obj.GetComponent<GameSparks_DataSender>().ReceiveBufferState(_packet);
+                        }
+                    }
                     #endregion
                 }
                 break;
             case 113:
                 {
-                    //UPDATES PLAYER POWERUPS AND MESH SWITCH
-                    #region UPDATES PLAYER POWERUPS AND MESH SWITCH
-                    NetworkPlayerEvent _netPlayerEvent = new NetworkPlayerEvent();
-                    _netPlayerEvent.playerID = _packet.Data.GetInt(1).Value;
-                    _netPlayerEvent.playerStatusSwitch = _packet.Data.GetInt(2).Value == 1 ? true : false;
-                    _netPlayerEvent.playerStatus = (NetworkPlayerStatus)_packet.Data.GetInt(3).Value;
+                    //UPDATES PLAYER POWERUPS
+                    #region UPDATES PLAYER POWERUPS
+                    int playerIndex = _packet.Data.GetInt(1).Value;
+                    bool powerUpSwitch = false;
+                    if (_packet.Data.GetInt(2).Value == 0)
+                        powerUpSwitch = false;
+                    else
+                        powerUpSwitch = true;
 
-                    //UIManager.instance.GameUpdateText.text += "\nData Translation for Disable"+_netPlayerEvent.playerStatus;
-                    NetworkDataFilter.Instance.ReceiveNetworkPlayerEvent(_netPlayerEvent);
+                    for (int i = 0; i < tankPool.Count; i++)
+                    {
+                        GameObject _obj = tankPool[i];
+                        GameSparks_DataSender _GameSparks_DataSender = _obj.GetComponent<GameSparks_DataSender>();
+
+                        if (_GameSparks_DataSender.NetworkID == playerIndex)
+                        {
+                            _obj.GetComponent<GameSparks_DataSender>().ReceivePowerUpState(powerUpSwitch);
+                        }
+                    }
                     #endregion
                 }
                 break;
             case 114:
                 {
-                    //CAR AVATAR SWITCH
-                    #region CAR AVATAR SWITCH
-                    int receivedPlayerToMove = 0;
-                    receivedPlayerToMove = _packet.Data.GetInt(1).Value;
+                    return;
+                    int receivedPlayerBump = _packet.Data.GetInt(1).Value;
 
-                    for (int i = 0; i < _carPool.Count; i++)
+                    for (int i = 0; i < tankPool.Count; i++)
                     {
-                        GameObject _obj = _carPool[i].gameObject;
-                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
-
-                        if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
+                        if (tankPool[i].GetComponent<GameSparks_DataSender>().NetworkID == receivedPlayerBump)
                         {
-                            _GameSparks_DataSender.SetCarAvatar(_packet.Data.GetInt(2).Value);
+                            int isBumped = _packet.Data.GetInt(2).Value;
+                            int isFlying = _packet.Data.GetInt(3).Value;
+                            int isFalling = _packet.Data.GetInt(4).Value;
+                            float forceToDeplete = _packet.Data.GetFloat(5).Value;
+                            tankPool[i].GetComponent<SimpleCarController>().SetupInteractionVariables(isBumped, isFlying, isFalling, forceToDeplete);
                         }
                     }
-                    #endregion
                 }
                 break;
             case 115:
@@ -256,12 +234,12 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     int PlayerController = _packet.Data.GetInt(2).Value;
                     List<GameObject> _objList = new List<GameObject>();
 
-                    if (PeerID == 1)
+                    if (PeerID == "1")
                         _objList = PowerUpManager.Instance.MissleList_Player2;
-                    else if (PeerID == 2)
+                    else if (PeerID == "2")
                         _objList = PowerUpManager.Instance.MissleList_Player1;
 
-                    if (PlayerController != PeerID)
+                    if (PlayerController.ToString() != PeerID)
                     {
                         for (int i = 0; i < _objList.Count; i++)
                         {
@@ -292,107 +270,106 @@ public class GameSparkPacketReceiver : MonoBehaviour
                 break;
             case 116:
                 {
+                    //TNT SPAWN AND SWITCH
+                    #region TNT SPAWN AND SWITCH
+                    int receivedServer_ID = _packet.Data.GetInt(1).Value;
+                    int receivedTNT_ID = _packet.Data.GetInt(2).Value;
+                    Vector3 receivedPosition = _packet.Data.GetVector3(3).Value;
+                    bool ifEnabled = false;
+                    if (_packet.Data.GetInt(4).Value == 0)
+                        ifEnabled = false;
+                    else if (_packet.Data.GetInt(4).Value == 1)
+                        ifEnabled = true;
+
+
+                    // GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nRECEIVED TNT # (" + receivedTNT_ID + ") of (" + receivedServer_ID + ") HAS been dispatched to " + receivedPosition;
+                    PowerUpManager.Instance.ReceiveFromServer(receivedServer_ID, receivedTNT_ID, receivedPosition, ifEnabled);
+                    #endregion
+                }
+                break;
+            case 117:
+                {
+                    //UPDATES PLAYER EXPLOSION AND COLLISION
+                    #region UPDATES PLAYER EXPLOSION AND COLLISION
                     int receivedPlayerToMove = _packet.Data.GetInt(1).Value;
-                    float receivedTrailValue = _packet.Data.GetFloat(2).Value;
-                    float receivedTrailValueDividend = _packet.Data.GetFloat(3).Value;
+                    int receivedPlayerAction = _packet.Data.GetInt(2).Value;
 
-
-                    for (int i = 0; i < _carPool.Count; i++)
+                    for (int i = 0; i < tankPool.Count; i++)
                     {
-                        GameObject _obj = _carPool[i].gameObject;
-                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
-
-                        if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
+                        if (tankPool[i].GetComponent<GameSparks_DataSender>().NetworkID == receivedPlayerToMove)
                         {
-                            _GameSparks_DataSender.ReceiveTrailVAlue(receivedTrailValue, receivedTrailValueDividend);
+                            if(receivedPlayerAction == 1)
+                            tankPool[i].GetComponent<SimpleCarController>().BumpThisObjWithForce();
+                            if (receivedPlayerAction == 2)
+                                tankPool[i].GetComponent<SimpleCarController>().PlayerExplode();
                         }
                     }
+                    #endregion
                 }
                 break;
             case 118:
                 {
                     //UPDATES PLAYER HEALTH
                     #region UPDATES PLAYER HEALTH
-                    
                     int receivedPlayerID = _packet.Data.GetInt(1).Value;
                     float receivedPlayerHealth = _packet.Data.GetFloat(2).Value;
-                    
+
+                    //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nRECEIVED: Player " + receivedPlayerID + " Health now is: " + receivedPlayerHealth;
                     if (receivedPlayerID == 1)
                     {
-                        UIManager.instance.HealthBar_1.fillAmount = receivedPlayerHealth / 5;
-                        UIManager.instance.HealthText_1.text = receivedPlayerHealth.ToString();
-
+                        PlayerHealthBar_1.fillAmount = receivedPlayerHealth / 100;
                     }
                     if (receivedPlayerID == 2)
                     {
-                        UIManager.instance.HealthBar_2.fillAmount = receivedPlayerHealth / 5;
-                        UIManager.instance.HealthText_2.text = receivedPlayerHealth.ToString();
-
-                    }
-
-                    if(receivedPlayerID != PeerID)
-                    {
-                        if (receivedPlayerHealth <= 0)
-                        {
-                            ResultScreen();
-                            using (RTData data = RTData.Get())
-                            {
-                                data.SetInt(1, 0);
-                                GetRTSession().SendData(067, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                            }
-                        }
+                        PlayerHealthBar_2.fillAmount = receivedPlayerHealth / 100;
                     }
                     #endregion
                 }
                 break;
-            case 123:
+            case 119://UPDATES PLAYER COLLISION
                 {
-                    UIManager.instance.GameUpdateText.text += "OBSOLETE OPCODE";
-                    Debug.LogError("OBSOLETE OPCODE");
-                    return;
-                    //EXTRAPOLATION_SWITCH
-                    #region EXTRAPOLATION_SWITCH
+                    Tower_AI_Network.Instance.Receive_Packet(_packet);
+                }
+                break;
+            case 120://UPDATES PLAYER COLLISION
+                {
+                    Tower_AI_Network.Instance.Receive_Packet(_packet);
+                }
+                break;
+            case 121:
+                {
+                    int receivedPlayerID = _packet.Data.GetInt(1).Value;
+                   // string receivedInventory = _packet.Data.GetString(2);
+
+                    string[] inventoryTypeSlot = new string[3];
+                    inventoryTypeSlot[0] = _packet.Data.GetString(2);
+                    inventoryTypeSlot[1] = _packet.Data.GetString(3);
+                    inventoryTypeSlot[2] = _packet.Data.GetString(4);
+                    GameObject.Find("GameUpdateText").GetComponent<Text>().text +=  "\n" + inventoryTypeSlot[0] + " " + inventoryTypeSlot[1] + " " + inventoryTypeSlot[2];
+
+                    for (int i = 0; i < inventoryTypeSlot.Length; i++)
+                    {
+                        if (inventoryTypeSlot[i] == "TNT")
+                            PowerButtons[i].GetComponent<Image>().sprite = Img_TNT.sprite;
+                        else if (inventoryTypeSlot[i] == "Shield")
+                            PowerButtons[i].GetComponent<Image>().sprite = Img_Shield.sprite;
+                        else if (inventoryTypeSlot[i] == "Smoke")
+                            PowerButtons[i].GetComponent<Image>().sprite = Img_Smoke.sprite;
+                        else
+                            PowerButtons[i].GetComponent<Image>().sprite = Img_Empty.sprite;
+                    }
+                }
+                break;
+            case 122:
+                {
+
                     int receivedPlayerToMove = _packet.Data.GetInt(1).Value;
                     int receivedPlayerAction = _packet.Data.GetInt(2).Value;
 
-
-                    if (receivedPlayerToMove != PeerID)
+                    if(receivedPlayerToMove.ToString() != PeerID)
                     {
-                        _curMethod = (MethodUsed)receivedPlayerAction;
+                        _curMethod = (CurrentMethod)receivedPlayerAction;
                     }
-                    #endregion
-                }
-                break;
-            case 066:
-                {
-                    ResetGame();
-                }
-                break;
-            case 067:
-                {
-                    ResultScreen();
-                }
-                break;
-            case 131:
-                {
-                    UIManager.instance.GameUpdateText.text += "OBSOLETE OPCODE";
-                    Debug.LogError("OBSOLETE OPCODE");
-                    return;
-                    //MESH RESET
-                    #region MESH RESET
-                    int receivedPlayerToMove = 0;
-                    receivedPlayerToMove = _packet.Data.GetInt(1).Value;
-                    for (int i = 0; i < _carPool.Count; i++)
-                    {
-                        GameObject _obj = _carPool[i].gameObject;
-                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
-
-                        if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
-                        {
-                            _obj.GetComponent<Car_Movement>()._trailCollision.Reset_Mesh();
-                        }
-                    }
-                    #endregion
                 }
                 break;
         }
@@ -400,58 +377,9 @@ public class GameSparkPacketReceiver : MonoBehaviour
     }
     #endregion
     //====================================================================================
-    #region RESET GAME
-    public void LocalREset()
-    {
-        ResetGame();
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, 0);
-            GetRTSession().SendData(066, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-    }
+ 
 
-    public void ResetGameFromButton()
-    {
 
-        UIManager.instance.SetResultScreen(false);
-        if (_tronGameManager.NetworkStart == false)
-        {
-            _tronGameManager.PlayerObjects[0].transform.position = new Vector3(UnityEngine.Random.RandomRange(-5,5), 3, UnityEngine.Random.RandomRange(-5, 5));
-            _tronGameManager.PlayerObjects[0].transform.eulerAngles = new Vector3(0, 0, 0);
-            _tronGameManager.PlayerObjects[0].GetComponent<Rigidbody>().Sleep();
-            return;
-        }
-        ResetGame();
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, 0);
-            GetRTSession().SendData(066, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-    }
-    public void ResetGame()
-    {
-        UIManager.instance.SetResultScreen(false);
-        FiveSecUpdateTime = 0;
-
-        serverClock = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-        gameTimeInt = 0;
-
-        for (int i = 0; i < _carPool.Count; i++)
-        {
-            GameObject _obj = _carPool[i].gameObject;
-            Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
-            Car_Movement _carMovement = _obj.GetComponent<Car_Movement>();
-
-            //_carMovement._trailCollision.SetEmiision(false);
-            //_carMovement._trailCollision.Reset_Mesh();
-            _GameSparks_DataSender.InitCam();
-            _GameSparks_DataSender.Health = 6;
-            _carMovement.Die();
-        }
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nGAME RESET";
-    }
-    #endregion
     //=========================================================================================================================================================================
     //
     //                                                               NON GAME SPARKS RELATED
@@ -463,25 +391,23 @@ public class GameSparkPacketReceiver : MonoBehaviour
     {
         serverClock = serverClock.AddSeconds(Time.fixedDeltaTime);
 
-        gameTimeInt = (float)((serverClock.Second * 1000) + serverClock.Millisecond);
+        gameTimeInt = (float)((serverClock.Second * 1000)  + serverClock.Millisecond);
         ActualTime.text = serverClock.Minute + " : " + serverClock.Second + " : " + serverClock.Millisecond + "\n" + timeDelta + " " + latency + " " + roundTrip;
-        
-        if(FiveSecUpdateTime >= 180)
-        {
-            ResetGame();
-            using (RTData data = RTData.Get())
-            {
-                data.SetInt(1, 0);
-                GetRTSession().SendData(066, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-            }
-        }
 
-        if(Input.GetKeyDown(KeyCode.Delete))
+        return;
+        if (Input.GetKeyDown(KeyCode.J))
         {
-
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text="";
+            StopCoroutine("SendTimeStamp");
+            StartCoroutine("SendTimeStamp");
         }
+        if (gameTimeText != "")
+        {
+            gameTimeInt += Time.fixedDeltaTime;
+                ActualTime.text = gameTimeInt.ToString();
+        }
+        //REFACTOR GAME TIME
     }
+
 
     public double gameTimeInt;
     string gameTimeText = "";
@@ -494,10 +420,17 @@ public class GameSparkPacketReceiver : MonoBehaviour
     //GAME TEST
     #region GAME TEST
     public double playerPingOffset = 1000f;
+    public enum CurrentMethod
+    {
+        LINEAR,
+        CUBIC,
+        INSTANT,
+    }
+    public CurrentMethod _curMethod;
 
     public void changeMethod(int _meth)
     {
-        _curMethod = (MethodUsed)_meth;
+        _curMethod = (CurrentMethod)_meth;
         displayMethod.text = _curMethod.ToString();
     }
     public void adjustOffset(float _off)
@@ -515,7 +448,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
     public bool fixedInterTime = true;
 
 
-    public void DisableFiveSecUpdate(bool tes)
+    public void DisableFiveSecUpdate(bool tes )
     {
         enableFiveSec = tes;
         displayFiveSec.text = enableFiveSec.ToString();
@@ -523,34 +456,60 @@ public class GameSparkPacketReceiver : MonoBehaviour
     public void fixInterTime(bool tes)
     {
         fixedInterTime = tes;
-        if (tes)
-            displayfixInterTime.text = "Fixed 0.3f";
+        if(tes)
+        displayfixInterTime.text = "Fixed 0.3f";
         else
-            displayfixInterTime.text = "adjustable";
+        displayfixInterTime.text = "adjustable";
     }
     #endregion
     //====================================================================================
-
-
-    void Update()
-    { 
-        if(Input.GetKeyDown(KeyCode.Escape))
+    
+    void OnGUI()
+    {
+        if (PeerID == "1")
+            GUI.Box(new Rect(Screen.width / 2 - 50, Screen.height / 2, 100, 30), "" + _curMethod);
+        if (PeerID == "2")
+            GUI.Box(new Rect(Screen.width / 2 + 50, Screen.height / 2, 100, 30), "" + _curMethod);
+        return;
+        try
         {
-            BackToMainMenu();
+            for (int q = 0; q < tankPool.Count; q++)
+            {
+                GameSparks_DataSender _sparksSender = tankPool[q].GetComponent<GameSparks_DataSender>();
+                for (int i = 0; i < _sparksSender.m_BufferedState.Length; i++)
+                {
+                    GUI.Box(new Rect(q * 200, i * 30, 200, 30), i + " (" + (int)_sparksSender.m_BufferedState[i].pos.x + " : " + (int)_sparksSender.m_BufferedState[i].pos.z + ") "+ (int)_sparksSender.m_BufferedState[i].timestamp);//+ _sparksSender.m_BufferedState[i].timestamp.ToString());
+                }
+            }
         }
-
+        catch
+        { }
     }
 
-    public void BackToMainMenu()
+    public Image PlayerHealthBar_1, PlayerHealthBar_2;
+
+    public GameObject InventoryPanel;
+    public GameObject[] PowerButtons;
+    public Image Img_TNT, Img_Shield, Img_Smoke,Img_Empty;
+
+    public void SetupInventory(string _item1, string _item2, string _item3)
     {
-        UIManager.instance.SetResultScreen(false);
-        GetRTSession().Disconnect();
-        GS.Disconnect();
-        TronGameManager.Instance.ResetGameToMenu();
-    }
-    public void ResultScreen()
-    {
-        UIManager.instance.SetResultScreen(true);
+        string[] inventoryTypeSlot = new string[3];
+        inventoryTypeSlot[0] = _item1;
+        inventoryTypeSlot[1] = _item2;
+        inventoryTypeSlot[2] = _item3;
+
+        for (int i = 0; i < inventoryTypeSlot.Length; i++)
+        {
+            if (inventoryTypeSlot[i] == "TNT")
+                PowerButtons[i].GetComponent<Image>().sprite = Img_TNT.sprite;
+            else if (inventoryTypeSlot[i] == "Shield")
+                PowerButtons[i].GetComponent<Image>().sprite = Img_Shield.sprite;
+            else if (inventoryTypeSlot[i] == "Smoke")
+                PowerButtons[i].GetComponent<Image>().sprite = Img_Smoke.sprite;
+            else
+                PowerButtons[i].GetComponent<Image>().sprite = Img_Empty.sprite;
+        }
     }
 }
 

@@ -54,7 +54,7 @@ public class Car_Network_Interpolation : MonoBehaviour {
             m_BufferedState[0] = state;
 
             PlayerPing = _gameSparkPacketReceiver.gameTimeInt - state.timestamp;
-            UIManager.instance.PingText.text = PlayerPing.ToString();
+            UIManager.Instance.PingText.text = PlayerPing.ToString();
             // Increment state count but never exceed buffer size
             m_TimestampCount = Mathf.Min(m_TimestampCount + 1, m_BufferedState.Length);
 

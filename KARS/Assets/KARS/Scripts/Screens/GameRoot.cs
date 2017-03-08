@@ -198,7 +198,6 @@ namespace Synergy88 {
                     break;
                 case PowerupType.TNT:
                     Debug.LogError("Drop TNT");
-                    Player[0].DropTNT();
                     break;
                 case PowerupType.SHEILD:
                     Debug.LogError("Activate Shield");

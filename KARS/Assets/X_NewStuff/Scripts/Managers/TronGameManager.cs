@@ -6,9 +6,11 @@ using UnityEngine.UI;
 
 public class TronGameManager : GameStatsTweaker {
 
-    public GameObject InGame_PANEL, Debug_PANEL, Waiting_PANEL;
-    NetworkPlayerStatus SkillSlot1, SkillSlot2;
 
+    public Transform[] spawnPlayerPosition;
+
+    public GameObject GameSparksObject;
+    public GameObject CurrentGameSparksObject;
     string[] skillStringList = new string[]
     {
         "Shield",
@@ -33,7 +35,7 @@ public class TronGameManager : GameStatsTweaker {
             temp.transform.SetParent(SkillButtonParent);
             temp.transform.localScale = Vector3.one;
 
-            temp.GetComponent<Image>().sprite = SpriteManager.Instance.SkillIcons[i].GetComponent<Image>().sprite;
+            temp.GetComponent<Image>().sprite = UIManager.Instance.SkillIcons[i].GetComponent<Image>().sprite;
             temp.SetActive(true);
 
             temp.transform.GetChild(0).GetComponent<Text>().text = skillStringList[i];
@@ -103,7 +105,6 @@ public class TronGameManager : GameStatsTweaker {
     public GameObject DEbugUI;
     public GameObject singlePlayerUI;
     
-    public GameObject CharacterSelectPanel;
 
     int carMeshIndex;
     public GameObject[] carMeshList;
@@ -136,7 +137,7 @@ public class TronGameManager : GameStatsTweaker {
             PlayerObjects[i].SetActive(true);
             PlayerObjects[i].GetComponent<Car_Movement>().CarRotationObject.eulerAngles = Vector3.zero;
         }
-        UIManager.instance.SetRespawnScreen(true);
+        UIManager.Instance.SetRespawnScreen(true);
 
     }
     #endregion
@@ -174,40 +175,7 @@ public class TronGameManager : GameStatsTweaker {
     #endregion
     //==================================================================================================================================
     #region CHARACTER SELECT
-    public void SetNetworkStart(bool _switch)
-    {
-        NetworkStart = _switch;
-        if (_switch)//MULTIPLAYER
-        {
-            for (int i = 0; i < PlayerObjects.Length; i++)
-                PlayerObjects[i].SetActive(true);
-        }
-        /*
-        else if (!_switch)//SINGLE PLAYER
-        {
-            for (int i = 0; i < NetworkCanvas.Length; i++)
-                NetworkCanvas[i].SetActive(false);
-            PlayerObjects[0].GetComponent<Car_DataReceiver>().enabled = false;
-            PlayerObjects[0].GetComponent<Car_Movement>().enabled = true;
-
-            PlayerObjects[0].GetComponent<Car_Movement>().myCam.enabled = true;
-            PlayerObjects[0].GetComponent<Car_Movement>().StartGame = true;
-            PlayerObjects[0].GetComponent<Car_Movement>()._trailCollision.SetEmiision(true);
-
-
-            PlayerObjects[1].GetComponent<AI_Behaviour>().enabled = true;
-            PowerUpManager.Instance.StartNetwork();
-            DEbugUI.gameObject.SetActive(true);
-            singlePlayerUI.SetActive(true);
-            //UIManager.instance.Player1Panel.SetActive(true);
-        }*/
-    }
-
-    public void OpenCharacterSelect(bool _switch)
-    {
-        CharacterSelectPanel.SetActive(_switch);
-
-    }
+        
     public void NextCar()
     {
         carMeshIndex++;
@@ -242,69 +210,25 @@ public class TronGameManager : GameStatsTweaker {
     public void ReceiveSignalToStartGame()
     {
 
-        TweakMoveSpeed(0);
-        TweakrotationSpeed(0);
-
-        TweaktrailDistanceTotal(0);
-
-        Tweakconst_StunDuration(0);
-
-        Tweak_missleCooldown(0);
-        Tweak_shieldCooldown(0);
-
-        Tweak_nitroCooldown(0);
-        Tweak_nitroSpeed(0);
-        Tweak_nitroDuration(0);
-
-        Tweak_accelerationSpeedMax(0);
-        Tweak_accelerationTimerMax(0);
-
-        OpenCharacterSelect(false);
+        UIManager.Instance.GameUpdateText.text += "\nRecieve Signal to Start Game";
+        UIManager.Instance.SetCharacterSelectScreen(false);
 
         NetworkStart = true;
 
-        if (NetworkStart)
+        if (GameSparkPacketReceiver.Instance.PeerID == 0)
         {
-            if (GameSparkPacketReceiver.Instance.PeerID == 0)
-            {
-                StartCoroutine(RetryToSTart());
-                return;
-            }
-            ReadyPlayer(GameSparkPacketReceiver.Instance.PeerID);
-         
-            Transform skillParent;
-            if (GameSparkPacketReceiver.Instance.PeerID == 1)
-                skillParent = UIManager.instance.Player1_SkillsParent.transform;
-            else
-                skillParent = UIManager.instance.Player2_SkillsParent.transform;
-            
-            foreach (Transform T in skillParent)
-            {
-                if (T.gameObject.name == selected_currentSkill_Text[0].text || T.gameObject.name == selected_currentSkill_Text[1].text)
-                {
-                    T.gameObject.SetActive(true);
-                }
-            }
-            Debug_PANEL.SetActive(true);
-            InGame_PANEL.SetActive(true);
-            Waiting_PANEL.SetActive(false);
-            UIManager.instance.SetResultScreen(false);
+            StartCoroutine(RetryToSTart());
+            return;
         }
-        else
-        {
+        ReadyPlayer(GameSparkPacketReceiver.Instance.PeerID);
 
-        }
+        StateManager.Instance.Access_ChangeState(MENUSTATE.START_GAME);
     }
     IEnumerator RetryToSTart()
     {
+        UIManager.Instance.GameUpdateText.text += "\nRetry Start Game";
         yield return new WaitForSeconds(2);
         ReceiveSignalToStartGame();
-    }
-    public void StartGame()
-    {
-        Waiting_PANEL.SetActive(true);
-        RegisterGameSpark.Instance.LoginButton();
-
     }
     #endregion
     //==================================================================================================================================
@@ -315,7 +239,7 @@ public class TronGameManager : GameStatsTweaker {
     }
     IEnumerator DelayStartChecker(int _player)
     {
-
+        UIManager.Instance.GameUpdateText.text += "\nDelay Start Player: "+_player;
         yield return new WaitForSeconds(3);
         GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
 
@@ -387,18 +311,18 @@ public class TronGameManager : GameStatsTweaker {
     //==================================================================================================================================
 
 
-    public GameObject GameSparksObject;
-    public GameObject CurrentGameSparksObject;
-    public void ResetGameToMenu()
+
+
+
+
+    public void Access_ReInitializeGameSparks()
     {
-        UIManager.instance.SetRespawnScreen(false);
         Destroy(CurrentGameSparksObject);
         CurrentGameSparksObject = Instantiate(GameSparksObject, transform.position, Quaternion.identity);
+    }
 
-        UIManager.instance.GameUpdateText.text += "\nRESETING MENU PANELS";
-        InGame_PANEL.SetActive(false);
-        Debug_PANEL.SetActive(false);
-        CharacterSelectPanel.SetActive(true);
+    public void Access_PlayerReset()
+    {
         PlayerObjects[0].GetComponent<Car_DataReceiver>().ifMy_Network_Player = false;
         PlayerObjects[1].GetComponent<Car_DataReceiver>().ifMy_Network_Player = false;
         PlayerObjects[0].GetComponent<Car_DataReceiver>().Network_ID = 0;
@@ -409,28 +333,5 @@ public class TronGameManager : GameStatsTweaker {
 
         PlayerObjects[0].GetComponent<Car_Movement>().SetStartGame(false);
         PlayerObjects[1].GetComponent<Car_Movement>().SetStartGame(false);
-        
-
-        UIManager.instance.Player1Panel.SetActive(false);
-        UIManager.instance.Player2Panel.SetActive(false);
-
-        foreach(Transform t in UIManager.instance.Player1_SkillsParent.transform)
-        {
-            t.gameObject.SetActive(false);
-        }
-        foreach (Transform t in UIManager.instance.Player2_SkillsParent.transform)
-        {
-            t.gameObject.SetActive(false);
-        }
     }
-
-    public Transform[] spawnPlayerPosition;
-
-
-
-
-
-
-
-    
 }

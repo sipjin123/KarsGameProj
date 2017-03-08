@@ -600,12 +600,6 @@ namespace Synergy88
             shieldDur = maxShieldDur;
             shield.SetActive(true);
         }
-
-        internal void DropTNT()
-        {
-            PowerUpManager.Instance.DropTNT();
-
-        }
         
         private Vector3 CarMovement()
         {

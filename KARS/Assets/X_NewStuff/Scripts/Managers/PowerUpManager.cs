@@ -84,12 +84,12 @@ public class PowerUpManager : MonoBehaviour {
             TnTList.Add(temp);
             temp.GetComponent<TnTScript>().InitializeObj(i);
         }
-        UIManager.Instance.GameUpdateText.text += "\nPeer is Setup";
         try
         {
             ServerPeerID = (GameSparkPacketReceiver.Instance.PeerID);
         }
         catch { }
+        UIManager.Instance.GameUpdateText.text += "\nPower Up Manager is SEtup";
     }
     #endregion
     //=======================================================================================================================
@@ -164,7 +164,7 @@ public class PowerUpManager : MonoBehaviour {
             else
                 data.SetInt(4, 0);
 
-            GetRTSession.SendData(116, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GetRTSession.SendData(OPCODE_CLASS.TrailOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
     #endregion

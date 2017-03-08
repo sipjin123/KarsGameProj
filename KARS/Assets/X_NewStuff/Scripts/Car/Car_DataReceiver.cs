@@ -168,7 +168,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
             data.SetDouble(7, _gameSparkPacketReceiver.gameTimeInt);
 
 
-            GetRTSession.SendData(111, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GetRTSession.SendData(OPCODE_CLASS.MovementOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     } 
 
@@ -189,7 +189,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             data.SetInt(1, Network_ID);
             data.SetFloat(2, Health);
-            GetRTSession.SendData(118, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
 
         if(Health<= 0)
@@ -198,7 +198,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
             using (RTData data = RTData.Get())
             {
                 data.SetInt(1, 0);
-                GetRTSession.SendData(067, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                GetRTSession.SendData(OPCODE_CLASS.ResultOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
             }
         }
     }
@@ -356,6 +356,18 @@ public class Car_DataReceiver : Car_Network_Interpolation
             {
                 UIManager.Instance.GameUpdateText.text += "\nCAR_RECEIVER: SUCCESSFULLY READY THIS PLAYER";
                 _carMovement.SetReady(_switch);
+
+                //2 PLAYERS READY
+                if (TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().isREady && TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().isREady)
+                {
+                    GameSparkPacketReceiver.Instance.SentStartToServer();
+                    UIManager.Instance.GameUpdateText.text += "\nBoth players are ready";
+                }
+                else
+                {
+                    UIManager.Instance.GameUpdateText.text += "\nBoth players are NOT ready, tryng again";
+                    GameSparkPacketReceiver.Instance.SentReadyToServer();
+                }
             }
             catch
             {
@@ -365,8 +377,6 @@ public class Car_DataReceiver : Car_Network_Interpolation
         }
         if (_netStatus == NetworkPlayerStatus.SET_START)
         {
-            if (_carMovement.isREady == false)
-                return;
             try
             {
                 UIManager.Instance.GameUpdateText.text += "\nCAR_RECEIVER: SUCCESSFULLY START THIS PLAYER";
@@ -400,7 +410,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 data.SetInt(2, _switch == true ? 1 : 0);
                 data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_TRAIL);
 
-                GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
             }
     }
 
@@ -417,7 +427,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 data.SetInt(2, 0);
 
             data.SetInt(3, (int)_status);
-            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
     public void SetCarAvatar(int _avatarNumber)
@@ -577,7 +587,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 data.SetInt(2, 0);
 
             data.SetInt(3, (int)_status);
-            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
     public void ReceivePowerUpState(bool _switch, NetworkPlayerStatus _netStatus)

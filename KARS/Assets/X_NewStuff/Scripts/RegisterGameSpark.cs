@@ -211,6 +211,7 @@ public class RegisterGameSpark : MonoBehaviour {
 
     void SpawnPlayers(int _peerID)
     {
+        UIManager.Instance.GameUpdateText.text += "\nRegisterGameSparks: Spawned Players";
         Car_DataReceiver _obj = null;
         if (_peerID == 1)
         {

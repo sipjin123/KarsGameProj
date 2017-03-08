@@ -18,6 +18,7 @@ public class TronGameManager : GameStatsTweaker {
 
     public GameObject[] SelectedCarHighlights;
 
+
     #region SKILLS RELATED
     string[] skillStringList = new string[]
     {
@@ -34,7 +35,6 @@ public class TronGameManager : GameStatsTweaker {
 
     public Transform SkillButtonParent;
     public GameObject SkillButton;
-
     public void InitSkillList()
     {
         for (int i = 0; i < skillStringList.Length; i++)
@@ -57,6 +57,7 @@ public class TronGameManager : GameStatsTweaker {
         SelectSkillSlot(0);
     }
 
+    public int SelectedSkin;
     int currentSlotIndex;
     public Image[] selected_currentSkill_Image;
     public Text[] selected_currentSkill_Text;
@@ -171,13 +172,16 @@ public class TronGameManager : GameStatsTweaker {
     #endregion
     //==================================================================================================================================
     #region CHARACTER SELECT
+    public void SelectThisCar()
+    {
+        SelectedSkin = carMeshIndex;
+        for (int i = 0; i < SelectedCarHighlights.Length; i++)
+            SelectedCarHighlights[i].SetActive(false);
+        SelectedCarHighlights[SelectedSkin].SetActive(true);
+    }
     public void SelectIndex(int _val)
     {
         carMeshIndex = _val;
-        if (carMeshIndex > carMeshList.Length - 1)
-        {
-            carMeshIndex = 0;
-        }
         for (int i = 0; i < carMeshList.Length; i++)
         {
             carMeshList[i].SetActive(false);
@@ -185,9 +189,10 @@ public class TronGameManager : GameStatsTweaker {
         }
         carMeshList[carMeshIndex].SetActive(true);
         StatList[carMeshIndex].SetActive(true);
+
         for (int i = 0; i < SelectedCarHighlights.Length; i++)
             SelectedCarHighlights[i].SetActive(false);
-        SelectedCarHighlights[_val].SetActive(true);
+        SelectedCarHighlights[SelectedSkin].SetActive(true);
     }
     public void NextCar()
     {
@@ -206,7 +211,7 @@ public class TronGameManager : GameStatsTweaker {
 
         for (int i = 0; i < SelectedCarHighlights.Length; i++)
             SelectedCarHighlights[i].SetActive(false);
-        SelectedCarHighlights[carMeshIndex].SetActive(true);
+        SelectedCarHighlights[SelectedSkin].SetActive(true);
     }
     public void PreviousCar()
     {
@@ -225,7 +230,7 @@ public class TronGameManager : GameStatsTweaker {
 
         for (int i = 0; i < SelectedCarHighlights.Length; i++)
             SelectedCarHighlights[i].SetActive(false);
-        SelectedCarHighlights[carMeshIndex].SetActive(true);
+        SelectedCarHighlights[SelectedSkin].SetActive(true);
     }
     #endregion
     //==================================================================================================================================
@@ -274,65 +279,16 @@ public class TronGameManager : GameStatsTweaker {
             data.SetInt(1, _player);
             data.SetInt(2, 1);
             data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
-            GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
 
         //SET LOCAL CAR MESH
-        PlayerObjects[_player-1].GetComponent<Car_DataReceiver>().SetCarAvatar(carMeshIndex);
+        PlayerObjects[_player-1].GetComponent<Car_DataReceiver>().SetCarAvatar(SelectedSkin);
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, _player);
-            data.SetInt(2, carMeshIndex);
-            GetRTSession.SendData(114, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-
-        //2 PLAYERS READY
-        if (PlayerObjects[0].GetComponent<Car_Movement>().isREady && PlayerObjects[1].GetComponent<Car_Movement>().isREady)
-        {
-            for (int i = 0; i < PlayerObjects.Length; i++)
-            {
-
-                PlayerObjects[i].GetComponent<Car_Movement>().SetStartGame(true);
-                using (RTData data = RTData.Get())
-                {
-                    data.SetInt(1, i+1);
-                    data.SetInt(2, 1);
-                    data.SetInt(3, (int)NetworkPlayerStatus.SET_START);
-                    GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                }
-            }
-            UIManager.Instance.GameUpdateText.text += "\nBoth players are ready";
-        }
-        else
-        {
-            UIManager.Instance.GameUpdateText.text += "\nBoth players are NOT ready, Tryng Again to Ready";
-            StartCoroutine(DelayRetryReadyPlayers(_player));
-        }
-    }
-    IEnumerator DelayRetryReadyPlayers(int val)
-    {
-        UIManager.Instance.GameUpdateText.text += "\nDelay Ready Player";
-        yield return new WaitForSeconds(2);
-        //2 PLAYERS READY
-        if (PlayerObjects[0].GetComponent<Car_Movement>().isREady && PlayerObjects[1].GetComponent<Car_Movement>().isREady)
-        {
-            for (int i = 0; i < PlayerObjects.Length; i++)
-            {
-
-                PlayerObjects[i].GetComponent<Car_Movement>().SetStartGame(true);
-                using (RTData data = RTData.Get())
-                {
-                    data.SetInt(1, i + 1);
-                    data.SetInt(2, 1);
-                    data.SetInt(3, (int)NetworkPlayerStatus.SET_START);
-                    GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                }
-            }
-        }
-        else
-        {
-            UIManager.Instance.GameUpdateText.text += "\nWill Retry to Ready Player";
-            StartCoroutine(DelayRetryReadyPlayers(val));
+            data.SetInt(2, SelectedSkin);
+            GetRTSession.SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
     #endregion

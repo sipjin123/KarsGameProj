@@ -434,6 +434,15 @@ public class GameSparkPacketReceiver : MonoBehaviour
                 UIManager.Instance.GameUpdateText.text += "\nSentStartGame For Player: " + (i + 1);
             }
         }
+
+        //SET LOCAL CAR MESH
+        _tronGameManager.PlayerObjects[PeerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(_tronGameManager.SelectedSkin);
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, PeerID);
+            data.SetInt(2, _tronGameManager.SelectedSkin);
+            GetRTSession().SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
     }
     public void SentReadyToServer()
     {

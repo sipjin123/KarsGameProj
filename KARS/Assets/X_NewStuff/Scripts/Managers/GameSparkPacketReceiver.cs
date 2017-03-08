@@ -101,25 +101,17 @@ public class GameSparkPacketReceiver : MonoBehaviour
     {
         if (_isReady)
         {
-
-
             //NETWORKTEST
             UIManager.Instance.GameUpdateText.text += "\n Netowrk Ready";
 
             Debug.Log("GSM| RT Session Connected...");
             PeerID = RegisterGameSpark.Instance.PeerID;
             StartCoroutine(SendTimeStamp());
-
-
-
-
             //_tronGameManager.SetNetworkStart(true);
         }
     }
     #endregion
     //====================================================================================
-
-
     #region CLOCK SYNC
     private IEnumerator SendTimeStamp()
     {
@@ -164,6 +156,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
         */
     }
     #endregion
+    //====================================================================================
     #region DATA RECEIVE
     private void OnPacketReceived(RTPacket _packet)
     {
@@ -177,9 +170,6 @@ public class GameSparkPacketReceiver : MonoBehaviour
                 break;
             case 102:
                 {
-                    
-
-
                     FiveSecUpdateTime += 5;
                     UIManager.Instance.GameTimeText.text = FiveSecUpdateTime.ToString();
                     SyncClock(_packet);
@@ -289,6 +279,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
                 break;
             case 116:
                 {
+                    #region ADJUSTS PLAYER TRAIL
                     int receivedPlayerToMove = _packet.Data.GetInt(1).Value;
                     float receivedTrailValue = _packet.Data.GetFloat(2).Value;
                     float receivedTrailValueDividend = _packet.Data.GetFloat(3).Value;
@@ -304,6 +295,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
                             _GameSparks_DataSender.ReceiveTrailVAlue(receivedTrailValue, receivedTrailValueDividend);
                         }
                     }
+                    #endregion
                 }
                 break;
             case 118:
@@ -324,9 +316,8 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     {
                         UIManager.Instance.HealthBar_2.fillAmount = receivedPlayerHealth / 5;
                         UIManager.Instance.HealthText_2.text = receivedPlayerHealth.ToString();
-
                     }
-
+                    /*
                     if(receivedPlayerID != PeerID)
                     {
                         if (receivedPlayerHealth <= 0)
@@ -338,31 +329,13 @@ public class GameSparkPacketReceiver : MonoBehaviour
                                 GetRTSession().SendData(067, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
                             }
                         }
-                    }
-                    #endregion
-                }
-                break;
-            case 123:
-                {
-                    UIManager.Instance.GameUpdateText.text += "OBSOLETE OPCODE";
-                    Debug.LogError("OBSOLETE OPCODE");
-                    return;
-                    //EXTRAPOLATION_SWITCH
-                    #region EXTRAPOLATION_SWITCH
-                    int receivedPlayerToMove = _packet.Data.GetInt(1).Value;
-                    int receivedPlayerAction = _packet.Data.GetInt(2).Value;
-
-
-                    if (receivedPlayerToMove != PeerID)
-                    {
-                        _curMethod = (MethodUsed)receivedPlayerAction;
-                    }
+                    }*/
                     #endregion
                 }
                 break;
             case 066:
                 {
-                    ResetGame();
+                    StateManager.Instance.Access_ChangeState(MENUSTATE.RESTART_GAME);
                 }
                 break;
             case 067:
@@ -370,85 +343,11 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     StateManager.Instance.Access_ChangeState(MENUSTATE.RESULT);
                 }
                 break;
-            case 131:
-                {
-                    UIManager.Instance.GameUpdateText.text += "OBSOLETE OPCODE";
-                    Debug.LogError("OBSOLETE OPCODE");
-                    return;
-                    //MESH RESET
-                    #region MESH RESET
-                    int receivedPlayerToMove = 0;
-                    receivedPlayerToMove = _packet.Data.GetInt(1).Value;
-                    for (int i = 0; i < _carPool.Count; i++)
-                    {
-                        GameObject _obj = _carPool[i].gameObject;
-                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
-
-                        if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
-                        {
-                            _obj.GetComponent<Car_Movement>()._trailCollision.Reset_Mesh();
-                        }
-                    }
-                    #endregion
-                }
-                break;
         }
 
     }
     #endregion
     //====================================================================================
-    #region RESET GAME
-    public void LocalREset()
-    {
-        ResetGame();
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, 0);
-            GetRTSession().SendData(066, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-    }
-
-    public void ResetGameFromButton()
-    {
-
-        UIManager.Instance.SetResultScreen(false);
-        if (_tronGameManager.NetworkStart == false)
-        {
-            _tronGameManager.PlayerObjects[0].transform.position = new Vector3(UnityEngine.Random.RandomRange(-5,5), 3, UnityEngine.Random.RandomRange(-5, 5));
-            _tronGameManager.PlayerObjects[0].transform.eulerAngles = new Vector3(0, 0, 0);
-            _tronGameManager.PlayerObjects[0].GetComponent<Rigidbody>().Sleep();
-            return;
-        }
-        ResetGame();
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, 0);
-            GetRTSession().SendData(066, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-    }
-    public void ResetGame()
-    {
-        UIManager.Instance.SetResultScreen(false);
-        FiveSecUpdateTime = 0;
-
-        serverClock = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-        gameTimeInt = 0;
-
-        for (int i = 0; i < _carPool.Count; i++)
-        {
-            GameObject _obj = _carPool[i].gameObject;
-            Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
-            Car_Movement _carMovement = _obj.GetComponent<Car_Movement>();
-
-            //_carMovement._trailCollision.SetEmiision(false);
-            //_carMovement._trailCollision.Reset_Mesh();
-            _GameSparks_DataSender.InitCam();
-            _GameSparks_DataSender.Health = 6;
-            _carMovement.Die();
-        }
-        UIManager.Instance.GameUpdateText.text += "\nGAME RESET";
-    }
-    #endregion
     //=========================================================================================================================================================================
     //
     //                                                               NON GAME SPARKS RELATED
@@ -465,18 +364,12 @@ public class GameSparkPacketReceiver : MonoBehaviour
         
         if(FiveSecUpdateTime >= 180)
         {
-            ResetGame();
+            StateManager.Instance.Access_ChangeState(MENUSTATE.RESTART_GAME);
             using (RTData data = RTData.Get())
             {
                 data.SetInt(1, 0);
                 GetRTSession().SendData(066, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
             }
-        }
-
-        if(Input.GetKeyDown(KeyCode.Delete))
-        {
-
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text="";
         }
     }
 
@@ -489,7 +382,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
     #endregion
     //====================================================================================
     //GAME TEST
-    #region GAME TEST
+    #region PING TEST
     public double playerPingOffset = 1000f;
 
     public void changeMethod(int _meth)
@@ -497,54 +390,26 @@ public class GameSparkPacketReceiver : MonoBehaviour
         _curMethod = (MethodUsed)_meth;
         displayMethod.text = _curMethod.ToString();
     }
-    public void adjustOffset(float _off)
-    {
-        playerPingOffset += _off;
-        displayOffset.text = playerPingOffset.ToString();
-    }
-    public Text displayOffset;
     public Text displayMethod;
-    public Text displayFiveSec;
-    public Text displayfixInterTime;
-
-
-    bool enableFiveSec = true;
-    public bool fixedInterTime = true;
-
-
-    public void DisableFiveSecUpdate(bool tes)
-    {
-        enableFiveSec = tes;
-        displayFiveSec.text = enableFiveSec.ToString();
-    }
-    public void fixInterTime(bool tes)
-    {
-        fixedInterTime = tes;
-        if (tes)
-            displayfixInterTime.text = "Fixed 0.3f";
-        else
-            displayfixInterTime.text = "adjustable";
-    }
     #endregion
     //====================================================================================
 
+    public void Access_ResetClock()
+    {
+        FiveSecUpdateTime = 0;
+
+        serverClock = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+        gameTimeInt = 0;
+    }
 
     void Update()
     { 
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            OnClick_BackToMainMenu();
+            StateManager.Instance.Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
         }
-
     }
 
-    public void OnClick_BackToMainMenu()
-    {
-        UIManager.Instance.SetResultScreen(false);
-        GetRTSession().Disconnect();
-        GS.Disconnect();
-        StateManager.Instance.Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
-    }
 }
 
 

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using GameSparks.Core;
 using UnityEngine;
 
 public class StateManager : MonoBehaviour {
@@ -17,33 +16,68 @@ public class StateManager : MonoBehaviour {
     {
         switch (_state)
         {
-            case MENUSTATE.MATCH_FOUND:
+            case MENUSTATE.HOME:
                 {
-
-                    UIManager.Instance.GameUpdateText.text += "\nState: MatchFound";
-                    TronGameManager.Instance.ReceiveSignalToStartGame();
+                    UIManager.Instance.SetInnterCharacterSelectScreen(false);
+                    UIManager.Instance.SetOuterCharacterSelectScreen(false);
+                    UIManager.Instance.SetMenuCanvas(true);
                 }
                 break;
             case MENUSTATE.CHARACTER_SELECT:
                 {
+                    UIManager.Instance.SetMenuCanvas(false);
+                    UIManager.Instance.SetInnterCharacterSelectScreen(false);
+                    UIManager.Instance.SetOuterCharacterSelectScreen(true);
+                }
+                break;
+            case MENUSTATE.CHARACTER_STATS_VIEW:
+                {
+                    UIManager.Instance.SetMenuCanvas(false);
+                    UIManager.Instance.SetInnterCharacterSelectScreen(true);
+                    UIManager.Instance.SetOuterCharacterSelectScreen(false);
+                }
+                break;
 
+
+            case MENUSTATE.MATCH_FOUND:
+                {
+                    TronGameManager.Instance.ReceiveSignalToStartGame();
                 }
                 break;
             case MENUSTATE.MATCH_FIND:
                 {
                     UIManager.Instance.SetWaitingScreen(true);
+                    UIManager.Instance.SetMenuCanvas(false);
                     RegisterGameSpark.Instance.Access_LoginAuthentication();
+                }
+                break;
+            case MENUSTATE.RESTART_GAME:
+                {
+                    UIManager.Instance.SetResultScreen(false);
+                    GameSparkPacketReceiver.Instance.Access_ResetClock();
+
+                    for (int i = 0; i < GameSparkPacketReceiver.Instance._carPool.Count; i++)
+                    {
+                        GameObject _obj = GameSparkPacketReceiver.Instance._carPool[i].gameObject;
+                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
+                        Car_Movement _carMovement = _obj.GetComponent<Car_Movement>();
+
+                        //_carMovement._trailCollision.SetEmiision(false);
+                        //_carMovement._trailCollision.Reset_Mesh();
+                        _GameSparks_DataSender.InitCam();
+                        _GameSparks_DataSender.Health = 6;
+                        _carMovement.Die();
+                    }
                 }
                 break;
             case MENUSTATE.START_GAME:
                 {
-                    UIManager.Instance.GameUpdateText.text += "\nState: Start Game";
                     UIManager.Instance.SetDebugScreen(true);
                     UIManager.Instance.SetInGameScreen(true);
+                    UIManager.Instance.SetRespawnScreen(true);
 
                     UIManager.Instance.SetWaitingScreen(false);
                     UIManager.Instance.SetResultScreen(false);
-                    UIManager.Instance.SetRespawnScreen(true);
 
 
                     Transform skillParent;
@@ -70,12 +104,28 @@ public class StateManager : MonoBehaviour {
                 break;
             case MENUSTATE.RETURN_TO_MAIN_MENU:
                 {
-                    UIManager.Instance.SetCharacterSelectScreen(true);
+                    //GAMESPARKS DISCONNECTION
+                    try
+                    {
+                        GameSparkPacketReceiver.Instance.GetRTSession().Disconnect();
+                    }
+                    catch
+                    {
+                        UIManager.Instance.GameUpdateText.text += "\nNonExisting RT Session";
+                    }
+                    GS.Disconnect();
+
+                    //UI SETUP
+                    UIManager.Instance.SetMenuCanvas(true);
+                    UIManager.Instance.SetOuterCharacterSelectScreen(false);
+                    UIManager.Instance.SetInnterCharacterSelectScreen(false);
+                    UIManager.Instance.SetResultScreen(false);
                     UIManager.Instance.SetRespawnScreen(false);
                     UIManager.Instance.SetInGameScreen(false);
                     UIManager.Instance.SetDebugScreen(false);
-                    UIManager.Instance.GameUpdateText.text += "\nRESETING MENU PANELS";
+                    UIManager.Instance.SetWaitingScreen(false);
 
+                    //PLAYER OBJECT RESET
                     TronGameManager.Instance.Access_ReInitializeGameSparks();
                     TronGameManager.Instance.Access_PlayerReset();
 
@@ -99,8 +149,12 @@ public class StateManager : MonoBehaviour {
 
 public enum MENUSTATE
 {
-    MATCH_FOUND,
+    HOME,
     CHARACTER_SELECT,
+    CHARACTER_STATS_VIEW,
+
+    MATCH_FOUND,
+    RESTART_GAME,
     MATCH_FIND,
     START_GAME,
     RESULT,

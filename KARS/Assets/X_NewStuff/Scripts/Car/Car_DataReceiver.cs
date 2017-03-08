@@ -22,7 +22,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
     public bool ifMy_Network_Player;
 
     [SerializeField]
-    private Camera NetworkCam;
+    public Camera NetworkCam;
 
 
 
@@ -123,7 +123,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
     //================================================================================================================================
     void Update()
     {
-        if (!ifMy_Network_Player)
+        if (!ifMy_Network_Player && Network_ID != 0)
         {
             UpdateFunctInterpolate();
             return;
@@ -190,6 +190,16 @@ public class Car_DataReceiver : Car_Network_Interpolation
             data.SetInt(1, Network_ID);
             data.SetFloat(2, Health);
             GetRTSession.SendData(118, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+
+        if(Health<= 0)
+        {
+            StateManager.Instance.Access_ChangeState(MENUSTATE.RESULT);
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, 0);
+                GetRTSession.SendData(067, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            }
         }
     }
 
@@ -344,26 +354,28 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             try
             {
-                UIManager.Instance.GameUpdateText.text += "\nsuccessfully READY THIS PLAYER";
+                UIManager.Instance.GameUpdateText.text += "\nCAR_RECEIVER: SUCCESSFULLY READY THIS PLAYER";
                 _carMovement.SetReady(_switch);
             }
             catch
             {
-                UIManager.Instance.GameUpdateText.text += "\nFAILED TO READY THIS PLAYER";
+                UIManager.Instance.GameUpdateText.text += "\nCAR_RECEIVER: FAILED TO READY, RETRYING";
                 StartCoroutine(delayRestartReady(_switch, _netStatus));
             }
         }
         if (_netStatus == NetworkPlayerStatus.SET_START)
         {
+            if (_carMovement.isREady == false)
+                return;
             try
             {
-                UIManager.Instance.GameUpdateText.text += "\nsuccessfully start THIS PLAYER";
+                UIManager.Instance.GameUpdateText.text += "\nCAR_RECEIVER: SUCCESSFULLY START THIS PLAYER";
                 _carMovement.SetStartGame(_switch);
-                _gameSparkPacketReceiver.ResetGameFromButton();
+                StateButtonManager.Instance.OnClick_ResetGame();
             }
             catch
             {
-                UIManager.Instance.GameUpdateText.text += "\nFAILED TO STARTY THIS PLAYER";
+                UIManager.Instance.GameUpdateText.text += "\nCAR_RECEIVER: FAILED TO START, RETRYING";
                 StartCoroutine(delayRestartReady(_switch, _netStatus));
             }
         }
@@ -435,7 +447,37 @@ public class Car_DataReceiver : Car_Network_Interpolation
     }
     #endregion
 
+    public void ResetPowerups()
+    {
+        StunObject.SetActive(false);
+        StunSwitch = false;
 
+        BlindObjectBlocker.SetActive(false);
+        BlindObject.SetActive(false);
+        BlindSwitch = false;
+
+        ConfuseObject.SetActive(false);
+        ConfuseSwitch = false;
+        //_carMovement.FlipSwitch = false;
+
+        SlowObject.SetActive(false);
+        SlowSwitch = false;
+
+        SilenceObject.SetActive(false);
+        SilenceBlocker.SetActive(false);
+        SilenceSwitch = false;
+        
+        ShieldSwitch = false;
+        ShieldObject.SetActive(false);
+
+        FlySwitch = false;
+        FlyObject.SetActive(false);
+
+        ExpandSwitch = false;
+        ExpandObject.SetActive(false);
+        
+        NitroSwitch = false;
+    }
 
     public void ActivatePowerUpFromButton(int _val)
     {

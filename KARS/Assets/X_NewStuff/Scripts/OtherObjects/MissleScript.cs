@@ -138,7 +138,7 @@ public class MissleScript : MonoBehaviour {
                 data.SetVector3(6, transform.eulerAngles);
                 data.SetInt(7, _var);
 
-                GetRTSession.SendData(115, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                GetRTSession.SendData(OPCODE_CLASS.MissleOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
             }
         }
         catch { }

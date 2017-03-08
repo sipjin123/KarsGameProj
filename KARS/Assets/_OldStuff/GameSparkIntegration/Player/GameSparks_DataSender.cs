@@ -170,7 +170,7 @@ public class GameSparks_DataSender : MonoBehaviour
             data.SetInt(4, isFalling);
             data.SetFloat(5, forceToDeplete);
 
-            GetRTSession.SendData(114, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GetRTSession.SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
 

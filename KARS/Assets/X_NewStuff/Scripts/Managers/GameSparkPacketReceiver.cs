@@ -87,6 +87,8 @@ public class GameSparkPacketReceiver : MonoBehaviour
     private void OnPlayerConnectedToGame(int _peerId)
     {
         Debug.Log("GSM| Player Connected, " + _peerId);
+
+        UIManager.Instance.GameUpdateText.text += "\nGameSparkPacketReceiver: Player is Locally Connected";
     }
 
     private void OnPlayerDisconnected(int _peerId)
@@ -210,6 +212,14 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     _netPlayerEvent.playerStatusSwitch = _packet.Data.GetInt(2).Value == 1 ? true : false;
                     _netPlayerEvent.playerStatus = (NetworkPlayerStatus)_packet.Data.GetInt(3).Value;
 
+                    if(_netPlayerEvent.playerStatus == NetworkPlayerStatus.SET_READY)
+                    {
+                        UIManager.Instance.GameUpdateText.text += "\nOPCODE_DATA: ready";
+                    }
+                    if (_netPlayerEvent.playerStatus == NetworkPlayerStatus.SET_START)
+                    {
+                        UIManager.Instance.GameUpdateText.text += "\nOPCODE_DATA: start";
+                    }
                     //UIManager.instance.GameUpdateText.text += "\nData Translation for Disable"+_netPlayerEvent.playerStatus;
                     NetworkDataFilter.Instance.ReceiveNetworkPlayerEvent(_netPlayerEvent);
                     #endregion
@@ -368,7 +378,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
             using (RTData data = RTData.Get())
             {
                 data.SetInt(1, 0);
-                GetRTSession().SendData(066, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                GetRTSession().SendData(OPCODE_CLASS.ResetOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
             }
         }
     }
@@ -410,6 +420,45 @@ public class GameSparkPacketReceiver : MonoBehaviour
         }
     }
 
+   public void SentStartToServer()
+    {
+        for (int i = 0; i < TronGameManager.Instance.PlayerObjects.Length; i++)
+        {
+            TronGameManager.Instance.PlayerObjects[i].GetComponent<Car_Movement>().SetStartGame(true);
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, i + 1);
+                data.SetInt(2, 1);
+                data.SetInt(3, (int)NetworkPlayerStatus.SET_START);
+                GetRTSession().SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                UIManager.Instance.GameUpdateText.text += "\nSentStartGame For Player: " + (i + 1);
+            }
+        }
+    }
+    public void SentReadyToServer()
+    {
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, PeerID);
+            data.SetInt(2, 1);
+            data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
+            GetRTSession().SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            UIManager.Instance.GameUpdateText.text += "\nSentStartGame For Player: " + (PeerID);
+        }
+    }
 }
 
+public static class OPCODE_CLASS
+{
+    public static int MeshOpcode { get { return 114; } }
+    public static int HealthOpcode { get { return 118; } }
 
+    public static int StatusOpcode { get { return 113; } }
+    public static int MissleOpcode { get { return 115; } }
+
+    public static int TrailOpcode { get { return 116; } }
+    public static int MovementOpcode { get { return 111; } }
+
+    public static int ResetOpcode { get { return 066; } }
+    public static int ResultOpcode { get { return 067; } }
+}

@@ -617,7 +617,15 @@ public class GameStatsTweaker : MonoBehaviour {
 
 
 
-
+    public void ClearLogs()
+    {
+        UIManager.Instance.GameUpdateText.text = "";
+    }
+    public GameObject Logss;
+    public void EnebleDisableLogs()
+    {
+        Logss.SetActive(!Logss.activeInHierarchy);
+    }
     //--------------------------------------------------------------------------------------
     #region GAME STATS TWEAKER
     public void Add_Stat_Speed(int _stat)

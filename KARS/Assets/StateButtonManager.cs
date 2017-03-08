@@ -25,7 +25,7 @@ public class StateButtonManager : MonoBehaviour {
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, 0);
-            GameSparkPacketReceiver.Instance.GetRTSession().SendData(066, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GameSparkPacketReceiver.Instance.GetRTSession().SendData(OPCODE_CLASS.ResetOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
         StateManager.Instance.Access_ChangeState(MENUSTATE.RESTART_GAME);
     }

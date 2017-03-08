@@ -60,7 +60,9 @@ public class UIManager : MonoBehaviour {
                     InGame_CANVAS, 
                     Debug_CANVAS, 
                     Waiting_CANVAS,
-    CharacterSelectPanel;
+                    Innter_CharacterSelectPanel,
+                    Outer_CharacterSelectPanel,
+                    MainMenu_Canvas;
     //==========================================================================================
     public void SetRespawnScreen(bool _switch)
     {
@@ -83,10 +85,25 @@ public class UIManager : MonoBehaviour {
         Waiting_CANVAS.SetActive(_switch);
     }
 
-    public void SetCharacterSelectScreen(bool _switch)
+    public void SetInnterCharacterSelectScreen(bool _switch)
     {
-        CharacterSelectPanel.SetActive(_switch);
+        Innter_CharacterSelectPanel.SetActive(_switch);
+    }
+    public void SetOuterCharacterSelectScreen(bool _switch)
+    {
+        Outer_CharacterSelectPanel.SetActive(_switch);
     }
 
+    public void SetMenuCanvas(bool _switch)
+    {
+        MainMenu_Canvas.SetActive(_switch);
+    }
 
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Delete))
+        {
+            GameUpdateText.text = "";
+        }
+    }
 }

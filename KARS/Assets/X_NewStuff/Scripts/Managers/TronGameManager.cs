@@ -7,10 +7,18 @@ using UnityEngine.UI;
 public class TronGameManager : GameStatsTweaker {
 
 
+
+    private static TronGameManager _instance;
+    public static TronGameManager Instance { get { return _instance; } }
+
     public Transform[] spawnPlayerPosition;
 
     public GameObject GameSparksObject;
     public GameObject CurrentGameSparksObject;
+
+    public GameObject[] SelectedCarHighlights;
+
+    #region SKILLS RELATED
     string[] skillStringList = new string[]
     {
         "Shield",
@@ -81,21 +89,9 @@ public class TronGameManager : GameStatsTweaker {
     {
         SkillPanel.SetActive(!SkillPanel.activeInHierarchy);
     }
+    #endregion
 
-
-
-
-
-
-
-
-
-    private static TronGameManager _instance;
-    public static TronGameManager Instance { get { return _instance; } }
-
-
-
-
+    
 
     //==================================================================================================================================
     #region VARIABLES
@@ -175,7 +171,24 @@ public class TronGameManager : GameStatsTweaker {
     #endregion
     //==================================================================================================================================
     #region CHARACTER SELECT
-        
+    public void SelectIndex(int _val)
+    {
+        carMeshIndex = _val;
+        if (carMeshIndex > carMeshList.Length - 1)
+        {
+            carMeshIndex = 0;
+        }
+        for (int i = 0; i < carMeshList.Length; i++)
+        {
+            carMeshList[i].SetActive(false);
+            StatList[i].SetActive(false);
+        }
+        carMeshList[carMeshIndex].SetActive(true);
+        StatList[carMeshIndex].SetActive(true);
+        for (int i = 0; i < SelectedCarHighlights.Length; i++)
+            SelectedCarHighlights[i].SetActive(false);
+        SelectedCarHighlights[_val].SetActive(true);
+    }
     public void NextCar()
     {
         carMeshIndex++;
@@ -190,6 +203,10 @@ public class TronGameManager : GameStatsTweaker {
         }
         carMeshList[carMeshIndex].SetActive(true);
         StatList[carMeshIndex].SetActive(true);
+
+        for (int i = 0; i < SelectedCarHighlights.Length; i++)
+            SelectedCarHighlights[i].SetActive(false);
+        SelectedCarHighlights[carMeshIndex].SetActive(true);
     }
     public void PreviousCar()
     {
@@ -205,19 +222,22 @@ public class TronGameManager : GameStatsTweaker {
         }
         carMeshList[carMeshIndex].SetActive(true);
         StatList[carMeshIndex].SetActive(true);
+
+        for (int i = 0; i < SelectedCarHighlights.Length; i++)
+            SelectedCarHighlights[i].SetActive(false);
+        SelectedCarHighlights[carMeshIndex].SetActive(true);
     }
-    
+    #endregion
+    //==================================================================================================================================
+
     public void ReceiveSignalToStartGame()
     {
-
-        UIManager.Instance.GameUpdateText.text += "\nRecieve Signal to Start Game";
-        UIManager.Instance.SetCharacterSelectScreen(false);
-
         NetworkStart = true;
 
         if (GameSparkPacketReceiver.Instance.PeerID == 0)
         {
-            StartCoroutine(RetryToSTart());
+            StopCoroutine("RetryToSTart");
+            StartCoroutine("RetryToSTart");
             return;
         }
         ReadyPlayer(GameSparkPacketReceiver.Instance.PeerID);
@@ -226,12 +246,11 @@ public class TronGameManager : GameStatsTweaker {
     }
     IEnumerator RetryToSTart()
     {
-        UIManager.Instance.GameUpdateText.text += "\nRetry Start Game";
         yield return new WaitForSeconds(2);
         ReceiveSignalToStartGame();
     }
-    #endregion
-    //==================================================================================================================================
+
+
     #region PLAYER START SYNC
     void ReadyPlayer(int _player)
     {
@@ -239,11 +258,16 @@ public class TronGameManager : GameStatsTweaker {
     }
     IEnumerator DelayStartChecker(int _player)
     {
-        UIManager.Instance.GameUpdateText.text += "\nDelay Start Player: "+_player;
         yield return new WaitForSeconds(3);
         GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
 
+        UIManager.Instance.GameUpdateText.text += "\nDelay Start Player: " + _player;
         //READY LOCAL PLAYER 
+        if (_player == 0)
+        {
+            DelayStartChecker(_player);
+            yield return null;
+        }
         PlayerObjects[_player - 1].GetComponent<Car_Movement>().SetReady(true);
         using (RTData data = RTData.Get())
         {
@@ -277,14 +301,17 @@ public class TronGameManager : GameStatsTweaker {
                     GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
                 }
             }
+            UIManager.Instance.GameUpdateText.text += "\nBoth players are ready";
         }
         else
         {
+            UIManager.Instance.GameUpdateText.text += "\nBoth players are NOT ready, Tryng Again to Ready";
             StartCoroutine(DelayRetryReadyPlayers(_player));
         }
     }
     IEnumerator DelayRetryReadyPlayers(int val)
     {
+        UIManager.Instance.GameUpdateText.text += "\nDelay Ready Player";
         yield return new WaitForSeconds(2);
         //2 PLAYERS READY
         if (PlayerObjects[0].GetComponent<Car_Movement>().isREady && PlayerObjects[1].GetComponent<Car_Movement>().isREady)
@@ -304,17 +331,19 @@ public class TronGameManager : GameStatsTweaker {
         }
         else
         {
+            UIManager.Instance.GameUpdateText.text += "\nWill Retry to Ready Player";
             StartCoroutine(DelayRetryReadyPlayers(val));
         }
     }
     #endregion
     //==================================================================================================================================
 
+ 
 
 
 
 
-
+    #region PUBLIC FUNCTIONS
     public void Access_ReInitializeGameSparks()
     {
         Destroy(CurrentGameSparksObject);
@@ -323,15 +352,24 @@ public class TronGameManager : GameStatsTweaker {
 
     public void Access_PlayerReset()
     {
-        PlayerObjects[0].GetComponent<Car_DataReceiver>().ifMy_Network_Player = false;
-        PlayerObjects[1].GetComponent<Car_DataReceiver>().ifMy_Network_Player = false;
-        PlayerObjects[0].GetComponent<Car_DataReceiver>().Network_ID = 0;
-        PlayerObjects[1].GetComponent<Car_DataReceiver>().Network_ID = 0;
+        for (int i = 0; i < PlayerObjects.Length; i++)
+        {
+            PlayerObjects[i].GetComponent<Car_DataReceiver>().ClearBufferState();
+            PlayerObjects[i].SetActive(true);
+            PlayerObjects[i].GetComponent<Car_DataReceiver>().Network_ID = 0;
+            PlayerObjects[i].GetComponent<Car_DataReceiver>().NetworkCam.enabled = false;
+            PlayerObjects[i].GetComponent<Car_DataReceiver>().ifMy_Network_Player = false;
 
-        PlayerObjects[0].GetComponent<Car_Movement>().SetReady(false);
-        PlayerObjects[1].GetComponent<Car_Movement>().SetReady(false);
+            PlayerObjects[i].GetComponent<Car_DataReceiver>().ResetPowerups();
 
-        PlayerObjects[0].GetComponent<Car_Movement>().SetStartGame(false);
-        PlayerObjects[1].GetComponent<Car_Movement>().SetStartGame(false);
+            PlayerObjects[i].GetComponent<Car_Movement>().CarRotationObject.eulerAngles = Vector3.zero;
+            PlayerObjects[i].transform.eulerAngles = Vector3.zero;
+            PlayerObjects[i].transform.position = spawnPlayerPosition[i].position;
+
+
+            PlayerObjects[i].GetComponent<Car_Movement>().SetStartGame(false);
+            PlayerObjects[i].GetComponent<Car_Movement>().SetReady(false);
+        }
     }
+    #endregion
 }

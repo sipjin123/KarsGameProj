@@ -172,53 +172,35 @@ public class TronGameManager : GameStatsTweaker {
     #endregion
     //==================================================================================================================================
     #region CHARACTER SELECT
-    public void SelectThisCar()
+    public void OnClick_SelectCarButton()
     {
         SelectedSkin = carMeshIndex;
-        for (int i = 0; i < SelectedCarHighlights.Length; i++)
-            SelectedCarHighlights[i].SetActive(false);
-        SelectedCarHighlights[SelectedSkin].SetActive(true);
+        UpdateCarSelection();
     }
-    public void SelectIndex(int _val)
+    public void OnClick_SelectThisCarFrame(int _val)
     {
         carMeshIndex = _val;
-        for (int i = 0; i < carMeshList.Length; i++)
-        {
-            carMeshList[i].SetActive(false);
-            StatList[i].SetActive(false);
-        }
-        carMeshList[carMeshIndex].SetActive(true);
-        StatList[carMeshIndex].SetActive(true);
-
-        for (int i = 0; i < SelectedCarHighlights.Length; i++)
-            SelectedCarHighlights[i].SetActive(false);
-        SelectedCarHighlights[SelectedSkin].SetActive(true);
+        UpdateCarSelection();
     }
     public void NextCar()
     {
         carMeshIndex++;
-        if (carMeshIndex > carMeshList.Length - 1)
-        {
-            carMeshIndex = 0;
-        }
-        for (int i = 0; i < carMeshList.Length; i++)
-        {
-            carMeshList[i].SetActive(false);
-            StatList[i].SetActive(false);
-        }
-        carMeshList[carMeshIndex].SetActive(true);
-        StatList[carMeshIndex].SetActive(true);
-
-        for (int i = 0; i < SelectedCarHighlights.Length; i++)
-            SelectedCarHighlights[i].SetActive(false);
-        SelectedCarHighlights[SelectedSkin].SetActive(true);
+        UpdateCarSelection();
     }
     public void PreviousCar()
     {
         carMeshIndex--;
+        UpdateCarSelection();
+    }
+    private void UpdateCarSelection()
+    {
         if (carMeshIndex <= -1)
         {
             carMeshIndex = carMeshList.Length - 1;
+        }
+        if (carMeshIndex >= carMeshList.Length)
+        {
+            carMeshIndex = 0;
         }
         for (int i = 0; i < carMeshList.Length; i++)
         {
@@ -280,15 +262,6 @@ public class TronGameManager : GameStatsTweaker {
             data.SetInt(2, 1);
             data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
             GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-
-        //SET LOCAL CAR MESH
-        PlayerObjects[_player-1].GetComponent<Car_DataReceiver>().SetCarAvatar(SelectedSkin);
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, _player);
-            data.SetInt(2, SelectedSkin);
-            GetRTSession.SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
     #endregion

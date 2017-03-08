@@ -60,7 +60,7 @@ public class RegisterGameSpark : MonoBehaviour {
 
     }
 
-    public void LoginButton()
+    public void Access_LoginAuthentication()
     {
         AuthenticateUser(UserName.text, "test", OnRegistration, OnAuthentication);
         Canvas_Login.SetActive(true);
@@ -125,8 +125,6 @@ public class RegisterGameSpark : MonoBehaviour {
     }
     public void FindPlayers()
     {
-
-
         Debug.LogError("Attempting Matchmaking...");
         new MatchmakingRequest()
             .SetMatchShortCode("B0ntakun") 
@@ -170,8 +168,8 @@ public class RegisterGameSpark : MonoBehaviour {
         RTSessionInfo sessionInfo = new RTSessionInfo(_message);
         Debug.LogError("Writen builder: " + sessionInfo);
 
-        
 
+        UIManager.Instance.GameUpdateText.text += "\nOnMatchFound";
         GameSparkPacketReceiver.Instance.StartNewRTSession(sessionInfo);
 
     }

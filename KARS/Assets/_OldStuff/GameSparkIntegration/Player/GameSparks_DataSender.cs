@@ -84,7 +84,7 @@ public class GameSparks_DataSender : MonoBehaviour
         ExtrapoalteObj.gameObject.layer = LayerMask.NameToLayer("3D");
 
 
-        _shieldObject = Instantiate(PowerUpManager.Instance.Shield, Vector3.one, Quaternion.identity) as GameObject;
+        //_shieldObject = Instantiate(PowerUpManager.Instance.Shield, Vector3.one, Quaternion.identity) as GameObject;
         _shieldObject.transform.SetParent(transform);
         _shieldObject.transform.localPosition = Vector3.zero;
         _shieldObject.transform.localEulerAngles = Vector3.zero;

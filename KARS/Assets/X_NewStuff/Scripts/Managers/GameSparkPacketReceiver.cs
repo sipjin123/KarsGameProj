@@ -15,9 +15,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
     #region VARIABLES
     private static GameSparkPacketReceiver _instance;
     public static GameSparkPacketReceiver Instance { get { return _instance; } }
-
-
-
+    
     public TronGameManager _tronGameManager;
 
     public enum MethodUsed
@@ -33,7 +31,6 @@ public class GameSparkPacketReceiver : MonoBehaviour
     void Awake()
     {
         _instance = this;
-       // _carPool = new List<Car_DataReceiver>();
         _curMethod = MethodUsed.LINEAR;
     }
 
@@ -84,7 +81,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
             (ready) => { OnRTReady(ready); },
             (packet) => { OnPacketReceived(packet); });
         gameSparksRTUnity.Connect(); // when the config is set, connect the game
-        _tronGameManager.ReceiveSignalToStartGame();
+        StateManager.Instance.Access_ChangeState(MENUSTATE.MATCH_FOUND);
     }
 
     private void OnPlayerConnectedToGame(int _peerId)
@@ -97,7 +94,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
         Debug.Log("GSM| Player Disconnected, " + _peerId);
         GetRTSession().Disconnect();
         GS.Disconnect();
-        TronGameManager.Instance.ResetGameToMenu();
+        StateManager.Instance.Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
     }
 
     private void OnRTReady(bool _isReady)
@@ -107,7 +104,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
 
 
             //NETWORKTEST
-            UIManager.instance.GameUpdateText.text += "\n Netowrk Ready";
+            UIManager.Instance.GameUpdateText.text += "\n Netowrk Ready";
 
             Debug.Log("GSM| RT Session Connected...");
             PeerID = RegisterGameSpark.Instance.PeerID;
@@ -116,7 +113,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
 
 
 
-            _tronGameManager.SetNetworkStart(true);
+            //_tronGameManager.SetNetworkStart(true);
         }
     }
     #endregion
@@ -184,7 +181,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
 
 
                     FiveSecUpdateTime += 5;
-                    UIManager.instance.GameTimeText.text = FiveSecUpdateTime.ToString();
+                    UIManager.Instance.GameTimeText.text = FiveSecUpdateTime.ToString();
                     SyncClock(_packet);
                     //UPDATES GAME TIME EVERY 5 SECONDS
                     if (!InitiateNetwork)
@@ -319,14 +316,14 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     
                     if (receivedPlayerID == 1)
                     {
-                        UIManager.instance.HealthBar_1.fillAmount = receivedPlayerHealth / 5;
-                        UIManager.instance.HealthText_1.text = receivedPlayerHealth.ToString();
+                        UIManager.Instance.HealthBar_1.fillAmount = receivedPlayerHealth / 5;
+                        UIManager.Instance.HealthText_1.text = receivedPlayerHealth.ToString();
 
                     }
                     if (receivedPlayerID == 2)
                     {
-                        UIManager.instance.HealthBar_2.fillAmount = receivedPlayerHealth / 5;
-                        UIManager.instance.HealthText_2.text = receivedPlayerHealth.ToString();
+                        UIManager.Instance.HealthBar_2.fillAmount = receivedPlayerHealth / 5;
+                        UIManager.Instance.HealthText_2.text = receivedPlayerHealth.ToString();
 
                     }
 
@@ -334,7 +331,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     {
                         if (receivedPlayerHealth <= 0)
                         {
-                            ResultScreen();
+                            StateManager.Instance.Access_ChangeState(MENUSTATE.RESULT);
                             using (RTData data = RTData.Get())
                             {
                                 data.SetInt(1, 0);
@@ -347,7 +344,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
                 break;
             case 123:
                 {
-                    UIManager.instance.GameUpdateText.text += "OBSOLETE OPCODE";
+                    UIManager.Instance.GameUpdateText.text += "OBSOLETE OPCODE";
                     Debug.LogError("OBSOLETE OPCODE");
                     return;
                     //EXTRAPOLATION_SWITCH
@@ -370,12 +367,12 @@ public class GameSparkPacketReceiver : MonoBehaviour
                 break;
             case 067:
                 {
-                    ResultScreen();
+                    StateManager.Instance.Access_ChangeState(MENUSTATE.RESULT);
                 }
                 break;
             case 131:
                 {
-                    UIManager.instance.GameUpdateText.text += "OBSOLETE OPCODE";
+                    UIManager.Instance.GameUpdateText.text += "OBSOLETE OPCODE";
                     Debug.LogError("OBSOLETE OPCODE");
                     return;
                     //MESH RESET
@@ -414,7 +411,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
     public void ResetGameFromButton()
     {
 
-        UIManager.instance.SetResultScreen(false);
+        UIManager.Instance.SetResultScreen(false);
         if (_tronGameManager.NetworkStart == false)
         {
             _tronGameManager.PlayerObjects[0].transform.position = new Vector3(UnityEngine.Random.RandomRange(-5,5), 3, UnityEngine.Random.RandomRange(-5, 5));
@@ -431,7 +428,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
     }
     public void ResetGame()
     {
-        UIManager.instance.SetResultScreen(false);
+        UIManager.Instance.SetResultScreen(false);
         FiveSecUpdateTime = 0;
 
         serverClock = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
@@ -449,7 +446,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
             _GameSparks_DataSender.Health = 6;
             _carMovement.Die();
         }
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nGAME RESET";
+        UIManager.Instance.GameUpdateText.text += "\nGAME RESET";
     }
     #endregion
     //=========================================================================================================================================================================
@@ -536,21 +533,17 @@ public class GameSparkPacketReceiver : MonoBehaviour
     { 
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            BackToMainMenu();
+            OnClick_BackToMainMenu();
         }
 
     }
 
-    public void BackToMainMenu()
+    public void OnClick_BackToMainMenu()
     {
-        UIManager.instance.SetResultScreen(false);
+        UIManager.Instance.SetResultScreen(false);
         GetRTSession().Disconnect();
         GS.Disconnect();
-        TronGameManager.Instance.ResetGameToMenu();
-    }
-    public void ResultScreen()
-    {
-        UIManager.instance.SetResultScreen(true);
+        StateManager.Instance.Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
     }
 }
 

@@ -8,25 +8,36 @@ public class PowerUpManager : MonoBehaviour {
     //=======================================================================================================================
     //VARIABLES
     #region VARIABLES
+    //SINGLETON
     private static PowerUpManager instance;
     public static PowerUpManager Instance
     {
         get { return instance; }
     }
 
-    int ServerPeerID;
-
     [SerializeField]
     GameObject Player1, Player2;
-    public GameObject Shield;
 
+    [Header("POOLS")]
     [SerializeField]
-    Transform MisslePool_Player1, MisslePool_Player2, TnTPool;
+    Transform MisslePool_Player1;
+    [SerializeField]
+    Transform MisslePool_Player2;
+    [SerializeField]
+    Transform TnTPool;
 
+    [Header("LISTS")]
     public List<GameObject> MissleList_Player1;
     public List<GameObject> MissleList_Player2;
     public List<GameObject> TnTList;
+
+
+    int ServerPeerID;
     private GameSparksRTUnity GetRTSession;
+
+    bool MissleCooldownTimer_Switch;
+    float MissleCooldownTimer_Count;
+
     #endregion
     //=======================================================================================================================
     //INITIALIZATION
@@ -73,7 +84,7 @@ public class PowerUpManager : MonoBehaviour {
             TnTList.Add(temp);
             temp.GetComponent<TnTScript>().InitializeObj(i);
         }
-        UIManager.instance.GameUpdateText.text += "\nPeer is Setup";
+        UIManager.Instance.GameUpdateText.text += "\nPeer is Setup";
         try
         {
             ServerPeerID = (GameSparkPacketReceiver.Instance.PeerID);
@@ -199,82 +210,29 @@ public class PowerUpManager : MonoBehaviour {
     //=======================================================================================================================
     void FixedUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (MissleCooldownTimer_Switch == true)
         {
-            LaunchMissleFromBUtton(1);
+            if (ServerPeerID == 1)
+                UIManager.Instance.MissleBar_1.fillAmount = MissleCooldownTimer_Count / TronGameManager.Instance.missleCooldown;
+            else
+                UIManager.Instance.MissleBar_2.fillAmount = MissleCooldownTimer_Count / TronGameManager.Instance.missleCooldown;
+
+            if (MissleCooldownTimer_Count < TronGameManager.Instance.missleCooldown)
+            {
+                MissleCooldownTimer_Count += Time.fixedDeltaTime;
+            }
+            else
+            {
+                MissleCooldownTimer_Switch = false;
+            }
         }
-        if(Input.GetKeyDown(KeyCode.RightAlt))
-        {
-            DropTNTFromButton();
-        }
-
-
-
-            if (MissleCooldownTimer_Switch == true)
-            {
-                if (ServerPeerID == 1)
-                    UIManager.instance.MissleBar_1.fillAmount = MissleCooldownTimer_Count / TronGameManager.Instance.missleCooldown;
-                else
-                    UIManager.instance.MissleBar_2.fillAmount = MissleCooldownTimer_Count / TronGameManager.Instance.missleCooldown;
-
-                if (MissleCooldownTimer_Count < TronGameManager.Instance.missleCooldown)
-                {
-                    MissleCooldownTimer_Count += Time.fixedDeltaTime;
-                }
-                else
-                {
-                    MissleCooldownTimer_Switch = false;
-                }
-            }
-
-            if(NitroActiveTimer_Switch)
-            {
-
-                if (ServerPeerID == 1)
-                    UIManager.instance.NitrosBar_1.fillAmount = 1- (NitroActiveTimer_Timer / TronGameManager.Instance.nitroDuration);
-                else
-                    UIManager.instance.NitrosBar_2.fillAmount = 1-(NitroActiveTimer_Timer / TronGameManager.Instance.nitroDuration);
-
-                if (NitroActiveTimer_Timer < TronGameManager.Instance.nitroDuration)
-                {
-                    NitroActiveTimer_Timer += Time.deltaTime;
-                }
-                else 
-                {
-                    NitroActiveTimer_Switch = false;
-
-                    NitroCooldownTimer_Switch = true;
-                    NitroCooldownTimer_Timer = 0;
-                }
-            }
-            if(NitroCooldownTimer_Switch)
-            {
-                if (ServerPeerID == 1)
-                    UIManager.instance.NitrosBar_1.fillAmount = NitroCooldownTimer_Timer / TronGameManager.Instance.nitroCooldown;
-                else
-                    UIManager.instance.NitrosBar_2.fillAmount = NitroCooldownTimer_Timer / TronGameManager.Instance.nitroCooldown;
-
-                if (NitroCooldownTimer_Timer < TronGameManager.Instance.nitroCooldown)
-                {
-                    NitroCooldownTimer_Timer += Time.fixedDeltaTime;
-                }
-                else
-                {
-                    NitroCooldownTimer_Switch = false;
-                }
-            }
 
         if(Input.GetKeyDown(KeyCode.Y))
         {
-
             GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
         }
     }
 
-
-    bool MissleCooldownTimer_Switch;
-    float MissleCooldownTimer_Count;
-    
     public void LaunchMissleFromBUtton(int _misNum)
     {
         if (MissleCooldownTimer_Switch == true)
@@ -292,62 +250,6 @@ public class PowerUpManager : MonoBehaviour {
         else
         {
             LockOnTarget(0,Player2, (MissleScript.MISSLE_TYPE)_misNum);
-        }
-    }
-    
-    bool NitroActiveTimer_Switch;
-    float NitroActiveTimer_Timer;
-
-    bool NitroCooldownTimer_Switch;
-    float NitroCooldownTimer_Timer;
-
-    public void ActivateNitrosFromButton()
-    {
-        if (NitroActiveTimer_Switch == true)
-            return;
-
-        NitroActiveTimer_Switch = true;
-        NitroActiveTimer_Timer = 0;
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-    public void DropTNTFromButton()
-    {
-
-        if (GameSparkPacketReceiver.Instance.PeerID == 2)
-        {
-            SetUpTNT(2, Player2.transform.position, true);
-        }
-        else if (GameSparkPacketReceiver.Instance.PeerID == 1)
-        {
-            SetUpTNT(1, Player1.transform.position, true);
-        }
-        else
-        {
-            SetUpTNT(0, Player1.transform.position, true);
-        }
-    }
-    internal void DropTNT()
-    {
-        Debug.LogError("Drop TNT");
-
-        if (GameSparkPacketReceiver.Instance.PeerID == 2)
-        {
-            SetUpTNT(2, Player2.transform.position, true);
-        }
-        else if (GameSparkPacketReceiver.Instance.PeerID == 1)
-        {
-            SetUpTNT(1, Player1.transform.position, true);
         }
     }
 }

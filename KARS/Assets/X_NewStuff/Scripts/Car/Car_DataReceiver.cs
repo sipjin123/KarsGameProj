@@ -104,11 +104,11 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
             if (Network_ID == 1)
             {
-                UIManager.instance.Player1Panel.SetActive(true);
+                UIManager.Instance.Player1Panel.SetActive(true);
             }
             else if (Network_ID == 2)
             {
-                UIManager.instance.Player2Panel.SetActive(true);
+                UIManager.Instance.Player2Panel.SetActive(true);
             }
         }
     }
@@ -177,13 +177,13 @@ public class Car_DataReceiver : Car_Network_Interpolation
         Health -= 1;
         if (Network_ID == 1)
         {
-            UIManager.instance.HealthBar_1.fillAmount = Health / 5;
-            UIManager.instance.HealthText_1.text = Health.ToString();
+            UIManager.Instance.HealthBar_1.fillAmount = Health / 5;
+            UIManager.Instance.HealthText_1.text = Health.ToString();
         }
         else if (Network_ID == 2)
         {
-            UIManager.instance.HealthBar_2.fillAmount = Health / 5;
-            UIManager.instance.HealthText_2.text = Health.ToString();
+            UIManager.Instance.HealthBar_2.fillAmount = Health / 5;
+            UIManager.Instance.HealthText_2.text = Health.ToString();
         }
         using (RTData data = RTData.Get())
         {
@@ -344,12 +344,12 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             try
             {
-                UIManager.instance.GameUpdateText.text += "\nsuccessfully READY THIS PLAYER";
+                UIManager.Instance.GameUpdateText.text += "\nsuccessfully READY THIS PLAYER";
                 _carMovement.SetReady(_switch);
             }
             catch
             {
-                UIManager.instance.GameUpdateText.text += "\nFAILED TO READY THIS PLAYER";
+                UIManager.Instance.GameUpdateText.text += "\nFAILED TO READY THIS PLAYER";
                 StartCoroutine(delayRestartReady(_switch, _netStatus));
             }
         }
@@ -357,13 +357,13 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             try
             {
-                UIManager.instance.GameUpdateText.text += "\nsuccessfully start THIS PLAYER";
+                UIManager.Instance.GameUpdateText.text += "\nsuccessfully start THIS PLAYER";
                 _carMovement.SetStartGame(_switch);
                 _gameSparkPacketReceiver.ResetGameFromButton();
             }
             catch
             {
-                UIManager.instance.GameUpdateText.text += "\nFAILED TO STARTY THIS PLAYER";
+                UIManager.Instance.GameUpdateText.text += "\nFAILED TO STARTY THIS PLAYER";
                 StartCoroutine(delayRestartReady(_switch, _netStatus));
             }
         }

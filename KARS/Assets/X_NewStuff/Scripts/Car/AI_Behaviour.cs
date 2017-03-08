@@ -127,6 +127,7 @@ public class AI_Behaviour : MonoBehaviour {
     //==========================================================================================================================================
     void OnTriggerEnter(Collider hit)
     {
+        return;
         if(TronGameManager.Instance.NetworkStart == false)
         if (hit.gameObject.tag == "Trail" || hit.gameObject.name.Contains("Wall") || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
         {

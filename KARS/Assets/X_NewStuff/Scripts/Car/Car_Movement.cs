@@ -121,17 +121,17 @@ public class Car_Movement : MonoBehaviour {
             {
                 if (MyCarDataReceiver.Network_ID == 1)
                 {
-                    UIManager.instance.SpeedBar_1.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
-                    UIManager.instance.SpeedTimeText_1.text = accelerationTimer.ToString();
-                    UIManager.instance.SpeedMaxText_1.text = accelerationSpeed_Max.ToString();
-                    UIManager.instance.SpeedTexT_1.text = accelerationSpeed_Counter.ToString();
+                    UIManager.Instance.SpeedBar_1.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
+                    UIManager.Instance.SpeedTimeText_1.text = accelerationTimer.ToString();
+                    UIManager.Instance.SpeedMaxText_1.text = accelerationSpeed_Max.ToString();
+                    UIManager.Instance.SpeedTexT_1.text = accelerationSpeed_Counter.ToString();
                 }
                 else
                 {
-                    UIManager.instance.SpeedBar_2.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
-                    UIManager.instance.SpeedTimeText_2.text = accelerationTimer.ToString();
-                    UIManager.instance.SpeedMaxText_2.text = accelerationSpeed_Max.ToString();
-                    UIManager.instance.SpeedText_2.text = accelerationSpeed_Counter.ToString();
+                    UIManager.Instance.SpeedBar_2.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
+                    UIManager.Instance.SpeedTimeText_2.text = accelerationTimer.ToString();
+                    UIManager.Instance.SpeedMaxText_2.text = accelerationSpeed_Max.ToString();
+                    UIManager.Instance.SpeedText_2.text = accelerationSpeed_Counter.ToString();
                 }
                 accelerationSpeed_Counter += Time.fixedDeltaTime * ((accelerationSpeed_Max) / accelerationTimer);
             }
@@ -332,7 +332,7 @@ public class Car_Movement : MonoBehaviour {
             else
                 transform.position = new Vector3(_tronGameManager.spawnPlayerPosition[1].position.x, 10, _tronGameManager.spawnPlayerPosition[1].position.z);
 
-            UIManager.instance.SetRespawnScreen(true);
+            UIManager.Instance.SetRespawnScreen(true);
             if (_tronGameManager.NetworkStart == false)
             {
                 if (gameObject.name == "Car1")
@@ -366,7 +366,7 @@ public class Car_Movement : MonoBehaviour {
         else
             transform.position = _tronGameManager.spawnPlayerPosition[0].position;
 
-        UIManager.instance.SetRespawnScreen(false);
+        UIManager.Instance.SetRespawnScreen(false);
 
         CarRotationObject.transform.localEulerAngles = Vector3.zero;
         transform.localEulerAngles = Vector3.zero;
@@ -390,7 +390,7 @@ public class Car_Movement : MonoBehaviour {
         {
             try
             {
-                GetComponent<AI_Behaviour>().enabled = true;
+                //GetComponent<AI_Behaviour>().enabled = true;
             }
             catch { }
             _trailCollision.SetEmiision(true);

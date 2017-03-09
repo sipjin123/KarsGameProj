@@ -78,6 +78,9 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     private Image Player1_InGameHealthBar, Player2_InGameHealthBar;
     public Text Var_HP_1, Var_HP_2;
+
+    [SerializeField]
+    private GameObject SelectCarButton, SelectedCarImage;
     //==========================================================================================
     #region MAIN MENU VARIABLES
 
@@ -191,6 +194,12 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+    public void ActivateSelectCarButton(bool _switch)
+    {
+        SelectCarButton.SetActive(_switch);
+        SelectedCarImage.SetActive(!_switch);
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Delete))
@@ -199,7 +208,7 @@ public class UIManager : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            StateManager.Instance.Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
+            StateManager.Instance.Access_ChangeState(MENUSTATE.RESULT);
         }
     }
 

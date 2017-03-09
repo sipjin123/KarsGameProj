@@ -20,7 +20,7 @@ public class StateButtonManager : MonoBehaviour {
     {
         StateManager.Instance.Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
     }
-    public void OnClick_ResetGame()
+    public void OnClick_ResetGame()//FOR DEBUG PURPOSES ONLY
     {
         using (RTData data = RTData.Get())
         {

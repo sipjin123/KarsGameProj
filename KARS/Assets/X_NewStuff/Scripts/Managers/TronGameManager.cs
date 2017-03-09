@@ -30,7 +30,7 @@ public class TronGameManager : GameStatsTweaker {
         "Silence",
         "Fly",
         "Nitro",
-        "Extend",
+        "Expand",
     };
 
     public Transform SkillButtonParent;
@@ -198,6 +198,15 @@ public class TronGameManager : GameStatsTweaker {
         for (int i = 0; i < SelectedCarHighlights.Length; i++)
             SelectedCarHighlights[i].SetActive(false);
         SelectedCarHighlights[SelectedSkin].SetActive(true);
+
+        if(carMeshIndex == SelectedSkin)
+        {
+            UIManager.Instance.ActivateSelectCarButton(false);
+        }
+        else
+        {
+            UIManager.Instance.ActivateSelectCarButton(true);
+        }
     }
     #endregion
     //==================================================================================================================================
@@ -252,9 +261,21 @@ public class TronGameManager : GameStatsTweaker {
     #endregion
     //==================================================================================================================================
 
- 
 
 
+
+
+
+
+    public void Global_SendState(MENUSTATE _state)
+    {
+        StateManager.Instance.Access_ChangeState(_state);
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, 0);
+            GetRTSession.SendData(OPCODE_CLASS.ResultOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+    }
 
 
     #region PUBLIC FUNCTIONS

@@ -68,8 +68,6 @@ public class TrailCollision : MonoBehaviour
         Node.Add(Guide2.transform.position);
         CurrentVertex += 2;
         CurrentTriangle += 6;
-
-        _meshCollider.sharedMesh = _mesh;
     }
 
     void Minus()
@@ -80,6 +78,8 @@ public class TrailCollision : MonoBehaviour
         CurrentTriangle -= 6;
         Node.Remove(Node[0]);
         Node.Remove(Node[0]);
+
+        _meshCollider.sharedMesh = _mesh;
     }
     #endregion
     //=============================================================================================================================================================
@@ -201,9 +201,6 @@ public class TrailCollision : MonoBehaviour
 
         if(TotalDistanceTrail > trailDistanceTotal)
         {
-            _mesh = new Mesh();
-            _meshFilter.mesh = _mesh;
-            
             if (CurrentVertex > 4)
             {
                 if (Vector3.Distance(vertices[0], vertices[2]) > 0)
@@ -277,8 +274,10 @@ public class TrailCollision : MonoBehaviour
 
         try
         {
+            _mesh = new Mesh();
             _mesh.vertices = vertices;
             _mesh.triangles = tri;
+            _meshFilter.mesh = _mesh;
         }
         catch
         {

@@ -12,42 +12,70 @@ public class StateManager : MonoBehaviour {
     
 
 
+    void ResetAllMainMenuPanels()
+    {
+        UIManager.Instance.SetStatsPreviewScreen(false);
+        UIManager.Instance.SetCarPreviewScreen(false);
+        UIManager.Instance.SetMainMenuPanel(false);
+        UIManager.Instance.SetQuestPanel(false);
+        UIManager.Instance.SetShopPanel(false);
+        UIManager.Instance.SetSocialPanel(false);
+    }
+
     public void Access_ChangeState(MENUSTATE _state)
     {
         switch (_state)
         {
             case MENUSTATE.HOME:
                 {
-                    UIManager.Instance.SetInnterCharacterSelectScreen(false);
-                    UIManager.Instance.SetOuterCharacterSelectScreen(false);
-                    UIManager.Instance.SetMenuCanvas(true);
+                    ResetAllMainMenuPanels();
+                    UIManager.Instance.SetMainMenuPanel(true);
+                }
+                break;
+            case MENUSTATE.QUEST:
+                {
+                    ResetAllMainMenuPanels();
+                    UIManager.Instance.SetQuestPanel(true);
+                }
+                break;
+            case MENUSTATE.SHOP:
+                {
+                    ResetAllMainMenuPanels();
+                    UIManager.Instance.SetShopPanel(true);
+                }
+                break;
+            case MENUSTATE.SOCIAL:
+                {
+                    ResetAllMainMenuPanels();
+                    UIManager.Instance.SetSocialPanel(true);
                 }
                 break;
             case MENUSTATE.CHARACTER_SELECT:
                 {
-                    UIManager.Instance.SetMenuCanvas(false);
-                    UIManager.Instance.SetInnterCharacterSelectScreen(false);
-                    UIManager.Instance.SetOuterCharacterSelectScreen(true);
+                    TronGameManager.Instance.Access_UpdateCarSelection();
+                    ResetAllMainMenuPanels();
+                    UIManager.Instance.SetCarPreviewScreen(true);
                 }
                 break;
             case MENUSTATE.CHARACTER_STATS_VIEW:
                 {
-                    UIManager.Instance.SetMenuCanvas(false);
-                    UIManager.Instance.SetInnterCharacterSelectScreen(true);
-                    UIManager.Instance.SetOuterCharacterSelectScreen(false);
+                    ResetAllMainMenuPanels();
+                    UIManager.Instance.SetStatsPreviewScreen(true);
                 }
                 break;
+                
 
 
             case MENUSTATE.MATCH_FOUND:
                 {
+                    UIManager.Instance.Set_Canvas_Main(false);
                     TronGameManager.Instance.ReceiveSignalToStartGame();
                 }
                 break;
             case MENUSTATE.MATCH_FIND:
                 {
-                    UIManager.Instance.SetWaitingScreen(true);
-                    UIManager.Instance.SetMenuCanvas(false);
+                    ResetAllMainMenuPanels();
+                    UIManager.Instance.Set_Canvas_Waiting(true);
                     RegisterGameSpark.Instance.Access_LoginAuthentication();
                 }
                 break;
@@ -72,11 +100,11 @@ public class StateManager : MonoBehaviour {
                 break;
             case MENUSTATE.START_GAME:
                 {
-                    UIManager.Instance.SetDebugScreen(true);
-                    UIManager.Instance.SetInGameScreen(true);
+                    UIManager.Instance.Set_Canvas_Debug(true);
+                    UIManager.Instance.Set_Canvas_InGame(true);
                     UIManager.Instance.SetRespawnScreen(true);
 
-                    UIManager.Instance.SetWaitingScreen(false);
+                    UIManager.Instance.Set_Canvas_Waiting(false);
                     UIManager.Instance.SetResultScreen(false);
 
 
@@ -100,6 +128,15 @@ public class StateManager : MonoBehaviour {
             case MENUSTATE.RESULT:
                 {
                     UIManager.Instance.SetResultScreen(true);
+                    if(int.Parse( UIManager.Instance.Var_HP_1.text) >int.Parse(UIManager.Instance.Var_HP_2.text))
+                    {
+                        UIManager.Instance.SetPlayerWin(true, 1);
+                    }
+                    else
+                    {
+                        UIManager.Instance.SetPlayerWin(true, 2);
+                    }
+                    UIManager.Instance.MirrorPlayerHp();
                 }
                 break;
             case MENUSTATE.RETURN_TO_MAIN_MENU:
@@ -116,14 +153,15 @@ public class StateManager : MonoBehaviour {
                     GS.Disconnect();
 
                     //UI SETUP
-                    UIManager.Instance.SetMenuCanvas(true);
-                    UIManager.Instance.SetOuterCharacterSelectScreen(false);
-                    UIManager.Instance.SetInnterCharacterSelectScreen(false);
+                    ResetAllMainMenuPanels();
+                    UIManager.Instance.Set_Canvas_Main(true);
+                    UIManager.Instance.SetMainMenuPanel(true);
+
                     UIManager.Instance.SetResultScreen(false);
                     UIManager.Instance.SetRespawnScreen(false);
-                    UIManager.Instance.SetInGameScreen(false);
-                    UIManager.Instance.SetDebugScreen(false);
-                    UIManager.Instance.SetWaitingScreen(false);
+                    UIManager.Instance.Set_Canvas_InGame(false);
+                    UIManager.Instance.Set_Canvas_Debug(false);
+                    UIManager.Instance.Set_Canvas_Waiting(false);
 
                     //PLAYER OBJECT RESET
                     TronGameManager.Instance.Access_ReInitializeGameSparks();

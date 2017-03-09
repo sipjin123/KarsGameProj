@@ -56,50 +56,125 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     private GameObject RespawningScreen;
     [SerializeField]
-    private GameObject ResultScreen,
-                    InGame_CANVAS, 
-                    Debug_CANVAS, 
+    private GameObject InGame_Result_PANEL,
+                    InGame_CANVAS,
+                    Debug_CANVAS,
                     Waiting_CANVAS,
-                    Innter_CharacterSelectPanel,
-                    Outer_CharacterSelectPanel,
-                    MainMenu_Canvas;
+                    MainMenu_CANVAS,
+                    MainMenu_StatusPreview_PANEL,
+                    MainMenu_CarPreview_PANEL,
+                    MainMenu_Home_PANEL,
+                    MainMenu_Quest_PANEL,
+                    MainMenu_Shop_PANEL,
+                    MainMenu_Social_PANEL;
+
+
+    [SerializeField]
+    private GameObject Player1_Win, Player2_Win;
+    [SerializeField]
+    private Image Player1_HPResult, Player2_HPResult;
+    [SerializeField]
+    private Image Player1_InGameHealthBar, Player2_InGameHealthBar;
+    public Text Var_HP_1, Var_HP_2;
     //==========================================================================================
+    #region MAIN MENU VARIABLES
+
+    public void SetStatsPreviewScreen(bool _switch)
+    {
+        MainMenu_StatusPreview_PANEL.SetActive(_switch);
+    }
+    public void SetCarPreviewScreen(bool _switch)
+    {
+        MainMenu_CarPreview_PANEL.SetActive(_switch);
+    }
+    public void SetMainMenuPanel(bool _switch)
+    {
+        MainMenu_Home_PANEL.SetActive(_switch);
+    }
+    public void SetQuestPanel(bool _switch)
+    {
+        MainMenu_Quest_PANEL.SetActive(_switch);
+    }
+    public void SetShopPanel(bool _switch)
+    {
+        MainMenu_Shop_PANEL.SetActive(_switch);
+    }
+    public void SetSocialPanel(bool _switch)
+    {
+        MainMenu_Social_PANEL.SetActive(_switch);
+    }
+    #endregion
+
+
+    #region CANVAS
+    public void Set_Canvas_Main(bool _switch)
+    {
+        MainMenu_CANVAS.SetActive(_switch);
+    }
+    public void Set_Canvas_InGame(bool _switch)
+    {
+        InGame_CANVAS.SetActive(_switch);
+    }
+    public void Set_Canvas_Waiting(bool _switch)
+    {
+        Waiting_CANVAS.SetActive(_switch);
+    }
+    public void Set_Canvas_Debug(bool _switch)
+    {
+        Debug_CANVAS.SetActive(_switch);
+    }
+    #endregion
+
+    #region IN GAME UI
     public void SetRespawnScreen(bool _switch)
     {
         RespawningScreen.SetActive(_switch);
     }
     public void SetResultScreen(bool _switch)
     {
-        ResultScreen.SetActive(_switch);
+        InGame_Result_PANEL.SetActive(_switch);
     }
-    public void SetDebugScreen(bool _switch)
+    #endregion
+
+    #region PLAYER STATS
+    public void SetPlayerWin(bool _switch, int _player)
     {
-        Debug_CANVAS.SetActive(_switch);
+        if (_player == 1)
+        {
+            Player1_Win.SetActive(_switch);
+            Player2_Win.SetActive(!_switch);
+        }
+        else
+        {
+            Player1_Win.SetActive(!_switch);
+            Player2_Win.SetActive(_switch);
+        }
     }
-    public void SetInGameScreen(bool _switch)
+    public void MirrorPlayerHp()
     {
-        InGame_CANVAS.SetActive(_switch);
+        Player1_HPResult.fillAmount = Player1_InGameHealthBar.fillAmount;
+        Player2_HPResult.fillAmount = Player2_InGameHealthBar.fillAmount;
     }
-    public void SetWaitingScreen(bool _switch)
+    public void AdjustHPBarAndText(int _player, float _val)
     {
-        Waiting_CANVAS.SetActive(_switch);
+        if(_player == 1)
+        {
+            Var_HP_1.text = _val.ToString();
+            Player1_InGameHealthBar.fillAmount = _val / 5;
+        }
+        else
+        {
+            Var_HP_2.text = _val.ToString();
+            Player2_InGameHealthBar.fillAmount = _val / 5;
+        }
     }
-    public void SetInnterCharacterSelectScreen(bool _switch)
-    {
-        Innter_CharacterSelectPanel.SetActive(_switch);
-    }
-    public void SetOuterCharacterSelectScreen(bool _switch)
-    {
-        Outer_CharacterSelectPanel.SetActive(_switch);
-    }
-    public void SetMenuCanvas(bool _switch)
-    {
-        MainMenu_Canvas.SetActive(_switch);
-    }
+    #endregion
+
+
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Delete))
+        if (Input.GetKeyDown(KeyCode.Delete))
         {
             GameUpdateText.text = "";
         }
@@ -108,4 +183,5 @@ public class UIManager : MonoBehaviour {
             StateManager.Instance.Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
         }
     }
+
 }

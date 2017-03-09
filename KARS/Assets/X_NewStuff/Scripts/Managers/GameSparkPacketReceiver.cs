@@ -403,7 +403,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
     public Text displayMethod;
     #endregion
     //====================================================================================
-
+    #region PUBLIC FUNCTIONS
     public void Access_ResetClock()
     {
         FiveSecUpdateTime = 0;
@@ -411,16 +411,26 @@ public class GameSparkPacketReceiver : MonoBehaviour
         serverClock = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
         gameTimeInt = 0;
     }
-
-    void Update()
+    public void Access_PlayerSpawn(int _player)
     { 
-        if(Input.GetKeyDown(KeyCode.Escape))
+        UIManager.Instance.GameUpdateText.text += "\nRegisterGameSparks: Spawned Players";
+        Car_DataReceiver _obj = null;
+        if (_player == 1)
         {
-            StateManager.Instance.Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
+            _obj = GameObject.Find("Car1").GetComponent<Car_DataReceiver>();
+            _obj.SetNetworkObject(_player);
+            _obj.GetComponent<Car_Movement>().enabled = true;
+        }
+
+        if (_player == 2)
+        {
+            _obj = GameObject.Find("Car2").GetComponent<Car_DataReceiver>();
+            _obj.SetNetworkObject(_player);
+            _obj.GetComponent<Car_Movement>().enabled = true;
         }
     }
 
-   public void SentStartToServer()
+    public void Access_SentStartToServer()
     {
         for (int i = 0; i < TronGameManager.Instance.PlayerObjects.Length; i++)
         {
@@ -444,7 +454,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
             GetRTSession().SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
-    public void SentReadyToServer()
+    public void Access_SentReadyToServer()
     {
         using (RTData data = RTData.Get())
         {
@@ -455,19 +465,5 @@ public class GameSparkPacketReceiver : MonoBehaviour
             UIManager.Instance.GameUpdateText.text += "\nSentStartGame For Player: " + (PeerID);
         }
     }
-}
-
-public static class OPCODE_CLASS
-{
-    public static int MeshOpcode { get { return 114; } }
-    public static int HealthOpcode { get { return 118; } }
-
-    public static int StatusOpcode { get { return 113; } }
-    public static int MissleOpcode { get { return 115; } }
-
-    public static int TrailOpcode { get { return 116; } }
-    public static int MovementOpcode { get { return 111; } }
-
-    public static int ResetOpcode { get { return 066; } }
-    public static int ResultOpcode { get { return 067; } }
+    #endregion
 }

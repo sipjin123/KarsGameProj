@@ -45,4 +45,16 @@ public class StateButtonManager : MonoBehaviour {
     {
         StateManager.Instance.Access_ChangeState(MENUSTATE.HOME);
     }
+    public void OnClick_QuestScreen()
+    {
+        StateManager.Instance.Access_ChangeState(MENUSTATE.QUEST);
+    }
+    public void OnClick_ShopScreen()
+    {
+        StateManager.Instance.Access_ChangeState(MENUSTATE.SHOP);
+    }
+    public void OnClick_SocialScreen()
+    {
+        StateManager.Instance.Access_ChangeState(MENUSTATE.SOCIAL);
+    }
 }

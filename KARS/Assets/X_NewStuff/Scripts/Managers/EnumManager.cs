@@ -28,6 +28,9 @@ public enum MENUSTATE
     HOME,
     CHARACTER_SELECT,
     CHARACTER_STATS_VIEW,
+    QUEST,
+    SHOP,
+    SOCIAL,
 
     MATCH_FOUND,
     RESTART_GAME,

@@ -97,18 +97,12 @@ public class TronGameManager : GameStatsTweaker {
     //==================================================================================================================================
     #region VARIABLES
     public bool NetworkStart;
-    public GameObject[] NetworkCanvas;
-
-    public GameObject DEbugUI;
     public GameObject singlePlayerUI;
     
-
     int carMeshIndex;
     public GameObject[] carMeshList;
     public GameObject[] StatList;
     
-    public Image HealthBar1, HealthBar2;
-    public Text Var_HP_1, Var_HP_2;
     
 
     
@@ -144,16 +138,7 @@ public class TronGameManager : GameStatsTweaker {
     {
         if (!NetworkStart)
         {
-            if (player == 1)
-            {
-                Var_HP_1.text = life.ToString();
-                HealthBar1.fillAmount = life / 5;
-            }
-            else
-            {
-                Var_HP_2.text = life.ToString();
-                HealthBar2.fillAmount = life / 5;
-            }
+            UIManager.Instance.AdjustHPBarAndText(player, life);
             if (life <= 0)
             {
                 StartCoroutine("delaydeath");
@@ -175,24 +160,24 @@ public class TronGameManager : GameStatsTweaker {
     public void OnClick_SelectCarButton()
     {
         SelectedSkin = carMeshIndex;
-        UpdateCarSelection();
+        Access_UpdateCarSelection();
     }
     public void OnClick_SelectThisCarFrame(int _val)
     {
         carMeshIndex = _val;
-        UpdateCarSelection();
+        Access_UpdateCarSelection();
     }
     public void NextCar()
     {
         carMeshIndex++;
-        UpdateCarSelection();
+        Access_UpdateCarSelection();
     }
     public void PreviousCar()
     {
         carMeshIndex--;
-        UpdateCarSelection();
+        Access_UpdateCarSelection();
     }
-    private void UpdateCarSelection()
+    public void Access_UpdateCarSelection()
     {
         if (carMeshIndex <= -1)
         {

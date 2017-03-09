@@ -327,19 +327,6 @@ public class GameSparkPacketReceiver : MonoBehaviour
                         UIManager.Instance.HealthBar_2.fillAmount = receivedPlayerHealth / 5;
                         UIManager.Instance.HealthText_2.text = receivedPlayerHealth.ToString();
                     }
-                    /*
-                    if(receivedPlayerID != PeerID)
-                    {
-                        if (receivedPlayerHealth <= 0)
-                        {
-                            StateManager.Instance.Access_ChangeState(MENUSTATE.RESULT);
-                            using (RTData data = RTData.Get())
-                            {
-                                data.SetInt(1, 0);
-                                GetRTSession().SendData(067, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                            }
-                        }
-                    }*/
                     #endregion
                 }
                 break;

@@ -106,23 +106,6 @@ public class StateManager : MonoBehaviour {
 
                     UIManager.Instance.Set_Canvas_Waiting(false);
                     UIManager.Instance.SetResultScreen(false);
-
-
-                    Transform skillParent;
-                    if (GameSparkPacketReceiver.Instance.PeerID == 1)
-                        skillParent = UIManager.Instance.Player1_SkillsParent.transform;
-                    else
-                        skillParent = UIManager.Instance.Player2_SkillsParent.transform;
-
-                    foreach (Transform T in skillParent)
-                    {
-                        if (T.gameObject.name == TronGameManager.Instance.selected_currentSkill_Text[0].text 
-                            || T.gameObject.name == TronGameManager.Instance.selected_currentSkill_Text[1].text)
-                        {
-                            T.gameObject.SetActive(true);
-                        }
-                    }
-
                 }
                 break;
             case MENUSTATE.RESULT:
@@ -168,8 +151,7 @@ public class StateManager : MonoBehaviour {
                     TronGameManager.Instance.Access_PlayerReset();
 
                     //DEACTIVATE ALL SKILLS PANEL
-                    UIManager.Instance.Player1Panel.SetActive(false);
-                    UIManager.Instance.Player2Panel.SetActive(false);
+                    UIManager.Instance.ActivatePlayerPanel(0);
                     //DEACTIVATE ALL SKILLS ICON IN GAME
                     foreach (Transform t in UIManager.Instance.Player1_SkillsParent.transform)
                     {

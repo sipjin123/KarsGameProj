@@ -43,8 +43,10 @@ public class UIManager : MonoBehaviour {
 
     //STATS
     [Header("PLAYER UI")]
-    public GameObject Player1Panel;
-    public GameObject Player2Panel;
+    [SerializeField]
+    private GameObject Player1Panel;
+    [SerializeField]
+    private GameObject Player2Panel;
 
     public GameObject Player1_SkillsParent, Player2_SkillsParent;
 
@@ -170,7 +172,24 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-
+    public void ActivatePlayerPanel(int _player)
+    {
+        if(_player == 1)
+        {
+            Player1Panel.SetActive(true);
+            Player2Panel.SetActive(false);
+        }
+        else if (_player == 2)
+        {
+            Player1Panel.SetActive(false);
+            Player2Panel.SetActive(true);
+        }
+        else
+        {
+            Player1Panel.SetActive(false);
+            Player2Panel.SetActive(false);
+        }
+    }
 
     void Update()
     {

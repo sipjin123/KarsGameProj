@@ -95,22 +95,42 @@ public class Car_DataReceiver : Car_Network_Interpolation
         if (Network_ID == _gameSparkPacketReceiver.PeerID)
         {
             if (Network_ID == 0)
+            {
+                StopCoroutine("DelayREsetCam");
+                StartCoroutine("DelayREsetCam");
                 return;
+            }
             NetworkCam.enabled = true;
             ifMy_Network_Player = true;
 
             ResetTrail(true);
             Health = 5;
 
-            if (Network_ID == 1)
+
+            UIManager.Instance.ActivatePlayerPanel(Network_ID);
+
+
+            Transform skillParent;
+            if (GameSparkPacketReceiver.Instance.PeerID == 1)
+                skillParent = UIManager.Instance.Player1_SkillsParent.transform;
+            else
+                skillParent = UIManager.Instance.Player2_SkillsParent.transform;
+
+            foreach (Transform T in skillParent)
             {
-                UIManager.Instance.Player1Panel.SetActive(true);
+                if (T.gameObject.name == TronGameManager.Instance.selected_currentSkill_Text[0].text
+                    || T.gameObject.name == TronGameManager.Instance.selected_currentSkill_Text[1].text)
+                {
+                    T.gameObject.SetActive(true);
+                }
             }
-            else if (Network_ID == 2)
-            {
-                UIManager.Instance.Player2Panel.SetActive(true);
-            }
+
         }
+    }
+    IEnumerator DelayREsetCam()
+    {
+        yield return new WaitForSeconds(2);
+        InitCam();
     }
     public void StartGame(bool _switch)
     {

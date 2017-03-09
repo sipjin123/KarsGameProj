@@ -217,6 +217,7 @@ public class TronGameManager : GameStatsTweaker {
     #endregion
     //==================================================================================================================================
 
+    #region PLAYER START SYNC
     public void ReceiveSignalToStartGame()
     {
         NetworkStart = true;
@@ -238,7 +239,6 @@ public class TronGameManager : GameStatsTweaker {
     }
 
 
-    #region PLAYER START SYNC
     void ReadyPlayer(int _player)
     {
         StartCoroutine(DelayStartChecker(_player));

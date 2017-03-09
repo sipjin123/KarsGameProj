@@ -57,7 +57,6 @@ public class RegisterGameSpark : MonoBehaviour {
         MatchFoundMessage.Listener += OnMatchFound;
 
         UserName.text = DateTime.UtcNow.Second.ToString() + DateTime.UtcNow.Millisecond.ToString() + UnityEngine.Random.Range(0, 1000);
-
     }
 
     public void Access_LoginAuthentication()
@@ -157,7 +156,7 @@ public class RegisterGameSpark : MonoBehaviour {
 
         foreach (MatchFoundMessage._Participant player in _message.Participants)
         {
-            SpawnPlayers(int.Parse( player.PeerId.ToString() ) );
+            GameSparkPacketReceiver.Instance.Access_PlayerSpawn(int.Parse( player.PeerId.ToString())); 
             if (_message.JSONData["playerId"].ToString() == player.Id)
             {
                 PeerID = int.Parse(player.PeerId.ToString());
@@ -207,24 +206,4 @@ public class RegisterGameSpark : MonoBehaviour {
     }
     #endregion
     //===========================================================================================
-
-
-    void SpawnPlayers(int _peerID)
-    {
-        UIManager.Instance.GameUpdateText.text += "\nRegisterGameSparks: Spawned Players";
-        Car_DataReceiver _obj = null;
-        if (_peerID == 1)
-        {
-            _obj = GameObject.Find("Car1").GetComponent<Car_DataReceiver>();
-            _obj.SetNetworkObject( _peerID );
-            _obj.GetComponent<Car_Movement>().enabled = true;
-        }
-
-        if (_peerID == 2)
-        {
-            _obj = GameObject.Find("Car2").GetComponent<Car_DataReceiver>();
-            _obj.SetNetworkObject(_peerID);
-            _obj.GetComponent<Car_Movement>().enabled = true;
-        }
-    }
 }

@@ -360,13 +360,13 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 //2 PLAYERS READY
                 if (TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().isREady && TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().isREady)
                 {
-                    GameSparkPacketReceiver.Instance.SentStartToServer();
+                    GameSparkPacketReceiver.Instance.Access_SentStartToServer();
                     UIManager.Instance.GameUpdateText.text += "\nBoth players are ready";
                 }
                 else
                 {
                     UIManager.Instance.GameUpdateText.text += "\nBoth players are NOT ready, tryng again";
-                    GameSparkPacketReceiver.Instance.SentReadyToServer();
+                    GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
                 }
             }
             catch

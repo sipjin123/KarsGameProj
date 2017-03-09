@@ -54,7 +54,6 @@ public class NetworkDataFilter : MonoBehaviour
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.SET_START ||
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.SET_READY)
         {
-            //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nDisable: "+_networkPlayerEvent.playerStatus.ToString()+": " + _networkPlayerEvent.playerStatusSwitch;
             carReceiver.ReceiveDisableSTate(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
         }
         else if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_SHIELD ||
@@ -110,31 +109,6 @@ public struct NetworkPlayerVariables
     internal int playerID;
     internal NetworkPlayerVariableList playerVariable;
     internal float variableValue;
-}
-
-public enum NetworkPlayerStatus
-{
-    NONE,
-    ACTIVATE_SHIELD,
-    ACTIVATE_TRAIL,
-    ACTIVATE_NITRO,
-    ACTIVATE_STUN,
-    ACTIVATE_BLIND,
-    ACTIVATE_CONFUSE,
-    ACTIVATE_SLOW,
-    ACTIVATE_SILENCE,
-    ACTIVATE_GHOST,
-    ACTIVATE_FLY,
-    ACTIVATE_EXPAND,
-    SET_READY,
-    SET_START
-}
-
-public enum NetworkPlayerVariableList
-{
-    NONE,
-    HEALTH,
-    TRAIL,
 }
 
 #endregion

@@ -84,7 +84,6 @@ public class UIManager : MonoBehaviour {
     {
         Waiting_CANVAS.SetActive(_switch);
     }
-
     public void SetInnterCharacterSelectScreen(bool _switch)
     {
         Innter_CharacterSelectPanel.SetActive(_switch);
@@ -93,7 +92,6 @@ public class UIManager : MonoBehaviour {
     {
         Outer_CharacterSelectPanel.SetActive(_switch);
     }
-
     public void SetMenuCanvas(bool _switch)
     {
         MainMenu_Canvas.SetActive(_switch);
@@ -104,6 +102,10 @@ public class UIManager : MonoBehaviour {
         if(Input.GetKeyDown(KeyCode.Delete))
         {
             GameUpdateText.text = "";
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            StateManager.Instance.Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
         }
     }
 }

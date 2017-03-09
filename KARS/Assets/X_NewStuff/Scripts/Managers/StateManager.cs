@@ -146,17 +146,3 @@ public class StateManager : MonoBehaviour {
         }
     }
 }
-
-public enum MENUSTATE
-{
-    HOME,
-    CHARACTER_SELECT,
-    CHARACTER_STATS_VIEW,
-
-    MATCH_FOUND,
-    RESTART_GAME,
-    MATCH_FIND,
-    START_GAME,
-    RESULT,
-    RETURN_TO_MAIN_MENU
-}

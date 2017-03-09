@@ -214,12 +214,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
         if(Health<= 0)
         {
-            StateManager.Instance.Access_ChangeState(MENUSTATE.RESULT);
-            using (RTData data = RTData.Get())
-            {
-                data.SetInt(1, 0);
-                GetRTSession.SendData(OPCODE_CLASS.ResultOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-            }
+            TronGameManager.Instance.Global_SendState(MENUSTATE.RESULT);
         }
     }
 

@@ -120,10 +120,8 @@ public class StateManager : MonoBehaviour {
                         UIManager.Instance.SetPlayerWin(true, 2);
                     }
                     UIManager.Instance.MirrorPlayerHp();
-                }
-                break;
-            case MENUSTATE.RETURN_TO_MAIN_MENU:
-                {
+
+
                     //GAMESPARKS DISCONNECTION
                     try
                     {
@@ -135,16 +133,6 @@ public class StateManager : MonoBehaviour {
                     }
                     GS.Disconnect();
 
-                    //UI SETUP
-                    ResetAllMainMenuPanels();
-                    UIManager.Instance.Set_Canvas_Main(true);
-                    UIManager.Instance.SetMainMenuPanel(true);
-
-                    UIManager.Instance.SetResultScreen(false);
-                    UIManager.Instance.SetRespawnScreen(false);
-                    UIManager.Instance.Set_Canvas_InGame(false);
-                    UIManager.Instance.Set_Canvas_Debug(false);
-                    UIManager.Instance.Set_Canvas_Waiting(false);
 
                     //PLAYER OBJECT RESET
                     TronGameManager.Instance.Access_ReInitializeGameSparks();
@@ -163,6 +151,22 @@ public class StateManager : MonoBehaviour {
                     }
                 }
                 break;
+            case MENUSTATE.RETURN_TO_MAIN_MENU:
+                {
+
+                    //UI SETUP
+                    ResetAllMainMenuPanels();
+                    UIManager.Instance.Set_Canvas_Main(true);
+                    UIManager.Instance.SetMainMenuPanel(true);
+
+                    UIManager.Instance.SetResultScreen(false);
+                    UIManager.Instance.SetRespawnScreen(false);
+                    UIManager.Instance.Set_Canvas_InGame(false);
+                    UIManager.Instance.Set_Canvas_Debug(false);
+                    UIManager.Instance.Set_Canvas_Waiting(false);
+                }
+                break;
         }
     }
+
 }

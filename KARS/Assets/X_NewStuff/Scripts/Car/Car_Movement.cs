@@ -57,6 +57,9 @@ public class Car_Movement : MonoBehaviour {
     Rigidbody myRigid;
     [SerializeField]
     Transform centerOfMass;
+
+    [SerializeField]
+    private Transform[] Wheels;
     #endregion
     //==========================================================================================================================
     #region INIT
@@ -170,10 +173,7 @@ public class Car_Movement : MonoBehaviour {
                     if (!signalSent)
                     {
                         signalSent = true;
-                        if (MyCarDataReceiver.Network_ID == 1)
-                            transform.position = new Vector3(-5, 10, 0);
-                        if (MyCarDataReceiver.Network_ID == 2)
-                            transform.position = new Vector3(5, 10, 0);
+                        transform.position = new Vector3(_tronGameManager.spawnPlayerPosition[MyCarDataReceiver.Network_ID - 1].position.x, 10, _tronGameManager.spawnPlayerPosition[MyCarDataReceiver.Network_ID - 1].position.z);
                         StopCoroutine("DelayRespawn");
                         StartCoroutine("DelayRespawn");
                         accelerationSpeed_Counter = 0;
@@ -207,18 +207,31 @@ public class Car_Movement : MonoBehaviour {
         turningForce = _tronGameManager.turningForce;
         turningStraightDamping = _tronGameManager.turningStraightDamping;
 
+        float WheelLerpSpeed = .5f;
         if (_moveRight || Input.GetKey(KeyCode.D))
         {
+            for(int i = 0; i < Wheels.Length; i++)
+            {
+                Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, 35, 90)), WheelLerpSpeed);
+            }
             _currentTurningForce = Mathf.Clamp(_currentTurningForce - turningRate, -turningForce, turningForce);
             //MoveRight();
         }
         else if (_moveLeft || Input.GetKey(KeyCode.A))
         {
+            for (int i = 0; i < Wheels.Length; i++)
+            {
+                Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, -35, 90)), WheelLerpSpeed);
+            }
             _currentTurningForce = Mathf.Clamp(_currentTurningForce + turningRate, -turningForce, turningForce);
             //MoveLeft();
         }
         else
         {
+            for (int i = 0; i < Wheels.Length; i++)
+            {
+                Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler( new Vector3(0, 0, 90)), WheelLerpSpeed);
+            }
             _currentTurningForce *= turningStraightDamping;
         }
 
@@ -273,27 +286,6 @@ public class Car_Movement : MonoBehaviour {
     #region COLLISION
     void OnTriggerEnter(Collider hit)
     {
-        if (!TronGameManager.Instance.NetworkStart)
-        {
-            if (hit.gameObject.name.Contains("Missle") && hit.GetComponent<MissleScript>().PlayerController_ID != 1)
-            {
-                if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.STUN)
-                {
-                    MyCarDataReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_STUN);
-                }
-                if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.BLIND)
-                {
-                    MyCarDataReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_BLIND);
-                }
-                if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.CONFUSE)
-                {
-                    MyCarDataReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_CONFUSE);
-                }
-            }
-        }
-
-
-
         if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
             if (hit.gameObject.tag == "Wall" ||hit.gameObject.tag == "Trail" || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
@@ -327,10 +319,9 @@ public class Car_Movement : MonoBehaviour {
         {
             isDead = true;
 
-            if(MyCarDataReceiver.Network_ID == 1)
-            transform.position = new Vector3(_tronGameManager.spawnPlayerPosition[0].position.x, 10, _tronGameManager.spawnPlayerPosition[0].position.z);
-            else
-                transform.position = new Vector3(_tronGameManager.spawnPlayerPosition[1].position.x, 10, _tronGameManager.spawnPlayerPosition[1].position.z);
+            transform.position = new Vector3(   _tronGameManager.spawnPlayerPosition[MyCarDataReceiver.Network_ID - 1].position.x, 
+                                                10, 
+                                                _tronGameManager.spawnPlayerPosition[MyCarDataReceiver.Network_ID - 1].position.z);
 
             UIManager.Instance.SetRespawnScreen(true);
             if (_tronGameManager.NetworkStart == false)

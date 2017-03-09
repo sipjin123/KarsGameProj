@@ -96,7 +96,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
         Debug.Log("GSM| Player Disconnected, " + _peerId);
         GetRTSession().Disconnect();
         GS.Disconnect();
-        StateManager.Instance.Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
+        StateManager.Instance.Access_ChangeState(MENUSTATE.RESULT);
     }
 
     private void OnRTReady(bool _isReady)
@@ -315,7 +315,8 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     
                     int receivedPlayerID = _packet.Data.GetInt(1).Value;
                     float receivedPlayerHealth = _packet.Data.GetFloat(2).Value;
-                    
+                    UIManager.Instance.AdjustHPBarAndText(receivedPlayerID, receivedPlayerHealth);
+                    /*
                     if (receivedPlayerID == 1)
                     {
                         UIManager.Instance.HealthBar_1.fillAmount = receivedPlayerHealth / 5;
@@ -326,7 +327,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     {
                         UIManager.Instance.HealthBar_2.fillAmount = receivedPlayerHealth / 5;
                         UIManager.Instance.HealthText_2.text = receivedPlayerHealth.ToString();
-                    }
+                    }*/
                     #endregion
                 }
                 break;

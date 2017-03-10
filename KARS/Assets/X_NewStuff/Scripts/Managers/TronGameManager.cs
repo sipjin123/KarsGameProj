@@ -18,6 +18,12 @@ public class TronGameManager : GameStatsTweaker {
 
     public GameObject[] SelectedCarHighlights;
 
+    private bool blockMatchFinding;
+    public bool BlockMatchFinding
+    {
+        get { return blockMatchFinding; }
+        set { blockMatchFinding = value; }
+    }
 
     #region SKILLS RELATED
     string[] skillStringList = new string[]

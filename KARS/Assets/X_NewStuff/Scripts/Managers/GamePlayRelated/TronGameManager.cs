@@ -126,6 +126,7 @@ public class TronGameManager : GameStatsTweaker {
     }
     void Start()
     {
+        SelectedSkin = 1;
         InitSkillList();
 
         for (int i = 0; i < PlayerObjects.Length; i++)

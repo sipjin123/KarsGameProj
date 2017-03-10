@@ -114,7 +114,7 @@ public class PowerUpManager : MonoBehaviour {
         {
             data.SetInt(1, sender);
             data.SetInt(2, receiver);
-            GetRTSession.SendData(114, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GetRTSession.SendData(MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }*/
     #endregion

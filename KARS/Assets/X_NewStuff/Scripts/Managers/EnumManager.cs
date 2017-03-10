@@ -15,12 +15,11 @@ public static class OPCODE_CLASS
 
     public static int StatusOpcode { get { return 113; } }
     public static int MissleOpcode { get { return 115; } }
-
-    public static int TrailOpcode { get { return 116; } }
+    
     public static int MovementOpcode { get { return 111; } }
 
-    public static int ResetOpcode { get { return 066; } }
-    public static int ResultOpcode { get { return 067; } }
+    public static int MenuStateOpcode { get { return 066; } }
+
 }
 
 public enum MENUSTATE
@@ -64,4 +63,5 @@ public enum NetworkPlayerVariableList
     NONE,
     HEALTH,
     TRAIL,
+    CHILD_TRAIL,
 }

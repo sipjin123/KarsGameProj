@@ -152,6 +152,8 @@ public class PowerUpManager : MonoBehaviour {
 
     public void SendToServer(int _id, int _tntID,Vector3 _pos, bool _enable)
     {
+        Debug.LogError("opcode obsolete");
+        return;
         GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
         using (RTData data = RTData.Get())
         {
@@ -163,7 +165,7 @@ public class PowerUpManager : MonoBehaviour {
             else
                 data.SetInt(4, 0);
 
-            GetRTSession.SendData(OPCODE_CLASS.TrailOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
     #endregion

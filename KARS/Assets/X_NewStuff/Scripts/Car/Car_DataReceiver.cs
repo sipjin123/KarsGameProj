@@ -158,7 +158,9 @@ public class Car_DataReceiver : Car_Network_Interpolation
     void Test_Input()
     {
         if (Input.GetKeyDown(KeyCode.Minus))
+        {
             ReduceHealth();
+        }
         if (Input.GetKeyDown(KeyCode.Comma))
         {
             ResetTrail(true);
@@ -195,20 +197,13 @@ public class Car_DataReceiver : Car_Network_Interpolation
     public void ReduceHealth()
     {
         Health -= 1;
-        if (Network_ID == 1)
-        {
-            UIManager.Instance.HealthBar_1.fillAmount = Health / 5;
-            UIManager.Instance.HealthText_1.text = Health.ToString();
-        }
-        else if (Network_ID == 2)
-        {
-            UIManager.Instance.HealthBar_2.fillAmount = Health / 5;
-            UIManager.Instance.HealthText_2.text = Health.ToString();
-        }
+        UIManager.Instance.AdjustHPBarAndText(Network_ID, Health);
+
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, Network_ID);
-            data.SetFloat(2, Health);
+            data.SetInt(2, (int)NetworkPlayerVariableList.HEALTH);
+            data.SetFloat(3, Health);
             GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
 
@@ -467,11 +462,15 @@ public class Car_DataReceiver : Car_Network_Interpolation
     {
         return _TrailValueDividend;
     }
-    public void ReceiveTrailVAlue(float _trailValue, float _trailValueDividend)
+    public void ReceiveTrailVAlue(float _trailValue)
     {
         _TrailValue = _trailValue;
+    }
+    public void ReceiveTrailChildVAlue(float _trailValueDividend)
+    {
         _TrailValueDividend = _trailValueDividend;
     }
+
     #endregion
 
     public void ResetPowerups()

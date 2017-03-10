@@ -196,7 +196,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     netPlayerData.playerRot = _packet.Data.GetVector3(5).Value;
                     netPlayerData.timeStamp = _packet.Data.GetDouble(7).Value;
 
-                    NetworkDataFilter.instance.ReceiveNetworkPlayerData(netPlayerData);
+                    NetworkDataFilter.Instance.ReceiveNetworkPlayerData(netPlayerData);
                     #endregion
                 }
                 break;
@@ -284,58 +284,25 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     #endregion
                 }
                 break;
-            case 116:
-                {
-                    #region ADJUSTS PLAYER TRAIL
-                    int receivedPlayerToMove = _packet.Data.GetInt(1).Value;
-                    float receivedTrailValue = _packet.Data.GetFloat(2).Value;
-                    float receivedTrailValueDividend = _packet.Data.GetFloat(3).Value;
-
-
-                    for (int i = 0; i < _carPool.Count; i++)
-                    {
-                        GameObject _obj = _carPool[i].gameObject;
-                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
-
-                        if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
-                        {
-                            _GameSparks_DataSender.ReceiveTrailVAlue(receivedTrailValue, receivedTrailValueDividend);
-                        }
-                    }
-                    #endregion
-                }
-                break;
             case 118:
                 {
-                    //UPDATES PLAYER HEALTH
-                    #region UPDATES PLAYER HEALTH
-                    
-                    int receivedPlayerID = _packet.Data.GetInt(1).Value;
-                    float receivedPlayerHealth = _packet.Data.GetFloat(2).Value;
-                    UIManager.Instance.AdjustHPBarAndText(receivedPlayerID, receivedPlayerHealth);
-                    /*
-                    if (receivedPlayerID == 1)
-                    {
-                        UIManager.Instance.HealthBar_1.fillAmount = receivedPlayerHealth / 5;
-                        UIManager.Instance.HealthText_1.text = receivedPlayerHealth.ToString();
+                    //UPDATES PLAYER HEALTH AND TRAIL VALUE
+                    #region UPDATES PLAYER HEALTH AND TRAIL VALUE
+                    NetworkPlayerVariables _netPlayerVar= new NetworkPlayerVariables();
+                    _netPlayerVar.playerID = _packet.Data.GetInt(1).Value;
+                    _netPlayerVar.playerVariable = (NetworkPlayerVariableList)_packet.Data.GetInt(2).Value;
+                    _netPlayerVar.variableValue = _packet.Data.GetFloat(3).Value;
 
-                    }
-                    if (receivedPlayerID == 2)
-                    {
-                        UIManager.Instance.HealthBar_2.fillAmount = receivedPlayerHealth / 5;
-                        UIManager.Instance.HealthText_2.text = receivedPlayerHealth.ToString();
-                    }*/
+                    NetworkDataFilter.Instance.ReceivedNetworkPlayerVariable(_netPlayerVar);
                     #endregion
                 }
                 break;
             case 066:
                 {
-                    StateManager.Instance.Access_ChangeState(MENUSTATE.RESTART_GAME);
-                }
-                break;
-            case 067:
-                {
-                    StateManager.Instance.Access_ChangeState(MENUSTATE.RESULT);
+                    //MENUSTATE
+                    int receivedPlayerID = _packet.Data.GetInt(1).Value;
+                    int receivedMenuState = _packet.Data.GetInt(2).Value;
+                    StateManager.Instance.Access_ChangeState((MENUSTATE)receivedMenuState);
                 }
                 break;
         }
@@ -359,12 +326,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
         
         if(FiveSecUpdateTime >= 180)
         {
-            StateManager.Instance.Access_ChangeState(MENUSTATE.RESTART_GAME);
-            using (RTData data = RTData.Get())
-            {
-                data.SetInt(1, 0);
-                GetRTSession().SendData(OPCODE_CLASS.ResetOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-            }
+            _tronGameManager.Global_SendState(MENUSTATE.RESTART_GAME);
         }
     }
 

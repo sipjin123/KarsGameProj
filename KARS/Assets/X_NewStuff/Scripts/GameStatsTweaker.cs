@@ -311,21 +311,27 @@ public class GameStatsTweaker : MonoBehaviour {
 
     public void SendTrailData()
     {
-
-        if (GameSparkPacketReceiver.Instance.PeerID == 1)
-            PlayerObjects[0].GetComponent<Car_DataReceiver>().ReceiveTrailVAlue(trailDistanceTotal, DivisibleTrailValue);
-        if (GameSparkPacketReceiver.Instance.PeerID == 2)
-            PlayerObjects[1].GetComponent<Car_DataReceiver>().ReceiveTrailVAlue(trailDistanceTotal, DivisibleTrailValue);
-
+        if (GameSparkPacketReceiver.Instance.PeerID == 0)
+            return;
+        PlayerObjects[GameSparkPacketReceiver.Instance.PeerID-1].GetComponent<Car_DataReceiver>().ReceiveTrailVAlue(trailDistanceTotal);
+        PlayerObjects[GameSparkPacketReceiver.Instance.PeerID - 1].GetComponent<Car_DataReceiver>().ReceiveTrailChildVAlue(DivisibleTrailValue);
+        
         try
         {
             GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
             using (RTData data = RTData.Get())
             {
                 data.SetInt(1, GameSparkPacketReceiver.Instance.PeerID);
-                data.SetFloat(2, trailDistanceTotal);
+                data.SetInt(2, (int)NetworkPlayerVariableList.TRAIL);
+                data.SetFloat(3, trailDistanceTotal);
+                GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            }
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, GameSparkPacketReceiver.Instance.PeerID);
+                data.SetInt(2, (int)NetworkPlayerVariableList.CHILD_TRAIL);
                 data.SetFloat(3, DivisibleTrailValue);
-                GetRTSession.SendData(116, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
             }
         }
         catch { }
@@ -354,7 +360,7 @@ public class GameStatsTweaker : MonoBehaviour {
     public void TweaktrailDistanceTotal(float _var)
     {
         trailDistanceTotal += _var;
-
+        SendTrailData();
     }
 
     #endregion

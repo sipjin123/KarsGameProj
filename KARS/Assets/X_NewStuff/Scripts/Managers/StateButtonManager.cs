@@ -1,5 +1,4 @@
-﻿using GameSparks.RT;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StateButtonManager : MonoBehaviour {
 
@@ -26,12 +25,7 @@ public class StateButtonManager : MonoBehaviour {
     }
     public void OnClick_ResetGame()//FOR DEBUG PURPOSES ONLY
     {
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, 0);
-            GameSparkPacketReceiver.Instance.GetRTSession().SendData(OPCODE_CLASS.ResetOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-        StateManager.Instance.Access_ChangeState(MENUSTATE.RESTART_GAME);
+        TronGameManager.Instance.Global_SendState(MENUSTATE.RESTART_GAME);
     }
     public void OnClick_ViewCarStats()
     {

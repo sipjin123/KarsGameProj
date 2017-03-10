@@ -32,16 +32,8 @@ public class UIManager : MonoBehaviour {
                  ShieldBar_1, ShieldBar_2,
                  NitrosBar_1, NitrosBar_2;
 
-
-    //STATS
-    [Header("STATS")]
-    public Image HealthBar_1;
-    public Image HealthBar_2;
-    public Text HealthText_1;
-    public Text HealthText_2;
-
-
-    //STATS
+    
+    //SKILLS
     [Header("PLAYER UI")]
     [SerializeField]
     private GameObject Player1Panel;
@@ -71,6 +63,8 @@ public class UIManager : MonoBehaviour {
                     MainMenu_Social_PANEL;
 
 
+    //STATS
+    [Header("STATS")]
     [SerializeField]
     private GameObject Player1_Win, Player2_Win;
     [SerializeField]

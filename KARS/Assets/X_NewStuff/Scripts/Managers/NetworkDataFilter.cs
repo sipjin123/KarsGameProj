@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class NetworkDataFilter : MonoBehaviour
 {
     public static NetworkDataFilter Instance { get { return instance; } }
-    public static NetworkDataFilter instance;
+    private static NetworkDataFilter instance;
     void Awake()
     {
         instance = this;
@@ -80,6 +80,21 @@ public class NetworkDataFilter : MonoBehaviour
             }
         }
 
+
+        if (_networkPlayerVariables.playerVariable == NetworkPlayerVariableList.HEALTH)
+        {
+            int receivedPlayerID = _networkPlayerVariables.playerID;
+            float receivedPlayerHealth = _networkPlayerVariables.variableValue;
+            UIManager.Instance.AdjustHPBarAndText(receivedPlayerID, receivedPlayerHealth);
+        }
+        else if (_networkPlayerVariables.playerVariable == NetworkPlayerVariableList.TRAIL)
+        {
+            carReceiver.ReceiveTrailVAlue(_networkPlayerVariables.variableValue);
+        }
+        else if (_networkPlayerVariables.playerVariable == NetworkPlayerVariableList.CHILD_TRAIL)
+        {
+            carReceiver.ReceiveTrailChildVAlue(_networkPlayerVariables.variableValue);
+        }
 
     }
     #endregion

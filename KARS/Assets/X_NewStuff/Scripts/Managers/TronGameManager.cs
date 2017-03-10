@@ -276,10 +276,12 @@ public class TronGameManager : GameStatsTweaker {
     public void Global_SendState(MENUSTATE _state)
     {
         StateManager.Instance.Access_ChangeState(_state);
+
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, 0);
-            GetRTSession.SendData(OPCODE_CLASS.ResultOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            data.SetInt(2, (int)_state);
+            GetRTSession.SendData(OPCODE_CLASS.MenuStateOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
 

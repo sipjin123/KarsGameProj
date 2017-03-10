@@ -23,13 +23,10 @@ public class PowerUpManager : MonoBehaviour {
     Transform MisslePool_Player1;
     [SerializeField]
     Transform MisslePool_Player2;
-    [SerializeField]
-    Transform TnTPool;
 
     [Header("LISTS")]
     public List<GameObject> MissleList_Player1;
     public List<GameObject> MissleList_Player2;
-    public List<GameObject> TnTList;
 
 
     int ServerPeerID;
@@ -53,7 +50,6 @@ public class PowerUpManager : MonoBehaviour {
     {
         MissleList_Player1 = new List<GameObject>();
         MissleList_Player2 = new List<GameObject>();
-        TnTList = new List<GameObject>();
         StartCoroutine(DelayStartup());
     }
 
@@ -78,12 +74,6 @@ public class PowerUpManager : MonoBehaviour {
 
         yield return new WaitForSeconds(1);
         temp = null;
-        for (int i = 0; i < TnTPool.childCount; i++)
-        {
-            temp = TnTPool.GetChild(i).gameObject;
-            TnTList.Add(temp);
-            temp.GetComponent<TnTScript>().InitializeObj(i);
-        }
         try
         {
             ServerPeerID = (GameSparkPacketReceiver.Instance.PeerID);
@@ -92,63 +82,7 @@ public class PowerUpManager : MonoBehaviour {
     }
     #endregion
     //=======================================================================================================================
-    //TNT SEND AND RECEIVE FROM SERVER
-    #region TNT SEND AND RECEIVE FROM SERVER
-    public void SetUpTNT(int _id, Vector3 _pos, bool _enable)
-    {
-        if(TronGameManager.Instance.NetworkStart == false)
-        {
-             try
-            {
-                GameObject temp = TnTPool.transform.GetChild(0).gameObject;
-                temp.GetComponent<TnTScript>().DispatchTNTToDestination(_id, _pos, _enable);
-            }
-            catch
-            {
-                GameObject temp = TnTList[0];
-                for (int i = 0; i < TnTList.Count - 1; i++)
-                {
-                    TnTList[i] = TnTList[i + 1];
-                }
-                TnTList[TnTList.Count - 1] = temp;
-                TnTList[TnTList.Count - 1].GetComponent<TnTScript>().ResetTnT();
-                SetUpTNT(_id, _pos, _enable);
-            }
 
-            return;
-        }
-
-
-        try
-        {
-            GameObject temp = TnTPool.transform.GetChild(0).gameObject;
-            temp.GetComponent<TnTScript>().DispatchTNTToDestination(_id, _pos, _enable);
-            SendToServer(_id, temp.GetComponent<TnTScript>().TNT_ID, _pos, _enable);
-        }
-        catch
-        {
-            GameObject temp = TnTList[0];
-            for (int i = 0; i < TnTList.Count - 1; i++)
-            {
-                TnTList[i] = TnTList[i + 1];
-            }
-            TnTList[TnTList.Count - 1] = temp;
-            TnTList[TnTList.Count - 1].GetComponent<TnTScript>().ResetTnT();
-            SetUpTNT(_id,_pos,_enable);
-        }
-    }
-
-    public void ReceiveFromServer(int _id, int _tntID, Vector3 _pos, bool _enable)
-    {
-        GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nReceived From Server";
-        for(int i = 0; i < TnTList.Count; i++)
-        {
-            if(TnTList[i].GetComponent<TnTScript>().TNT_ID == _tntID)
-            {
-                TnTList[i].GetComponent<TnTScript>().DispatchTNTToDestination(_id,_pos,_enable);
-            }
-        }
-    }
 
     public void SendToServer(int _id, int _tntID,Vector3 _pos, bool _enable)
     {
@@ -168,7 +102,7 @@ public class PowerUpManager : MonoBehaviour {
             GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
-    #endregion
+
     //=======================================================================================================================
     //MISSLE SEND AND RECEIVE FROM SERVER
     #region MISSLE SEND AND RECEIVE FROM SERVER

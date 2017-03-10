@@ -8379,10 +8379,6 @@ MonoBehaviour:
   ShieldBar_2: {fileID: 1834543969}
   NitrosBar_1: {fileID: 722634570}
   NitrosBar_2: {fileID: 472360583}
-  HealthBar_1: {fileID: 1296224165}
-  HealthBar_2: {fileID: 372635871}
-  HealthText_1: {fileID: 2118622470}
-  HealthText_2: {fileID: 1941365104}
   Player1Panel: {fileID: 1499872423}
   Player2Panel: {fileID: 1690532315}
   Player1_SkillsParent: {fileID: 566003478}
@@ -22954,6 +22950,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b70b3312a4c3914f86496748331c003, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TnTParent: {fileID: 0}
+  GetRTSession: {fileID: 0}
   owner_Id: 0
   tnt_Id: 0
 --- !u!23 &641901044
@@ -25105,6 +25103,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b70b3312a4c3914f86496748331c003, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TnTParent: {fileID: 0}
+  GetRTSession: {fileID: 0}
   owner_Id: 0
   tnt_Id: 0
 --- !u!23 &691302589
@@ -26065,6 +26065,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b70b3312a4c3914f86496748331c003, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TnTParent: {fileID: 0}
+  GetRTSession: {fileID: 0}
   owner_Id: 0
   tnt_Id: 0
 --- !u!23 &706577483
@@ -46298,7 +46300,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: d756bb501f416f34c95b84fd0baf8d26, type: 2}
+  - {fileID: 2100000, guid: 1b1ecf7b6a4cbe94893d3a15ebf52bc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -52778,6 +52780,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b70b3312a4c3914f86496748331c003, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TnTParent: {fileID: 0}
+  GetRTSession: {fileID: 0}
   owner_Id: 0
   tnt_Id: 0
 --- !u!23 &1451325927
@@ -61866,6 +61870,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b70b3312a4c3914f86496748331c003, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TnTParent: {fileID: 0}
+  GetRTSession: {fileID: 0}
   owner_Id: 0
   tnt_Id: 0
 --- !u!23 &1735745011
@@ -70080,10 +70086,8 @@ MonoBehaviour:
   Player2: {fileID: 1764330668}
   MisslePool_Player1: {fileID: 298863462}
   MisslePool_Player2: {fileID: 507669644}
-  TnTPool: {fileID: 1764747375}
   MissleList_Player1: []
   MissleList_Player2: []
-  TnTList: []
 --- !u!1 &1939563742
 GameObject:
   m_ObjectHideFlags: 0

@@ -89,7 +89,6 @@ public class PowerUpManager : MonoBehaviour {
             ServerPeerID = (GameSparkPacketReceiver.Instance.PeerID);
         }
         catch { }
-        UIManager.Instance.GameUpdateText.text += "\nPower Up Manager is SEtup";
     }
     #endregion
     //=======================================================================================================================

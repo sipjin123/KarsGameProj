@@ -124,6 +124,7 @@ public class RegisterGameSpark : MonoBehaviour {
     }
     public void FindPlayers()
     {
+        UIManager.Instance.GameUpdateText.text += "\nPhase 2: Find Players";
         Debug.LogError("Attempting Matchmaking...");
         new MatchmakingRequest()
             .SetMatchShortCode("B0ntakun") 
@@ -168,7 +169,7 @@ public class RegisterGameSpark : MonoBehaviour {
         Debug.LogError("Writen builder: " + sessionInfo);
 
 
-        UIManager.Instance.GameUpdateText.text += "\nOnMatchFound";
+        UIManager.Instance.GameUpdateText.text += "\nPhase 3: OnMatchFound";
         GameSparkPacketReceiver.Instance.StartNewRTSession(sessionInfo);
 
     }
@@ -196,11 +197,13 @@ public class RegisterGameSpark : MonoBehaviour {
 
     private void OnRegistration(RegistrationResponse _resp)
     {
+        UIManager.Instance.GameUpdateText.text += "\nPhase 1: Registered Player";
         ConnectionStatus.text += "Registered " + _resp.UserId;
         StartCoroutine("DelayFindPlayer");
     }
     private void OnAuthentication(AuthenticationResponse _resp)
     {
+        UIManager.Instance.GameUpdateText.text += "\nPhase 1: Authenticated Player";
         ConnectionStatus.text += "Authenticated " + _resp.UserId;
         StartCoroutine("DelayFindPlayer");
     }

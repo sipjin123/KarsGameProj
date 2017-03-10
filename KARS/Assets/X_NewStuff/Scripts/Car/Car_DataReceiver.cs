@@ -369,24 +369,26 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             try
             {
-                UIManager.Instance.GameUpdateText.text += "\nCAR_RECEIVER: SUCCESSFULLY READY THIS PLAYER";
                 _carMovement.SetReady(_switch);
+                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY READY THIS PLAYER";
 
                 //2 PLAYERS READY
-                if (TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().isREady && TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().isREady)
+                if (TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().isREady 
+                    && TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().isREady)
                 {
                     GameSparkPacketReceiver.Instance.Access_SentStartToServer();
-                    UIManager.Instance.GameUpdateText.text += "\nBoth players are ready";
+                    UIManager.Instance.GameUpdateText.text += "\nPhase 5: Both players are ready";
                 }
                 else
                 {
-                    UIManager.Instance.GameUpdateText.text += "\nBoth players are NOT ready, tryng again";
                     GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
+                    UIManager.Instance.GameUpdateText.text += "\n\tBoth players are NOT ready, tryng again";
                 }
             }
             catch
             {
-                UIManager.Instance.GameUpdateText.text += "\nCAR_RECEIVER: FAILED TO READY, RETRYING";
+                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO READY, RETRYING, The cound of player objects is: "+TronGameManager.Instance.PlayerObjects.Length;
+                StopCoroutine("delayRestartReady");
                 StartCoroutine(delayRestartReady(_switch, _netStatus));
             }
         }
@@ -394,13 +396,13 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             try
             {
-                UIManager.Instance.GameUpdateText.text += "\nCAR_RECEIVER: SUCCESSFULLY START THIS PLAYER";
+                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY START THIS PLAYER";
                 _carMovement.SetStartGame(_switch);
                 StateButtonManager.Instance.OnClick_ResetGame();
             }
             catch
             {
-                UIManager.Instance.GameUpdateText.text += "\nCAR_RECEIVER: FAILED TO START, RETRYING";
+                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO START, RETRYING";
                 StartCoroutine(delayRestartReady(_switch, _netStatus));
             }
         }

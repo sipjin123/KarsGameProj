@@ -304,6 +304,7 @@ public class TronGameManager : GameStatsTweaker {
 
             PlayerObjects[i].GetComponent<Car_Movement>().SetStartGame(false);
             PlayerObjects[i].GetComponent<Car_Movement>().SetReady(false);
+            PlayerObjects[i].GetComponent<Car_Movement>().enabled = false;
         }
     }
     #endregion

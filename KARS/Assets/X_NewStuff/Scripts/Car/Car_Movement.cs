@@ -46,13 +46,17 @@ public class Car_Movement : MonoBehaviour {
 
     float accelerationSpeed_Counter;
 
-    float accelerationTimer ;
-    float accelerationSpeed_Max ;
+    float accelerationTimer;
+    float accelerationSpeed_Max;
 
-    float NitrosSpeed ;
+    float NitrosSpeed;
 
-    public bool FlipSwitch;
-
+    private bool FlipSwitch;
+    public bool FlipCarSwitch
+    {
+        get { return FlipSwitch; }
+        set { FlipSwitch = value; }
+    }
 
     Rigidbody myRigid;
     [SerializeField]
@@ -99,11 +103,13 @@ public class Car_Movement : MonoBehaviour {
 
         if (MyCarDataReceiver.GetSlowSwitch() == true)
             _finalValue = .8f;
+        if (MyCarDataReceiver.GetStunSwitch() == true)
+            _finalValue = .1f;
 
 
         return _finalValue;
     }
-
+    
     void FixedUpdate()
     {
         movementSpeed = _tronGameManager.MovementSpeed;
@@ -140,21 +146,16 @@ public class Car_Movement : MonoBehaviour {
             }
             //_characterController.Move(CarRotationObject.transform.forward * ((ComputedValues() * ReduceValues() )* Time.fixedDeltaTime));
 
-
-
+            
             if (MyCarDataReceiver.GetNitroSwitch() == true)
-            {
                 NitrosSpeed = _tronGameManager.nitroSpeed;
-                Debug.LogError("NITROS IS ACTIVTE!");
-            }
             else
-            {
                 NitrosSpeed = 0;
-            }
+            
 
             myRigid.AddForce(CarRotationObject.transform.forward *
-                ((_tronGameManager.Force_Value + NitrosSpeed + accelerationSpeed_Counter  * Time.fixedDeltaTime) * ReduceValues()));
-            
+                ((_tronGameManager.Force_Value + NitrosSpeed + accelerationSpeed_Counter * Time.fixedDeltaTime) * ReduceValues()));
+
             if (MyCarDataReceiver.GetFlySwitch() == true)
             {
                 if (transform.position.y < 6)
@@ -207,30 +208,25 @@ public class Car_Movement : MonoBehaviour {
         turningForce = _tronGameManager.turningForce;
         turningStraightDamping = _tronGameManager.turningStraightDamping;
 
-        float WheelLerpSpeed = .5f;
         if (_moveRight || Input.GetKey(KeyCode.D))
         {
-            for(int i = 0; i < Wheels.Length; i++)
-            {
-                Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, 35, 90)), WheelLerpSpeed);
-            }
-            _currentTurningForce = Mathf.Clamp(_currentTurningForce - turningRate, -turningForce, turningForce);
-            //MoveRight();
+            if (FlipSwitch == false)
+                MoveRight();
+            else
+                MoveLeft();
         }
         else if (_moveLeft || Input.GetKey(KeyCode.A))
         {
-            for (int i = 0; i < Wheels.Length; i++)
-            {
-                Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, -35, 90)), WheelLerpSpeed);
-            }
-            _currentTurningForce = Mathf.Clamp(_currentTurningForce + turningRate, -turningForce, turningForce);
-            //MoveLeft();
+            if (FlipSwitch == false)
+                MoveLeft();
+            else
+                MoveRight();
         }
         else
         {
             for (int i = 0; i < Wheels.Length; i++)
             {
-                Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler( new Vector3(0, 0, 90)), WheelLerpSpeed);
+                Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, 0, 90)), WheelLerpSpeed);
             }
             _currentTurningForce *= turningStraightDamping;
         }
@@ -257,28 +253,22 @@ public class Car_Movement : MonoBehaviour {
         _moveLeft = false;
     }
 
-
+    float WheelLerpSpeed = .5f;
     void MoveRight()
     {
-        float torqer = _tronGameManager.Torque_Value;
-        torqer = _currentTurningForce;
-        float tf = Mathf.Lerp(0, torqer, myRigid.velocity.magnitude / 2);
-
-        if (!FlipSwitch)
-            myRigid.angularVelocity = new Vector3(0, 1 * tf, 0);
-        else
-            myRigid.angularVelocity = new Vector3(0, -1 * tf, 0);
+        for (int i = 0; i < Wheels.Length; i++)
+        {
+            Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, 35, 90)), WheelLerpSpeed);
+        }
+        _currentTurningForce = Mathf.Clamp(_currentTurningForce - turningRate, -turningForce, turningForce);
     }
     void MoveLeft()
     {
-        float torqer = _tronGameManager.Torque_Value;
-        torqer = _currentTurningForce;
-        float tf = Mathf.Lerp(0, torqer, myRigid.velocity.magnitude / 2);
-
-        if(!FlipSwitch)
-            myRigid.angularVelocity = new Vector3(0, -1 * tf, 0);
-        else
-            myRigid.angularVelocity = new Vector3(0, 1 * tf, 0);
+        for (int i = 0; i < Wheels.Length; i++)
+        {
+            Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, -35, 90)), WheelLerpSpeed);
+        }
+        _currentTurningForce = Mathf.Clamp(_currentTurningForce + turningRate, -turningForce, turningForce);
     }
     #endregion
 

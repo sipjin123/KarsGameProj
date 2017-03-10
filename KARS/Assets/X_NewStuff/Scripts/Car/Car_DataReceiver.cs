@@ -347,7 +347,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             ConfuseObject.SetActive(_switch);
             ConfuseSwitch = _switch;
-            _carMovement.FlipSwitch = _switch;
+            _carMovement.FlipCarSwitch = _switch;
         }
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_SLOW)
         {

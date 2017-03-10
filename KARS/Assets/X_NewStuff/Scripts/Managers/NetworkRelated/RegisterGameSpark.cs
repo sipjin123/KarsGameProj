@@ -63,6 +63,7 @@ public class RegisterGameSpark : MonoBehaviour {
     {
         AuthenticateUser(UserName.text, "test", OnRegistration, OnAuthentication);
         Canvas_Login.SetActive(true);
+        UIManager.Instance.SetMatchCancelButton(true);
     }
     #endregion
     //===========================================================================================
@@ -122,8 +123,14 @@ public class RegisterGameSpark : MonoBehaviour {
         yield return new WaitForSeconds(3);
         FindPlayers();
     }
-    public void FindPlayers()
+    void FindPlayers()
     {
+        if(_tronGameManager.BlockMatchFinding == true)
+        {
+            UIManager.Instance.GameUpdateText.text += "\n\t\t-BLOCKED MATCH FINDING";
+            return;
+        }
+
         UIManager.Instance.GameUpdateText.text += "\nPhase 2: Find Players";
         Debug.LogError("Attempting Matchmaking...");
         new MatchmakingRequest()
@@ -137,10 +144,19 @@ public class RegisterGameSpark : MonoBehaviour {
                 }
             });
     }
+    public void Access_StopFindingPlayers()
+    {
+        StopCoroutine("DelayFindPlayer");
+    }
 
     private void OnMatchFound(MatchFoundMessage _message)
     {
-
+        if (_tronGameManager.BlockMatchFinding == true)
+        {
+            UIManager.Instance.GameUpdateText.text += "\n\t\t-BLOCKED MATCH FINDING";
+            return;
+        }
+        UIManager.Instance.SetMatchCancelButton(false);
         //NOTES
         /*
         _message.Host

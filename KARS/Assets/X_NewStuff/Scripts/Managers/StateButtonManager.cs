@@ -16,6 +16,10 @@ public class StateButtonManager : MonoBehaviour {
         StateManager.Instance.Access_ChangeState(MENUSTATE.MATCH_FIND);
     }
 
+    public void OnClick_CancelMathcFind()
+    {
+        StateManager.Instance.Access_ChangeState(MENUSTATE.CANCEL_MATCH_FIND);
+    }
     public void OnClick_BackToMainMenu()
     {
         StateManager.Instance.Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);

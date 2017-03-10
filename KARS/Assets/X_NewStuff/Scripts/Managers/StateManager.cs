@@ -63,9 +63,15 @@ public class StateManager : MonoBehaviour {
                     UIManager.Instance.SetStatsPreviewScreen(true);
                 }
                 break;
-                
 
 
+
+            case MENUSTATE.CANCEL_MATCH_FIND:
+                {
+                    ResetGameVariables();
+                    Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
+                }
+                break;
             case MENUSTATE.MATCH_FOUND:
                 {
                     UIManager.Instance.Set_Canvas_Main(false);
@@ -74,6 +80,7 @@ public class StateManager : MonoBehaviour {
                 break;
             case MENUSTATE.MATCH_FIND:
                 {
+                    TronGameManager.Instance.BlockMatchFinding = false;
                     TronGameManager.Instance.ClearLogs();
                     ResetAllMainMenuPanels();
                     UIManager.Instance.Set_Canvas_Waiting(true);
@@ -110,6 +117,7 @@ public class StateManager : MonoBehaviour {
                 break;
             case MENUSTATE.RESULT:
                 {
+                    TronGameManager.Instance.BlockMatchFinding = true;
                     //RESULTS SCREEN
                     UIManager.Instance.SetResultScreen(true);
                     if(int.Parse( UIManager.Instance.Var_HP_1.text) >int.Parse(UIManager.Instance.Var_HP_2.text))
@@ -121,36 +129,7 @@ public class StateManager : MonoBehaviour {
                         UIManager.Instance.SetPlayerWin(true, 2);
                     }
                     UIManager.Instance.MirrorPlayerHp();
-
-                    //PLAYER OBJECT RESET
-                    TronGameManager.Instance.Access_ReInitializeGameSparks();
-                    TronGameManager.Instance.Access_PlayerReset();
-
-                    //DEACTIVATE ALL SKILLS PANEL
-                    //DEACTIVATE ALL SKILLS ICON IN GAME
-                    UIManager.Instance.ActivatePlayerPanel(0);
-                    foreach (Transform t in UIManager.Instance.Player1_SkillsParent.transform)
-                    {
-                        t.gameObject.SetActive(false);
-                    }
-                    foreach (Transform t in UIManager.Instance.Player2_SkillsParent.transform)
-                    {
-                        t.gameObject.SetActive(false);
-                    }
-
-
-                    //GAMESPARKS DISCONNECTION
-                    try
-                    {
-                        GameSparkPacketReceiver.Instance.GetRTSession().Disconnect();
-                    }
-                    catch
-                    {
-                        UIManager.Instance.GameUpdateText.text += "\nNonExisting RT Session";
-                    }
-                    GS.Disconnect();
-
-
+                    ResetGameVariables();
                 }
                 break;
             case MENUSTATE.RETURN_TO_MAIN_MENU:
@@ -170,4 +149,36 @@ public class StateManager : MonoBehaviour {
         }
     }
 
+    void ResetGameVariables()
+    {
+        //PLAYER OBJECT RESET
+        TronGameManager.Instance.Access_ReInitializeGameSparks();
+        TronGameManager.Instance.Access_PlayerReset();
+
+        //DEACTIVATE ALL SKILLS PANEL
+        //DEACTIVATE ALL SKILLS ICON IN GAME
+        UIManager.Instance.ActivatePlayerPanel(0);
+        foreach (Transform t in UIManager.Instance.Player1_SkillsParent.transform)
+        {
+            t.gameObject.SetActive(false);
+        }
+        foreach (Transform t in UIManager.Instance.Player2_SkillsParent.transform)
+        {
+            t.gameObject.SetActive(false);
+        }
+
+        RegisterGameSpark.Instance.Access_StopFindingPlayers();
+        //GAMESPARKS DISCONNECTION
+        try
+        {
+            GameSparkPacketReceiver.Instance.GetRTSession().Disconnect();
+        }
+        catch
+        {
+            UIManager.Instance.GameUpdateText.text += "\nNonExisting RT Session";
+        }
+        GS.Disconnect();
+
+
+    }
 }

@@ -80,7 +80,7 @@ public class UIManager : MonoBehaviour {
     public Text Var_HP_1, Var_HP_2;
 
     [SerializeField]
-    private GameObject SelectCarButton, SelectedCarImage;
+    private GameObject SelectCarButton, SelectedCarImage, MatchCancelButton;
     //==========================================================================================
     #region MAIN MENU VARIABLES
 
@@ -198,6 +198,10 @@ public class UIManager : MonoBehaviour {
     {
         SelectCarButton.SetActive(_switch);
         SelectedCarImage.SetActive(!_switch);
+    }
+    public void SetMatchCancelButton(bool _switch)
+    {
+        MatchCancelButton.SetActive(_switch);
     }
 
     void Update()

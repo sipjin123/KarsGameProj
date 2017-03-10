@@ -32,6 +32,7 @@ public enum MENUSTATE
     SHOP,
     SOCIAL,
 
+    CANCEL_MATCH_FIND,
     MATCH_FOUND,
     RESTART_GAME,
     MATCH_FIND,

@@ -21,17 +21,34 @@ public class UIManager : MonoBehaviour {
     public Text NetworkTimeText, GameTimeText;
     #endregion
 
+<<<<<<< HEAD
 
     //SKILLS
     #region SKILLS
+=======
+    //POWERUP ICONS
+    [Header("POWERUPS")]
+    public Image SpeedBar_1;
+    public Image SpeedBar_2;
+    public Text SpeedTexT_1, SpeedText_2, 
+                SpeedTimeText_1, SpeedTimeText_2, 
+                SpeedMaxText_1, SpeedMaxText_2;
+    
+    
+    //SKILLS
+>>>>>>> 3e3b2bc (Sorting files)
     [Header("PLAYER UI")]
     [SerializeField]
     private GameObject Player1Panel;
     [SerializeField]
     private GameObject Player2Panel;
 
+<<<<<<< HEAD
     public GameObject[] Player1_SkillsParent, Player2_SkillsParent;
     public GameObject Player1_SkillsRoster, Player2_SkillsRoster;
+=======
+    public GameObject Player1_SkillsParent, Player2_SkillsParent;
+>>>>>>> 3e3b2bc (Sorting files)
 
     public GameObject[] SkillIcons;
 
@@ -39,11 +56,14 @@ public class UIManager : MonoBehaviour {
     private Image[] 
         Player1_SkillBlockers, 
         Player2_SkillBlockers;
+<<<<<<< HEAD
     [SerializeField]
     private Text[]
         Player1_SkillSlotNames,
         Player2_SkillSlotNames;
     #endregion
+=======
+>>>>>>> 3e3b2bc (Sorting files)
 
     //SCREENS
     #region SCREENS
@@ -57,8 +77,11 @@ public class UIManager : MonoBehaviour {
         InGame_CANVAS,
         Debug_CANVAS,
         Waiting_CANVAS,
+<<<<<<< HEAD
         GameInit_CANVAS,
         Countdown_CANVAS,
+=======
+>>>>>>> 3e3b2bc (Sorting files)
         MainMenu_CANVAS,
         MainMenu_StatusPreview_PANEL,
         MainMenu_CarPreview_PANEL,
@@ -69,8 +92,11 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     //STATS
+<<<<<<< HEAD
     #region STATS
     //STATS
+=======
+>>>>>>> 3e3b2bc (Sorting files)
     [Header("STATS")]
     [SerializeField]
     private GameObject Player1_Win, Player2_Win;
@@ -80,6 +106,7 @@ public class UIManager : MonoBehaviour {
         Player1_HPResult, Player2_HPResult, 
         Player1_InGameHealthBar, Player2_InGameHealthBar;
     public Text Var_HP_1, Var_HP_2;
+<<<<<<< HEAD
     #endregion
 
     //BUTTONS
@@ -126,6 +153,15 @@ public class UIManager : MonoBehaviour {
         DisconnectPanel.SetActive(_switch);
     }
 
+=======
+
+
+    [SerializeField]
+    private GameObject 
+        SelectCarButton, 
+        SelectedCarImage, 
+        MatchCancelButton;
+>>>>>>> 3e3b2bc (Sorting files)
     //==========================================================================================
     #region MAIN MENU VARIABLES
 
@@ -155,6 +191,10 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3e3b2bc (Sorting files)
     #region CANVAS
     public void Set_Canvas_Main(bool _switch)
     {
@@ -168,14 +208,18 @@ public class UIManager : MonoBehaviour {
     {
         Waiting_CANVAS.SetActive(_switch);
     }
+<<<<<<< HEAD
     public void Set_Canvas_Countdown(bool _switch)
     {
         Countdown_CANVAS.SetActive(_switch);
     }
+=======
+>>>>>>> 3e3b2bc (Sorting files)
     public void Set_Canvas_Debug(bool _switch)
     {
         Debug_CANVAS.SetActive(_switch);
     }
+<<<<<<< HEAD
     public void Set_Canvas_GameInit(bool _switch)
     {
         GameInit_CANVAS.SetActive(_switch);
@@ -201,10 +245,16 @@ public class UIManager : MonoBehaviour {
             Player2Panel.SetActive(false);
         }
     }
+=======
+    #endregion
+
+    #region IN GAME UI
+>>>>>>> 3e3b2bc (Sorting files)
     public void SetRespawnScreen(bool _switch)
     {
         RespawningScreen.SetActive(_switch);
     }
+<<<<<<< HEAD
 
     public void SetExplosionPanel(bool _switch)
     {
@@ -214,10 +264,13 @@ public class UIManager : MonoBehaviour {
     {
         return RespawningScreen.activeInHierarchy;
     }
+=======
+>>>>>>> 3e3b2bc (Sorting files)
     public void SetResultScreen(bool _switch)
     {
         InGame_Result_PANEL.SetActive(_switch);
     }
+<<<<<<< HEAD
 
     public void StartCooldDownForBlockers(int _player, int _slot, float _currentVal, float _maxVal, string _name)
     {
@@ -250,6 +303,8 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+=======
+>>>>>>> 3e3b2bc (Sorting files)
     #endregion
 
     #region PLAYER STATS
@@ -286,6 +341,7 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
+<<<<<<< HEAD
     #region PRE GAME LOADING 
     public void SetProgressText(string _val)
     {
@@ -300,6 +356,52 @@ public class UIManager : MonoBehaviour {
         CountdownTimerText.text = _val;
     }
     #endregion
+=======
+    public void ActivatePlayerPanel(int _player)
+    {
+        if(_player == 1)
+        {
+            Player1Panel.SetActive(true);
+            Player2Panel.SetActive(false);
+        }
+        else if (_player == 2)
+        {
+            Player1Panel.SetActive(false);
+            Player2Panel.SetActive(true);
+        }
+        else
+        {
+            Player1Panel.SetActive(false);
+            Player2Panel.SetActive(false);
+        }
+    }
+    public void StartCooldDownForBlockers(int _player, int _slot, float _currentVal, float _maxVal)
+    {
+        Image imgToCd = null;
+        if(_player == 1)
+        {
+            imgToCd = Player1_SkillBlockers[_slot];
+        }
+        else if (_player == 2)
+        {
+            imgToCd = Player2_SkillBlockers[_slot];
+        }
+        else
+        {
+            return;
+        }
+
+        imgToCd.fillAmount = _currentVal / _maxVal;
+        if(imgToCd.fillAmount > .98f)
+        {
+            imgToCd.enabled = false;
+        }
+        else
+        {
+            imgToCd.enabled = true;
+        }
+    }
+>>>>>>> 3e3b2bc (Sorting files)
 
     #region MENU BUTTONS
     public void ActivateSelectCarButton(bool _switch)
@@ -312,8 +414,11 @@ public class UIManager : MonoBehaviour {
         MatchCancelButton.SetActive(_switch);
     }
     #endregion
+<<<<<<< HEAD
 
     #region DEBUG
+=======
+>>>>>>> 3e3b2bc (Sorting files)
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Delete))
@@ -326,6 +431,7 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+<<<<<<< HEAD
     public void MoveUpLog()
     {
         GameUpdateText.transform.position += transform.up;
@@ -335,4 +441,6 @@ public class UIManager : MonoBehaviour {
         GameUpdateText.transform.position -= transform.up;
     }
     #endregion
+=======
+>>>>>>> 3e3b2bc (Sorting files)
 }

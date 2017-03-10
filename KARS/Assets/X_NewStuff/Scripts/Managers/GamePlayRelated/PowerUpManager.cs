@@ -74,7 +74,11 @@ public class PowerUpManager : MonoBehaviour {
         temp = null;
         try
         {
+<<<<<<< HEAD
             ServerPeerID = (GameSparkPacketHandler.Instance.GetPeerID());
+=======
+            ServerPeerID = (GameSparkPacketReceiver.Instance.PeerID);
+>>>>>>> 3e3b2bc (Sorting files)
         }
         catch { }
     }
@@ -106,16 +110,38 @@ public class PowerUpManager : MonoBehaviour {
             MissleList_Player2[MissleList_Player2.Count - 1] = temp;
         }
     }
+<<<<<<< HEAD
+=======
+    /*
+    void ClientSendToServerMissleLock(int sender, int receiver)
+    {
+        GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, sender);
+            data.SetInt(2, receiver);
+            GetRTSession.SendData(114, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+    }*/
+>>>>>>> 3e3b2bc (Sorting files)
     #endregion
     //=======================================================================================================================
 
     public void LaunchMissleFromBUtton(int _misNum)
     {
+<<<<<<< HEAD
         if (GameSparkPacketHandler.Instance.GetPeerID() == 2)
         {
             LockOnTarget(2, Player1,(MissleScript.MISSLE_TYPE)_misNum);
         }
         else if (GameSparkPacketHandler.Instance.GetPeerID() == 1)
+=======
+        if (GameSparkPacketReceiver.Instance.PeerID == 2)
+        {
+            LockOnTarget(2, Player1,(MissleScript.MISSLE_TYPE)_misNum);
+        }
+        else if (GameSparkPacketReceiver.Instance.PeerID == 1)
+>>>>>>> 3e3b2bc (Sorting files)
         {
             LockOnTarget(1, Player2, (MissleScript.MISSLE_TYPE)_misNum);
         }
@@ -124,6 +150,7 @@ public class PowerUpManager : MonoBehaviour {
             LockOnTarget(0,Player2, (MissleScript.MISSLE_TYPE)_misNum);
         }
     }
+<<<<<<< HEAD
 
     public void ResetMissles()
     {
@@ -143,4 +170,6 @@ public class PowerUpManager : MonoBehaviour {
             Debug.LogError("cant restart powe ups");
         }
     }
+=======
+>>>>>>> 3e3b2bc (Sorting files)
 }

@@ -174,13 +174,21 @@ public class GameStatsTweaker : MonoBehaviour {
         Base_Value_Speed = 10;
         Base_Value_Acceleration = 5;
         Base_Value_Rotation = 40;
+<<<<<<< HEAD
         Base_Value_Trail = 50;
+=======
+        Base_Value_Trail = 5;
+>>>>>>> 3e3b2bc (Sorting files)
 
         //IncrementStats
         Increment_Value_Speed = .25f;
         Increment_Value_Acceleration = -.1f;
         Increment_Value_Rotation = 2.5f;
+<<<<<<< HEAD
         Increment_Value_Trail = 5f;
+=======
+        Increment_Value_Trail = .5f;
+>>>>>>> 3e3b2bc (Sorting files)
 
         //PHYSICS
         Drag_Value = 1f;
@@ -194,7 +202,11 @@ public class GameStatsTweaker : MonoBehaviour {
         MovementSpeed = (DefaultMovement);
         rotationSpeed = (DefaultRotation);
         trailDistanceTotal = (DefaulttrailDistanceTotal);
+<<<<<<< HEAD
         DivisibleTrailValue = 5;
+=======
+        DivisibleTrailValue = 10;
+>>>>>>> 3e3b2bc (Sorting files)
 
         //POWERUPS
         const_StunDuration = (DefaultStun);
@@ -595,6 +607,7 @@ public class GameStatsTweaker : MonoBehaviour {
 
 
 
+<<<<<<< HEAD
     public void SendTrailData()
     {
         if (GameSparkPacketHandler.Instance.GetPeerID() == 0)
@@ -608,13 +621,33 @@ public class GameStatsTweaker : MonoBehaviour {
             using (RTData data = RTData.Get())
             {
                 data.SetInt(1, GameSparkPacketHandler.Instance.GetPeerID());
+=======
+
+    public void SendTrailData()
+    {
+        if (GameSparkPacketReceiver.Instance.PeerID == 0)
+            return;
+        PlayerObjects[GameSparkPacketReceiver.Instance.PeerID - 1].GetComponent<Car_DataReceiver>().ReceiveTrailVAlue(trailDistanceTotal);
+        PlayerObjects[GameSparkPacketReceiver.Instance.PeerID - 1].GetComponent<Car_DataReceiver>().ReceiveTrailChildVAlue(DivisibleTrailValue);
+
+        try
+        {
+            GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, GameSparkPacketReceiver.Instance.PeerID);
+>>>>>>> 3e3b2bc (Sorting files)
                 data.SetInt(2, (int)NetworkPlayerVariableList.TRAIL);
                 data.SetFloat(3, trailDistanceTotal);
                 GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
             }
             using (RTData data = RTData.Get())
             {
+<<<<<<< HEAD
                 data.SetInt(1, GameSparkPacketHandler.Instance.GetPeerID());
+=======
+                data.SetInt(1, GameSparkPacketReceiver.Instance.PeerID);
+>>>>>>> 3e3b2bc (Sorting files)
                 data.SetInt(2, (int)NetworkPlayerVariableList.CHILD_TRAIL);
                 data.SetFloat(3, DivisibleTrailValue);
                 GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);

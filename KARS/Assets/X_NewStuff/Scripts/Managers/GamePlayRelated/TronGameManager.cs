@@ -59,7 +59,7 @@ public class TronGameManager : GameStatsTweaker {
         }
         SelectThisSkill(SkillButtonParent.GetChild(0).gameObject);
         SelectSkillSlot(1);
-        SelectThisSkill(SkillButtonParent.GetChild(1).gameObject);
+        SelectThisSkill(SkillButtonParent.GetChild(2).gameObject);
         SelectSkillSlot(0);
     }
 

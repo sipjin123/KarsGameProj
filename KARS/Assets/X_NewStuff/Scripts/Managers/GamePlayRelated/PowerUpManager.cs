@@ -31,9 +31,7 @@ public class PowerUpManager : MonoBehaviour {
 
     int ServerPeerID;
     private GameSparksRTUnity GetRTSession;
-
-    bool MissleCooldownTimer_Switch;
-    float MissleCooldownTimer_Count;
+    
 
     #endregion
     //=======================================================================================================================
@@ -82,28 +80,6 @@ public class PowerUpManager : MonoBehaviour {
     }
     #endregion
     //=======================================================================================================================
-
-
-    public void SendToServer(int _id, int _tntID,Vector3 _pos, bool _enable)
-    {
-        Debug.LogError("opcode obsolete");
-        return;
-        GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, _id);
-            data.SetInt(2, _tntID);
-            data.SetVector3(3, _pos);
-            if (_enable)
-                data.SetInt(4, 1);
-            else
-                data.SetInt(4, 0);
-
-            GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-    }
-
-    //=======================================================================================================================
     //MISSLE SEND AND RECEIVE FROM SERVER
     #region MISSLE SEND AND RECEIVE FROM SERVER
     public void LockOnTarget(int senderID,GameObject _obj, MissleScript.MISSLE_TYPE _misType)
@@ -143,37 +119,9 @@ public class PowerUpManager : MonoBehaviour {
     }*/
     #endregion
     //=======================================================================================================================
-    void FixedUpdate()
-    {
-        if (MissleCooldownTimer_Switch == true)
-        {
-            if (ServerPeerID == 1)
-                UIManager.Instance.MissleBar_1.fillAmount = MissleCooldownTimer_Count / TronGameManager.Instance.missleCooldown;
-            else
-                UIManager.Instance.MissleBar_2.fillAmount = MissleCooldownTimer_Count / TronGameManager.Instance.missleCooldown;
-
-            if (MissleCooldownTimer_Count < TronGameManager.Instance.missleCooldown)
-            {
-                MissleCooldownTimer_Count += Time.fixedDeltaTime;
-            }
-            else
-            {
-                MissleCooldownTimer_Switch = false;
-            }
-        }
-
-        if(Input.GetKeyDown(KeyCode.Y))
-        {
-            GameObject.Find("GameUpdateText").GetComponent<Text>().text = "";
-        }
-    }
 
     public void LaunchMissleFromBUtton(int _misNum)
     {
-        if (MissleCooldownTimer_Switch == true)
-            return;
-        MissleCooldownTimer_Switch = true;
-        MissleCooldownTimer_Count = 0;
         if (GameSparkPacketReceiver.Instance.PeerID == 2)
         {
             LockOnTarget(2, Player1,(MissleScript.MISSLE_TYPE)_misNum);

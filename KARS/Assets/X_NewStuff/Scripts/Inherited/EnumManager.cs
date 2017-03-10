@@ -65,3 +65,10 @@ public enum NetworkPlayerVariableList
     TRAIL,
     CHILD_TRAIL,
 }
+
+public enum TYPE_OF_DATA_TO_SEND
+{
+    MOVEMENT,
+    STATUS,
+    REDUCE_HP
+}

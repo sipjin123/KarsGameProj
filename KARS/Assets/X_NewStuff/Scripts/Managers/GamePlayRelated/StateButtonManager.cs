@@ -27,6 +27,10 @@ public class StateButtonManager : MonoBehaviour {
     {
         TronGameManager.Instance.Global_SendState(MENUSTATE.RESTART_GAME);
     }
+    public void OnClick_QuitGame()//FOR DEBUG PURPOSES ONLY
+    {
+        TronGameManager.Instance.Global_SendState(MENUSTATE.RETURN_TO_MAIN_MENU);
+    }
     public void OnClick_ViewCarStats()
     {
         StateManager.Instance.Access_ChangeState(MENUSTATE.CHARACTER_STATS_VIEW);

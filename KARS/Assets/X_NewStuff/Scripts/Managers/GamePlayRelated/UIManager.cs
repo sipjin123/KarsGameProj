@@ -14,11 +14,12 @@ public class UIManager : MonoBehaviour {
     }
 
     //NETWORKRELATED
+    #region NETWORK
     [Header("NETWORK")]
     public Text GameUpdateText;
     public Text PingText;
     public Text NetworkTimeText, GameTimeText;
-
+    #endregion
 
     //POWERUP ICONS
     [Header("POWERUPS")]
@@ -27,11 +28,7 @@ public class UIManager : MonoBehaviour {
     public Text SpeedTexT_1, SpeedText_2, 
                 SpeedTimeText_1, SpeedTimeText_2, 
                 SpeedMaxText_1, SpeedMaxText_2;
-
-    public Image MissleBar_1, MissleBar_2,
-                 ShieldBar_1, ShieldBar_2,
-                 NitrosBar_1, NitrosBar_2;
-
+    
     
     //SKILLS
     [Header("PLAYER UI")]
@@ -44,37 +41,49 @@ public class UIManager : MonoBehaviour {
 
     public GameObject[] SkillIcons;
 
+    [SerializeField]
+    private Image[] 
+        Player1_SkillBlockers, 
+        Player2_SkillBlockers;
 
     //SCREENS
+    #region SCREENS
     [Header("SCREENS")]
     [SerializeField]
     private GameObject RespawningScreen;
-    [SerializeField]
-    private GameObject InGame_Result_PANEL,
-                    InGame_CANVAS,
-                    Debug_CANVAS,
-                    Waiting_CANVAS,
-                    MainMenu_CANVAS,
-                    MainMenu_StatusPreview_PANEL,
-                    MainMenu_CarPreview_PANEL,
-                    MainMenu_Home_PANEL,
-                    MainMenu_Quest_PANEL,
-                    MainMenu_Shop_PANEL,
-                    MainMenu_Social_PANEL;
 
+    [SerializeField]
+    private GameObject 
+        InGame_Result_PANEL,
+        InGame_CANVAS,
+        Debug_CANVAS,
+        Waiting_CANVAS,
+        MainMenu_CANVAS,
+        MainMenu_StatusPreview_PANEL,
+        MainMenu_CarPreview_PANEL,
+        MainMenu_Home_PANEL,
+        MainMenu_Quest_PANEL,
+        MainMenu_Shop_PANEL,
+        MainMenu_Social_PANEL;
+    #endregion
 
     //STATS
     [Header("STATS")]
     [SerializeField]
     private GameObject Player1_Win, Player2_Win;
-    [SerializeField]
-    private Image Player1_HPResult, Player2_HPResult;
-    [SerializeField]
-    private Image Player1_InGameHealthBar, Player2_InGameHealthBar;
-    public Text Var_HP_1, Var_HP_2;
 
     [SerializeField]
-    private GameObject SelectCarButton, SelectedCarImage, MatchCancelButton;
+    private Image   
+        Player1_HPResult, Player2_HPResult, 
+        Player1_InGameHealthBar, Player2_InGameHealthBar;
+    public Text Var_HP_1, Var_HP_2;
+
+
+    [SerializeField]
+    private GameObject 
+        SelectCarButton, 
+        SelectedCarImage, 
+        MatchCancelButton;
     //==========================================================================================
     #region MAIN MENU VARIABLES
 
@@ -187,7 +196,34 @@ public class UIManager : MonoBehaviour {
             Player2Panel.SetActive(false);
         }
     }
+    public void StartCooldDownForBlockers(int _player, int _slot, float _currentVal, float _maxVal)
+    {
+        Image imgToCd = null;
+        if(_player == 1)
+        {
+            imgToCd = Player1_SkillBlockers[_slot];
+        }
+        else if (_player == 2)
+        {
+            imgToCd = Player2_SkillBlockers[_slot];
+        }
+        else
+        {
+            return;
+        }
 
+        imgToCd.fillAmount = _currentVal / _maxVal;
+        if(imgToCd.fillAmount > .98f)
+        {
+            imgToCd.enabled = false;
+        }
+        else
+        {
+            imgToCd.enabled = true;
+        }
+    }
+
+    #region MENU BUTTONS
     public void ActivateSelectCarButton(bool _switch)
     {
         SelectCarButton.SetActive(_switch);
@@ -197,7 +233,7 @@ public class UIManager : MonoBehaviour {
     {
         MatchCancelButton.SetActive(_switch);
     }
-
+    #endregion
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Delete))

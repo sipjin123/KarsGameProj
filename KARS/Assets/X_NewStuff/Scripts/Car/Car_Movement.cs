@@ -25,7 +25,8 @@ public class Car_Movement : MonoBehaviour {
     bool isDead;
     public bool StartGame;
     public bool isREady;
-
+    [SerializeField]
+    private Camera_Behaviour _camBehaviour;
     public void SetStartGame(bool _switch)
     {
         StartGame = _switch;
@@ -224,6 +225,7 @@ public class Car_Movement : MonoBehaviour {
         }
         else
         {
+            _camBehaviour.ReturnToDefault();
             for (int i = 0; i < Wheels.Length; i++)
             {
                 Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, 0, 90)), WheelLerpSpeed);
@@ -256,19 +258,23 @@ public class Car_Movement : MonoBehaviour {
     float WheelLerpSpeed = .5f;
     void MoveRight()
     {
+        _camBehaviour.RotateLeft(1);
         for (int i = 0; i < Wheels.Length; i++)
         {
             Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, 35, 90)), WheelLerpSpeed);
         }
-        _currentTurningForce = Mathf.Clamp(_currentTurningForce - turningRate, -turningForce, turningForce);
+        _currentTurningForce -= turningRate;
+        _currentTurningForce = Mathf.Clamp(_currentTurningForce, -turningForce, turningForce);
     }
     void MoveLeft()
     {
+        _camBehaviour.RotateRight(1);
         for (int i = 0; i < Wheels.Length; i++)
         {
             Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, -35, 90)), WheelLerpSpeed);
         }
-        _currentTurningForce = Mathf.Clamp(_currentTurningForce + turningRate, -turningForce, turningForce);
+        _currentTurningForce += turningRate;
+        _currentTurningForce = Mathf.Clamp(_currentTurningForce, -turningForce, turningForce);
     }
     #endregion
 

@@ -117,6 +117,7 @@ public class TronGameManager : GameStatsTweaker {
     #region INITALIZATION
     void Awake()
     {
+        SelectedSkin = 1;
         _instance = this;
         Initer();
     }
@@ -126,7 +127,6 @@ public class TronGameManager : GameStatsTweaker {
     }
     void Start()
     {
-        SelectedSkin = 1;
         InitSkillList();
 
         for (int i = 0; i < PlayerObjects.Length; i++)

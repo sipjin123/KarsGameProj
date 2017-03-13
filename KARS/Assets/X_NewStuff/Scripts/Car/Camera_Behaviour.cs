@@ -3,70 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Camera_Behaviour : MonoBehaviour {
-
-    public Transform CamPos1, CamPos2;
-    public Transform CamPivot;
+    
     public Camera Camera;
-    Transform NewPosToRefer;
 
-    public enum VIEW
+    public float Cam_Y;
+    public float RotateSpeed;
+    void Start()
     {
-        PERPECTIVE,
-        TOP,
+        RotateSpeed = 25; 
     }
-    public VIEW _currentView;
-
-
-    bool OnGoingSwitch;
-
-    float switchTransformViewSpeed = 4;
-    float switchRotateViewSpeed = 1;
-
-    void Start ()
+    public void RotateRight(float multiplier)
     {
-
-		
-	}
-	
-	void FixedUpdate () {
-		
-        if(Input.GetKeyDown(KeyCode.V))
-        {
-            SwitchView();
-        }
-
-        if(OnGoingSwitch)
-        {
-            switch(_currentView)
-            {
-                case VIEW.PERPECTIVE:
-                    NewPosToRefer = CamPos1;
-                    break;
-                case VIEW.TOP:
-                    NewPosToRefer = CamPos2;
-                    break;
-            }
-
-            CamPivot.transform.localEulerAngles = Vector3.Slerp(CamPivot.localEulerAngles, NewPosToRefer.localEulerAngles, switchRotateViewSpeed * Time.fixedDeltaTime);
-
-            if (Vector3.Distance(CamPivot.transform.localEulerAngles, NewPosToRefer.transform.localEulerAngles) <= 0)
-            {
-                OnGoingSwitch = false;
-            }
-        }
-	}
-
-    void SwitchView()
+        lerper = 0;
+        Cam_Y += (RotateSpeed * multiplier) * Time.fixedDeltaTime;
+        transform.localRotation = Quaternion.Euler( new Vector3(0, Cam_Y, 0));
+    }
+    public void RotateLeft(float multiplier)
     {
-        if(_currentView == VIEW.PERPECTIVE)
-        {
-            _currentView = VIEW.TOP;
-            OnGoingSwitch = true;
-        }
-        else
-        {
-            _currentView = VIEW.PERPECTIVE;
-            OnGoingSwitch = true;
-        }
+        lerper = 0;
+        Cam_Y -= (RotateSpeed * multiplier) * Time.fixedDeltaTime;
+        transform.localRotation = Quaternion.Euler( new Vector3(0, Cam_Y, 0));
+    }
+    float lerper;
+    public void ReturnToDefault()
+    {
+        lerper += .01f;
+        Cam_Y = transform.localRotation.y;
+        transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(0, 0, 0), lerper);
     }
 }

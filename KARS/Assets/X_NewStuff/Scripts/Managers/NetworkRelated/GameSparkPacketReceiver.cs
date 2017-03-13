@@ -239,6 +239,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
                             _GameSparks_DataSender.SetCarAvatar(_packet.Data.GetInt(2).Value);
                         }
                     }
+                    UIManager.Instance.GameUpdateText.text += "\nPhase 6: Car has been Selected: "+ _packet.Data.GetInt(2).Value;
                     #endregion
                 }
                 break;
@@ -380,6 +381,16 @@ public class GameSparkPacketReceiver : MonoBehaviour
     {
         try
         {
+            //SET LOCAL CAR MESH
+            _tronGameManager.PlayerObjects[PeerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(_tronGameManager.SelectedSkin);
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, PeerID);
+                data.SetInt(2, _tronGameManager.SelectedSkin);
+                GetRTSession().SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                UIManager.Instance.GameUpdateText.text += "\nPhase 3.5: Sent Selected Mesh";
+            }
+
             for (int i = 0; i < TronGameManager.Instance.PlayerObjects.Length; i++)
             {
                 TronGameManager.Instance.PlayerObjects[i].GetComponent<Car_Movement>().SetStartGame(true);
@@ -393,14 +404,6 @@ public class GameSparkPacketReceiver : MonoBehaviour
                 }
             }
 
-            //SET LOCAL CAR MESH
-            _tronGameManager.PlayerObjects[PeerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(_tronGameManager.SelectedSkin);
-            using (RTData data = RTData.Get())
-            {
-                data.SetInt(1, PeerID);
-                data.SetInt(2, _tronGameManager.SelectedSkin);
-                GetRTSession().SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-            }
         }
         catch
         {
@@ -411,6 +414,16 @@ public class GameSparkPacketReceiver : MonoBehaviour
     {
         try
         {
+            //SET LOCAL CAR MESH
+            _tronGameManager.PlayerObjects[PeerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(_tronGameManager.SelectedSkin);
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, PeerID);
+                data.SetInt(2, _tronGameManager.SelectedSkin);
+                GetRTSession().SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                UIManager.Instance.GameUpdateText.text += "\nPhase 3.5: Sent Selected Mesh";
+            }
+
             using (RTData data = RTData.Get())
             {
                 data.SetInt(1, PeerID);

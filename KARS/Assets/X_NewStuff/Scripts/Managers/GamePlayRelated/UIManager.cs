@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour {
 
     //SINGLETON
     public static UIManager Instance { get { return instance; } }
+    
     private static UIManager instance;
     void Awake()
     {
@@ -38,6 +39,7 @@ public class UIManager : MonoBehaviour {
     private GameObject Player2Panel;
 
     public GameObject Player1_SkillsParent, Player2_SkillsParent;
+    public GameObject Player1_SkillsRoster, Player2_SkillsRoster;
 
     public GameObject[] SkillIcons;
 
@@ -84,6 +86,9 @@ public class UIManager : MonoBehaviour {
         SelectCarButton, 
         SelectedCarImage, 
         MatchCancelButton;
+
+    [SerializeField]
+    private GameObject ExplosionPanel;
     //==========================================================================================
     #region MAIN MENU VARIABLES
 
@@ -221,6 +226,11 @@ public class UIManager : MonoBehaviour {
         {
             imgToCd.enabled = true;
         }
+    }
+
+    public void SetExplosionPanel(bool _switch)
+    {
+        ExplosionPanel.SetActive(_switch);
     }
 
     #region MENU BUTTONS

@@ -174,13 +174,13 @@ public class GameStatsTweaker : MonoBehaviour {
         Base_Value_Speed = 10;
         Base_Value_Acceleration = 5;
         Base_Value_Rotation = 40;
-        Base_Value_Trail = 5;
+        Base_Value_Trail = 50;
 
         //IncrementStats
         Increment_Value_Speed = .25f;
         Increment_Value_Acceleration = -.1f;
         Increment_Value_Rotation = 2.5f;
-        Increment_Value_Trail = .5f;
+        Increment_Value_Trail = 5f;
 
         //PHYSICS
         Drag_Value = 1f;
@@ -194,7 +194,7 @@ public class GameStatsTweaker : MonoBehaviour {
         MovementSpeed = (DefaultMovement);
         rotationSpeed = (DefaultRotation);
         trailDistanceTotal = (DefaulttrailDistanceTotal);
-        DivisibleTrailValue = 10;
+        DivisibleTrailValue = 5;
 
         //POWERUPS
         const_StunDuration = (DefaultStun);

@@ -26,24 +26,14 @@ public class TronGameManager : GameStatsTweaker {
     }
 
     #region SKILLS RELATED
-    string[] skillStringList = new string[]
-    {
-        "Shield",
-        "Stun",
-        "Blind",
-        "Confuse",
-        "Slow",
-        "Silence",
-        "Fly",
-        "Nitro",
-        "Expand",
-    };
+
+    public int SkillListCount = 9;
 
     public Transform SkillButtonParent;
     public GameObject SkillButton;
     public void InitSkillList()
     {
-        for (int i = 0; i < skillStringList.Length; i++)
+        for (int i = 0; i < SkillListCount; i++)
         {
             GameObject temp = Instantiate(SkillButton, transform.position, Quaternion.identity) as GameObject;
             temp.transform.SetParent(SkillButtonParent);
@@ -52,7 +42,7 @@ public class TronGameManager : GameStatsTweaker {
             temp.GetComponent<Image>().sprite = UIManager.Instance.SkillIcons[i].GetComponent<Image>().sprite;
             temp.SetActive(true);
 
-            temp.transform.GetChild(0).GetComponent<Text>().text = skillStringList[i];
+            temp.transform.GetChild(0).GetComponent<Text>().text = ((SKILL_LIST)i).ToString();
             temp.GetComponent<Button>().onClick.AddListener(() => {
                 SelectThisSkill(temp);
             });
@@ -247,8 +237,6 @@ public class TronGameManager : GameStatsTweaker {
     IEnumerator DelayStartChecker(int _player)
     {
         yield return new WaitForSeconds(3);
-        GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
-
         UIManager.Instance.GameUpdateText.text += "\nDelay Start Player: " + _player;
         //READY LOCAL PLAYER 
         if (_player == 0)
@@ -256,13 +244,21 @@ public class TronGameManager : GameStatsTweaker {
             DelayStartChecker(_player);
             yield return null;
         }
-        PlayerObjects[_player - 1].GetComponent<Car_Movement>().SetReady(true);
-        using (RTData data = RTData.Get())
+        try
         {
-            data.SetInt(1, _player);
-            data.SetInt(2, 1);
-            data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
-            GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+            PlayerObjects[_player - 1].GetComponent<Car_Movement>().SetReady(true);
+            using (RTData data = RTData.Get())
+            {
+                data.SetInt(1, _player);
+                data.SetInt(2, 1);
+                data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
+                GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            }
+        }
+        catch
+        {
+            DelayStartChecker(_player);
         }
     }
     #endregion
@@ -317,4 +313,17 @@ public class TronGameManager : GameStatsTweaker {
         }
     }
     #endregion
+}
+
+public enum SKILL_LIST
+{
+    Shield,
+    Stun,
+    Blind,
+    Confuse,
+    Slow,
+    Silence,
+    Fly,
+    Nitro,
+    Expand
 }

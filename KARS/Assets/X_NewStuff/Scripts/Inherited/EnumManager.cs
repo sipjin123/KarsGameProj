@@ -54,6 +54,7 @@ public enum NetworkPlayerStatus
     ACTIVATE_GHOST,
     ACTIVATE_FLY,
     ACTIVATE_EXPAND,
+    ACTIVATE_EXPLOSION,
     SET_READY,
     SET_START
 }

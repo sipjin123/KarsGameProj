@@ -51,6 +51,7 @@ public class NetworkDataFilter : MonoBehaviour
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_CONFUSE ||
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_SLOW ||
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_SILENCE ||
+            _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_EXPLOSION ||
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.SET_START ||
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.SET_READY)
         {

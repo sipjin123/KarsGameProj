@@ -179,6 +179,7 @@ public class TronGameManager : GameStatsTweaker {
     #region INITALIZATION
     void Awake()
     {
+        SelectedSkin = 1;
         _instance = this;
         Initer();
 >>>>>>> 3e3b2bc (Sorting files)
@@ -189,7 +190,6 @@ public class TronGameManager : GameStatsTweaker {
     }
     void Start()
     {
-        SelectedSkin = 1;
         InitSkillList();
 
         for (int i = 0; i < PlayerObjects.Length; i++)

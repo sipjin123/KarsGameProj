@@ -2,31 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Car_Movement : MonoBehaviour {
+public class Car_Movement : MonoBehaviour
+{
     //==========================================================================================================================
     #region VARIABLES
-    private float movementSpeed;
 
-    CharacterController _characterController;
 
-    float currentRotation_Y;
-    float rotationSpeed;
-
-    public Transform CarRotationObject;
-
-    [SerializeField]
-    public TrailCollision _trailCollision;
-    public Camera myCam;
-
-    public
-    TronGameManager _tronGameManager;
-
-    Car_DataReceiver MyCarDataReceiver;
-    bool isDead;
-    public bool StartGame;
-    public bool isREady;
     [SerializeField]
     private Camera_Behaviour _camBehaviour;
+    [SerializeField]
+    private Transform centerOfMass;
+    [SerializeField]
+    private Transform[] Wheels;
+    [SerializeField]
+    private TronGameManager _tronGameManager;
+
+
+    //NETWORK ACCESSIBLE
+    public Camera myCam;
+    public Transform CarRotationObject;
+    public TrailCollision _trailCollision;
+
+    public bool StartGame;
+    public bool isREady;
     public void SetStartGame(bool _switch)
     {
         StartGame = _switch;
@@ -35,6 +33,30 @@ public class Car_Movement : MonoBehaviour {
     {
         isREady = _Switch;
     }
+    private bool FlipSwitch;
+    public bool FlipCarSwitch
+    {
+        get { return FlipSwitch; }
+        set { FlipSwitch = value; }
+    }
+
+
+    //LOCAL COMPONENTS
+    Car_DataReceiver MyCarDataReceiver;
+    CharacterController _characterController;
+    Rigidbody myRigid;
+
+
+
+
+    private float movementSpeed;
+
+
+    float rotationSpeed;
+
+
+
+    bool isDead;
 
     bool signalSent;
     float DieTimer;
@@ -52,19 +74,7 @@ public class Car_Movement : MonoBehaviour {
 
     float NitrosSpeed;
 
-    private bool FlipSwitch;
-    public bool FlipCarSwitch
-    {
-        get { return FlipSwitch; }
-        set { FlipSwitch = value; }
-    }
 
-    Rigidbody myRigid;
-    [SerializeField]
-    Transform centerOfMass;
-
-    [SerializeField]
-    private Transform[] Wheels;
     #endregion
     //==========================================================================================================================
     #region INIT
@@ -74,7 +84,6 @@ public class Car_Movement : MonoBehaviour {
         _characterController = GetComponent<CharacterController>();
         MyCarDataReceiver = GetComponent<Car_DataReceiver>();
         myRigid = GetComponent<Rigidbody>();
-        currentRotation_Y = CarRotationObject.transform.eulerAngles.y;
         myRigid.centerOfMass = centerOfMass.localPosition;
     }
 
@@ -110,7 +119,7 @@ public class Car_Movement : MonoBehaviour {
 
         return _finalValue;
     }
-    
+
     void FixedUpdate()
     {
         movementSpeed = _tronGameManager.MovementSpeed;
@@ -147,15 +156,17 @@ public class Car_Movement : MonoBehaviour {
             }
             //_characterController.Move(CarRotationObject.transform.forward * ((ComputedValues() * ReduceValues() )* Time.fixedDeltaTime));
 
-            
+
             if (MyCarDataReceiver.GetNitroSwitch() == true)
                 NitrosSpeed = _tronGameManager.nitroSpeed;
             else
                 NitrosSpeed = 0;
-            
 
-            myRigid.AddForce(CarRotationObject.transform.forward *
-                ((_tronGameManager.Force_Value + NitrosSpeed + accelerationSpeed_Counter * Time.fixedDeltaTime) * ReduceValues()));
+            if (!Input.GetKey(KeyCode.S))
+            {
+                myRigid.AddForce(CarRotationObject.transform.forward *
+                    ((_tronGameManager.Force_Value + NitrosSpeed + accelerationSpeed_Counter * Time.fixedDeltaTime) * ReduceValues()));
+            }
 
             if (MyCarDataReceiver.GetFlySwitch() == true)
             {
@@ -175,7 +186,10 @@ public class Car_Movement : MonoBehaviour {
                     if (!signalSent)
                     {
                         signalSent = true;
-                        transform.position = new Vector3(_tronGameManager.spawnPlayerPosition[MyCarDataReceiver.Network_ID - 1].position.x, 10, _tronGameManager.spawnPlayerPosition[MyCarDataReceiver.Network_ID - 1].position.z);
+
+                        transform.position = new Vector3(transform.position.x,
+                                                            -2,
+                                                            transform.position.z);
                         StopCoroutine("DelayRespawn");
                         StartCoroutine("DelayRespawn");
                         accelerationSpeed_Counter = 0;
@@ -203,6 +217,9 @@ public class Car_Movement : MonoBehaviour {
         }
     }
     bool _moveLeft, _moveRight;
+
+
+
     void InputSystem()
     {
         turningRate = _tronGameManager.turningRate;
@@ -284,7 +301,7 @@ public class Car_Movement : MonoBehaviour {
     {
         if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
-            if (hit.gameObject.tag == "Wall" ||hit.gameObject.tag == "Trail" || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
+            if (hit.gameObject.tag == "Wall" || hit.gameObject.tag == "Trail" || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
             {
                 if (!TronGameManager.Instance.NetworkStart)
                 {
@@ -297,10 +314,11 @@ public class Car_Movement : MonoBehaviour {
 
                 if (MyCarDataReceiver.GetShieldSwitch() == false)
                 {
+                    MyCarDataReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_EXPLOSION);
                     Die();
                 }
             }
-            
+
         }
     }
     #endregion
@@ -308,44 +326,51 @@ public class Car_Movement : MonoBehaviour {
     #region PLAYER DEATH
     public void Die()
     {
-        myRigid.Sleep();
-        myRigid.useGravity = false;
-        //if(MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID)
-        if ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart)
+        if (!isDead)
         {
             isDead = true;
-
-            transform.position = new Vector3(   _tronGameManager.spawnPlayerPosition[MyCarDataReceiver.Network_ID - 1].position.x, 
-                                                10, 
-                                                _tronGameManager.spawnPlayerPosition[MyCarDataReceiver.Network_ID - 1].position.z);
-
-            UIManager.Instance.SetRespawnScreen(true);
-            if (_tronGameManager.NetworkStart == false)
+            myRigid.Sleep();
+            myRigid.useGravity = false;
+            if ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart)
             {
-                if (gameObject.name == "Car1")
+                transform.position = new Vector3(transform.position.x,
+                                                    -2,
+                                                    transform.position.z);
+
+                UIManager.Instance.SetExplosionPanel(true);
+                if (_tronGameManager.NetworkStart == false)
                 {
-                    AIMode_HpBar -= 1;
-                    _tronGameManager.ReduceHPOfPlayer(1, AIMode_HpBar );
+                    if (gameObject.name == "Car1")
+                    {
+                        AIMode_HpBar -= 1;
+                        _tronGameManager.ReduceHPOfPlayer(1, AIMode_HpBar);
+                    }
+                    _trailCollision.SetEmiision(false);
+                    try
+                    {
+                        GetComponent<AI_Behaviour>().enabled = false;
+                    }
+                    catch
+                    {
+                    }
                 }
-                _trailCollision.SetEmiision(false);
-                try
+                else
                 {
-                    GetComponent<AI_Behaviour>().enabled = false;
+                    MyCarDataReceiver.ResetTrail(false);
+                    MyCarDataReceiver.ReduceHealth();
                 }
-                catch
-                {
-                }
-            }
-            else
-            {
-                MyCarDataReceiver.ResetTrail(false);
-                MyCarDataReceiver.ReduceHealth();
             }
         }
     }
     IEnumerator DelayRespawn()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2);
+        UIManager.Instance.SetRespawnScreen(true);
+        UIManager.Instance.SetExplosionPanel(false);
+        yield return new WaitForSeconds(5);
+
+        MyCarDataReceiver.SendNetworkDisable(false, NetworkPlayerStatus.ACTIVATE_EXPLOSION);
+        MyCarDataReceiver.ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_EXPLOSION);
         if (MyCarDataReceiver.Network_ID == 1)
             transform.position = _tronGameManager.spawnPlayerPosition[0].position;
         if (MyCarDataReceiver.Network_ID == 2)
@@ -360,7 +385,6 @@ public class Car_Movement : MonoBehaviour {
 
         myRigid.useGravity = true;
 
-        currentRotation_Y = 0;
         isDead = false;
         signalSent = false;
         DieTimer = 0;
@@ -373,7 +397,7 @@ public class Car_Movement : MonoBehaviour {
         {
         }
 
-        if(_tronGameManager.NetworkStart == false)
+        if (_tronGameManager.NetworkStart == false)
         {
             try
             {
@@ -384,4 +408,6 @@ public class Car_Movement : MonoBehaviour {
         }
     }
     #endregion
+
+    
 }

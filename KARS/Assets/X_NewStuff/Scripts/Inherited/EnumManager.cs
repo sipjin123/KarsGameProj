@@ -36,11 +36,6 @@ public enum MENUSTATE
     RESTART_GAME,
     MATCH_FIND,
     START_GAME,
-<<<<<<< HEAD
-
-    PRE_RESULT,
-=======
->>>>>>> 3e3b2bc (Sorting files)
     RESULT,
     RETURN_TO_MAIN_MENU
 }
@@ -59,10 +54,7 @@ public enum NetworkPlayerStatus
     ACTIVATE_GHOST,
     ACTIVATE_FLY,
     ACTIVATE_EXPAND,
-<<<<<<< HEAD
     ACTIVATE_EXPLOSION,
-=======
->>>>>>> 3e3b2bc (Sorting files)
     SET_READY,
     SET_START
 }
@@ -80,27 +72,4 @@ public enum TYPE_OF_DATA_TO_SEND
     MOVEMENT,
     STATUS,
     REDUCE_HP
-<<<<<<< HEAD
-}
-
-public enum SKILL_LIST
-{
-    Shield,
-    Stun,
-    Blind,
-    Confuse,
-    Slow,
-    Silence,
-    Fly,
-    Nitro,
-    Expand
-}
-
-public enum MethodUsed
-{
-    LINEAR,
-    CUBIC
-
-=======
->>>>>>> 3e3b2bc (Sorting files)
 }

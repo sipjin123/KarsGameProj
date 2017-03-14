@@ -81,14 +81,17 @@ public class GameSparkPacketReceiver : MonoBehaviour
             (ready) => { OnRTReady(ready); },
             (packet) => { OnPacketReceived(packet); });
         gameSparksRTUnity.Connect(); // when the config is set, connect the game
+
+
+        UIManager.Instance.GameUpdateText.text += "\nPhase 3: OnMatchFound";
         StateManager.Instance.Access_ChangeState(MENUSTATE.MATCH_FOUND);
+        _tronGameManager.SetProgressValueHolder(10);
     }
 
     private void OnPlayerConnectedToGame(int _peerId)
     {
         Debug.Log("GSM| Player Connected, " + _peerId);
-
-        UIManager.Instance.GameUpdateText.text += "\nGameSparkPacketReceiver: Player is Locally Connected";
+        
     }
 
     private void OnPlayerDisconnected(int _peerId)
@@ -159,6 +162,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
     #region DATA RECEIVE
     private void OnPacketReceived(RTPacket _packet)
     {
+
         switch (_packet.OpCode)
         {
             #region SERVER TIME
@@ -210,13 +214,14 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     _netPlayerEvent.playerStatusSwitch = _packet.Data.GetInt(2).Value == 1 ? true : false;
                     _netPlayerEvent.playerStatus = (NetworkPlayerStatus)_packet.Data.GetInt(3).Value;
 
-                    if(_netPlayerEvent.playerStatus == NetworkPlayerStatus.SET_READY)
+                    //UIManager.Instance.GameUpdateText.text += "\n\t\tOPCODE_DATA RECEIVE: " + _netPlayerEvent.playerStatus;
+                    if (_netPlayerEvent.playerStatus == NetworkPlayerStatus.SET_READY)
                     {
-                        UIManager.Instance.GameUpdateText.text += "\n\t\tOPCODE_DATA: ready";
+                        UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE RECEIVE: READY";
                     }
                     if (_netPlayerEvent.playerStatus == NetworkPlayerStatus.SET_START)
                     {
-                        UIManager.Instance.GameUpdateText.text += "\n\t\tOPCODE_DATA: start";
+                        UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE RECEIVE: START";
                     }
                     //UIManager.instance.GameUpdateText.text += "\nData Translation for Disable"+_netPlayerEvent.playerStatus;
                     NetworkDataFilter.Instance.ReceiveNetworkPlayerEvent(_netPlayerEvent);
@@ -241,6 +246,8 @@ public class GameSparkPacketReceiver : MonoBehaviour
                         }
                     }
                     UIManager.Instance.GameUpdateText.text += "\nPhase 6: Car has been Selected: "+ _packet.Data.GetInt(2).Value;
+
+                    _tronGameManager.SetProgressValueHolder(10);
                     #endregion
                 }
                 break;
@@ -380,64 +387,55 @@ public class GameSparkPacketReceiver : MonoBehaviour
 
     public void Access_SentStartToServer()
     {
-        try
+        //SEND START
+        GameSparksRTUnity RT = GetRTSession();
+        for (int i = 0; i < 2; i++)
         {
-            //SET LOCAL CAR MESH
-            _tronGameManager.PlayerObjects[PeerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(_tronGameManager.SelectedSkin);
+            TronGameManager.Instance.PlayerObjects[i].GetComponent<Car_Movement>().SetStartGame(true);
             using (RTData data = RTData.Get())
             {
-                data.SetInt(1, PeerID);
-                data.SetInt(2, _tronGameManager.SelectedSkin);
-                GetRTSession().SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                UIManager.Instance.GameUpdateText.text += "\nPhase 3.5: Sent Selected Mesh";
+                data.SetInt(1, i + 1);
+                data.SetInt(2, 1);
+                data.SetInt(3, (int)NetworkPlayerStatus.SET_START);
+                RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                _tronGameManager.SetProgressValueHolder(10);
             }
-
-            for (int i = 0; i < TronGameManager.Instance.PlayerObjects.Length; i++)
-            {
-                TronGameManager.Instance.PlayerObjects[i].GetComponent<Car_Movement>().SetStartGame(true);
-                using (RTData data = RTData.Get())
-                {
-                    data.SetInt(1, i + 1);
-                    data.SetInt(2, 1);
-                    data.SetInt(3, (int)NetworkPlayerStatus.SET_START);
-                    GetRTSession().SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                    UIManager.Instance.GameUpdateText.text += "\nPhase 4: SentStartGame For Player: " + (i + 1);
-                }
-            }
-
         }
-        catch
+        UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE SEND: MESH";
+        //SEND MESH
+        RT = GetRTSession();
+        _tronGameManager.PlayerObjects[PeerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(_tronGameManager.SelectedSkin);
+        using (RTData data = RTData.Get())
         {
-            UIManager.Instance.GameUpdateText.text += "\nPhase 4: Failed To Do Phase 4";
+            data.SetInt(1, PeerID);
+            data.SetInt(2, _tronGameManager.SelectedSkin);
+            RT.SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
+        UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE SEND: START";
     }
     public void Access_SentReadyToServer()
     {
-        try
+        //SEND READY
+        GameSparksRTUnity RT = GetRTSession();
+        using (RTData data = RTData.Get())
         {
-            //SET LOCAL CAR MESH
-            _tronGameManager.PlayerObjects[PeerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(_tronGameManager.SelectedSkin);
-            using (RTData data = RTData.Get())
-            {
-                data.SetInt(1, PeerID);
-                data.SetInt(2, _tronGameManager.SelectedSkin);
-                GetRTSession().SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                UIManager.Instance.GameUpdateText.text += "\nPhase 3.5: Sent Selected Mesh";
-            }
+            data.SetInt(1, PeerID);
+            data.SetInt(2, 1);
+            data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
+            RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+        UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE SEND: MESH";
 
-            using (RTData data = RTData.Get())
-            {
-                data.SetInt(1, PeerID);
-                data.SetInt(2, 1);
-                data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
-                GetRTSession().SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-            }
-            UIManager.Instance.GameUpdateText.text += "\nPhase 4.5: Sent Ready For Player: " + (PeerID);
-        }
-        catch
+        //SEND MESH
+        RT = GetRTSession();
+        _tronGameManager.PlayerObjects[PeerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(_tronGameManager.SelectedSkin);
+        using (RTData data = RTData.Get())
         {
-            UIManager.Instance.GameUpdateText.text += "\nPhase 4.5: Failed to Send Ready for Player: " + (PeerID);
+            data.SetInt(1, PeerID);
+            data.SetInt(2, _tronGameManager.SelectedSkin);
+            RT.SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
+        UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE SEND: READY";
     }
     #endregion
 }

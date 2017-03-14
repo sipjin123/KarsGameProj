@@ -73,3 +73,16 @@ public enum TYPE_OF_DATA_TO_SEND
     STATUS,
     REDUCE_HP
 }
+
+public enum SKILL_LIST
+{
+    Shield,
+    Stun,
+    Blind,
+    Confuse,
+    Slow,
+    Silence,
+    Fly,
+    Nitro,
+    Expand
+}

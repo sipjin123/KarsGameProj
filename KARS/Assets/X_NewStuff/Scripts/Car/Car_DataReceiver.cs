@@ -86,12 +86,17 @@ public class Car_DataReceiver : Car_Network_Interpolation
     #endregion
     //================================================================================================================================
     #region INIT
-    public void StartGame(bool _switch)
+     void StartGame(bool _switch)
     {
         if (Network_ID == _gameSparkPacketReceiver.PeerID)
         {
             _carMovement.StartGame = _switch;
         }
+    }
+    void Awake()
+    {
+
+        _carMovement = GetComponent<Car_Movement>();
     }
     #endregion
     //================================================================================================================================
@@ -305,7 +310,6 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 break;
             case NetworkPlayerStatus.ACTIVATE_EXPLOSION:
                 {
-                    UIManager.Instance.GameUpdateText.text += "\nSEND EXPLOSION LOCALLY";
                     {
                         ExplosionSwitch = true;
                         ExplosionObject.SetActive(true);
@@ -525,49 +529,48 @@ public class Car_DataReceiver : Car_Network_Interpolation
         }
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_EXPLOSION)
         {
-            UIManager.Instance.GameUpdateText.text += "\n\tEXPLOSION Command: "+_switch;
             ExplosionObject.SetActive(_switch);
             ExplosionSwitch = _switch;
         }
         if (_netStatus == NetworkPlayerStatus.SET_READY)
         {
-            try
-            {
-                _carMovement.SetReady(_switch);
-                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY READY THIS PLAYER";
+            _carMovement.SetReady(_switch);
+            UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY READY THIS PLAYER: "+Network_ID;
 
-                //2 PLAYERS READY
-                if (TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().isREady
-                    && TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().isREady)
-                {
-                    GameSparkPacketReceiver.Instance.Access_SentStartToServer();
-                    UIManager.Instance.GameUpdateText.text += "\nPhase 5: Both players are ready";
-                }
-                else
-                {
-                    GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
-                    UIManager.Instance.GameUpdateText.text += "\n\tBoth players are NOT ready, tryng again";
-                }
-            }
-            catch
+            UIManager.Instance.GameUpdateText.text += "\n\t" + TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().GetReady() + " - " 
+                                                             + TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().GetReady();
+
+            //2 PLAYERS READY
+            if (TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().GetReady()
+                && TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().GetReady())
             {
-                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO READY, RETRYING, The cound of player objects is: " + TronGameManager.Instance.PlayerObjects.Length;
+                GameSparkPacketReceiver.Instance.Access_SentStartToServer();
+                UIManager.Instance.GameUpdateText.text += "\nPhase 5: Both players are ready";
+
+            }
+            else
+            {
+                GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
+
                 StopCoroutine("delayRestartReady");
                 StartCoroutine(delayRestartReady(_switch, _netStatus));
+                UIManager.Instance.GameUpdateText.text += "\n\tBoth players are NOT ready, tryng again";
             }
         }
         if (_netStatus == NetworkPlayerStatus.SET_START)
         {
             try
             {
+                TronGameManager.Instance.SetProgressValueHolder(10);
                 UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY START THIS PLAYER";
                 _carMovement.SetStartGame(_switch);
-                StateButtonManager.Instance.OnClick_ResetGame();
+                //UIManager.Instance.Set_Canvas_Waiting(false);
             }
             catch
             {
-                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO START, RETRYING";
+                StopCoroutine("delayRestartReady");
                 StartCoroutine(delayRestartReady(_switch, _netStatus));
+                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO START, RETRYING";
             }
         }
     }
@@ -598,7 +601,6 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
     public void InitCam()
     {
-        _carMovement = GetComponent<Car_Movement>();
         _gameSparkPacketReceiver = GameSparkPacketReceiver.Instance.GetComponent<GameSparkPacketReceiver>();
         GetRTSession = _gameSparkPacketReceiver.GetRTSession();
         if (Network_ID == _gameSparkPacketReceiver.PeerID)
@@ -658,32 +660,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 }
             }
         }
-
-        /*
-        foreach (Transform T in skillRoster)
-        {
-            if (T.gameObject.name == TronGameManager.Instance.selected_currentSkill_Text[0].text)
-            {
-                T.GetComponent<Button>().onClick.RemoveListener(() => CDThisSkillSlot(0, T.gameObject));
-                T.GetComponent<Button>().onClick.RemoveListener(() => CDThisSkillSlot(1, T.gameObject));
-                T.GetComponent<Button>().onClick.RemoveAllListeners();
-
-                T.GetComponent<Button>().onClick.AddListener(() => CDThisSkillSlot(0, T.gameObject));
-                CooldownName[0] = T.name;
-                ButtonObject[0] = T;
-                coolDown_Timer[0] = 0;
-                CooldownCap[0] = CheckCoolDownCap(TronGameManager.Instance.selected_currentSkill_Text[0].text);
-
-                UIManager.Instance.StartCooldDownForBlockers(Network_ID, 0, CooldownCap[0], CooldownCap[0], CooldownName[0]);
-                T.SetParent(skillParent[0]);
-                T.localScale = Vector3.one;
-                T.localPosition = Vector3.zero;
-                T.gameObject.SetActive(true);
-
-                Debug.LogError("Skill 1 should be: " + T.name);
-                break;
-            }
-        }*/
+        
 
         foreach (Transform T in skillRoster)
         {
@@ -720,8 +697,6 @@ public class Car_DataReceiver : Car_Network_Interpolation
         T.localScale = Vector3.one;
         T.localPosition = Vector3.zero;
         T.gameObject.SetActive(true);
-
-        Debug.LogError("Skill "+ _var + " should be: " + T.name);
     }
 
     float CheckCoolDownCap(string _val)
@@ -781,7 +756,6 @@ public class Car_DataReceiver : Car_Network_Interpolation
     //================================================================================================================================
     public void CDThisSkillSlot(int _val , GameObject _obj)
     {
-        Debug.LogError("was clicked by: " + _obj.name);
         coolDown_Switch[_val] = true;
     }
 

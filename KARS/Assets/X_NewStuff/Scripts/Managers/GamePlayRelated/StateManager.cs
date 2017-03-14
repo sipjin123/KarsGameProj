@@ -80,11 +80,12 @@ public class StateManager : MonoBehaviour {
                 break;
             case MENUSTATE.MATCH_FIND:
                 {
-                    TronGameManager.Instance.BlockMatchFinding = false;
+                    RegisterGameSpark.Instance.Access_LoginAuthentication();
                     TronGameManager.Instance.ClearLogs();
+                    TronGameManager.Instance.StartProgressSession();
+                    TronGameManager.Instance.BlockMatchFinding = false;
                     ResetAllMainMenuPanels();
                     UIManager.Instance.Set_Canvas_Waiting(true);
-                    RegisterGameSpark.Instance.Access_LoginAuthentication();
                 }
                 break;
             case MENUSTATE.RESTART_GAME:
@@ -110,8 +111,7 @@ public class StateManager : MonoBehaviour {
                 {
                     UIManager.Instance.Set_Canvas_InGame(true);
                     UIManager.Instance.SetRespawnScreen(true);
-
-                    UIManager.Instance.Set_Canvas_Waiting(false);
+                    
                     UIManager.Instance.SetResultScreen(false);
                 }
                 break;
@@ -180,7 +180,6 @@ public class StateManager : MonoBehaviour {
             UIManager.Instance.GameUpdateText.text += "\nNonExisting RT Session";
         }
         GS.Disconnect();
-
-
+        
     }
 }

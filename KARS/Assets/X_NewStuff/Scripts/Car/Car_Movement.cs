@@ -24,7 +24,7 @@ public class Car_Movement : MonoBehaviour
     public TrailCollision _trailCollision;
 
     public bool StartGame;
-    public bool isREady;
+    private bool isREady;
     public void SetStartGame(bool _switch)
     {
         StartGame = _switch;
@@ -32,6 +32,10 @@ public class Car_Movement : MonoBehaviour
     public void SetReady(bool _Switch)
     {
         isREady = _Switch;
+    }
+    public bool GetReady()
+    {
+        return isREady;
     }
     private bool FlipSwitch;
     public bool FlipCarSwitch

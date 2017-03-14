@@ -31,6 +31,13 @@ public class TronGameManager : GameStatsTweaker {
 
     public Transform SkillButtonParent;
     public GameObject SkillButton;
+
+    public int SelectedSkin;
+    int currentSlotIndex;
+    public Image[] selected_currentSkill_Image;
+    public Text[] selected_currentSkill_Text;
+    public GameObject SkillPanel;
+
     public void InitSkillList()
     {
         for (int i = 0; i < SkillListCount; i++)
@@ -53,10 +60,6 @@ public class TronGameManager : GameStatsTweaker {
         SelectSkillSlot(0);
     }
 
-    public int SelectedSkin;
-    int currentSlotIndex;
-    public Image[] selected_currentSkill_Image;
-    public Text[] selected_currentSkill_Text;
 
     public GameObject[] slotIndicator;
     public GameObject[] skillSlotIndicator;
@@ -81,7 +84,6 @@ public class TronGameManager : GameStatsTweaker {
         selected_currentSkill_Text[currentSlotIndex].text = _obj.transform.GetChild(0).GetComponent<Text>().text;
     }
 
-    public GameObject SkillPanel;
     public void ToggleSkillSelection()
     {
         SkillPanel.SetActive(!SkillPanel.activeInHierarchy);
@@ -154,14 +156,14 @@ public class TronGameManager : GameStatsTweaker {
     #endregion
     //==================================================================================================================================
     #region CHARACTER SELECT
-    public void OnClick_SelectCarButton()
-    {
-        SelectedSkin = carMeshIndex;
-        Access_UpdateCarSelection();
-    }
     public void OnClick_SelectThisCarFrame(int _val)
     {
         carMeshIndex = _val;
+        Access_UpdateCarSelection();
+    }
+    public void OnClick_SelectCarButton()
+    {
+        SelectedSkin = carMeshIndex;
         Access_UpdateCarSelection();
     }
     public void NextCar()
@@ -174,6 +176,7 @@ public class TronGameManager : GameStatsTweaker {
         carMeshIndex--;
         Access_UpdateCarSelection();
     }
+
     public void Access_UpdateCarSelection()
     {
         if (carMeshIndex <= -1)
@@ -212,14 +215,13 @@ public class TronGameManager : GameStatsTweaker {
     public void ReceiveSignalToStartGame()
     {
         NetworkStart = true;
-
         if (GameSparkPacketReceiver.Instance.PeerID == 0)
         {
             StopCoroutine("RetryToSTart");
             StartCoroutine("RetryToSTart");
             return;
         }
-        ReadyPlayer(GameSparkPacketReceiver.Instance.PeerID);
+        StartCoroutine("DelayStartChecker");
 
         StateManager.Instance.Access_ChangeState(MENUSTATE.START_GAME);
     }
@@ -228,54 +230,109 @@ public class TronGameManager : GameStatsTweaker {
         yield return new WaitForSeconds(2);
         ReceiveSignalToStartGame();
     }
-
-
-    void ReadyPlayer(int _player)
-    {
-        StartCoroutine(DelayStartChecker(_player));
-    }
-    IEnumerator DelayStartChecker(int _player)
+    
+    IEnumerator DelayStartChecker()
     {
         yield return new WaitForSeconds(3);
-        UIManager.Instance.GameUpdateText.text += "\nDelay Start Player: " + _player;
-        //READY LOCAL PLAYER 
-        if (_player == 0)
+        SendStartSignalConcent();
+    }
+    private void SendStartSignalConcent()
+    {
+        PlayerObjects[GameSparkPacketReceiver.Instance.PeerID - 1].GetComponent<Car_Movement>().SetReady(true);
+        GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
+
+        return;
+        UIManager.Instance.GameUpdateText.text += "\n\tDelay Ready Player: " + GameSparkPacketReceiver.Instance.PeerID;
+
+        GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+        PlayerObjects[GameSparkPacketReceiver.Instance.PeerID - 1].GetComponent<Car_Movement>().SetReady(true);
+        using (RTData data = RTData.Get())
         {
-            UIManager.Instance.GameUpdateText.text += "\nRETRYING TO Delay Start Player: " + _player;
-            DelayStartChecker(_player);
-            yield return null;
+            data.SetInt(1, GameSparkPacketReceiver.Instance.PeerID);
+            data.SetInt(2, 1);
+            data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
+            GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
-        try
-        {
-            GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
-            PlayerObjects[_player - 1].GetComponent<Car_Movement>().SetReady(true);
-            using (RTData data = RTData.Get())
-            {
-                data.SetInt(1, _player);
-                data.SetInt(2, 1);
-                data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
-                GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-            }
-        }
-        catch
-        {
-            UIManager.Instance.GameUpdateText.text += "\nRETRYING TO Delay Start Player: " + _player;
-            DelayStartChecker(_player);
-        }
+        UIManager.Instance.GameUpdateText.text += "\nSignal Sent To Server :: Ready Player: " + GameSparkPacketReceiver.Instance.PeerID;
+
     }
     #endregion
     //==================================================================================================================================
 
+    float progressValueHolder;
+    float currentProgressValue;
+    bool progressValueSwitch;
+    float progressTimer;
+    public void SetProgressValueHolder(float _val)
+    {
+        progressValueHolder += _val;
+    }
+    public void StartProgressSession()
+    {
+        progressTimer = 0;
+        progressValueHolder = 0;
+        currentProgressValue = 0;
+        UIManager.Instance.SetProgressText("");
+        progressValueSwitch = true;
+    }
+    void Update()
+    {
+        if(progressValueSwitch)
+        {
+            progressTimer += Time.deltaTime;
+            UIManager.Instance.SetProgressTimerText(((int)progressTimer).ToString());
+            if (progressValueHolder > 0)
+            {
+                progressValueHolder -= Time.deltaTime * 10;
+                currentProgressValue += Time.deltaTime * 10;
+                if (currentProgressValue >= 70 && currentProgressValue < 70.5)
+                {
+                    currentProgressValue = 71;
+                    SetProgressValueHolder(29);
+                }
+                if (currentProgressValue >= 99)
+                {
+                    currentProgressValue = 100;
+                    UIManager.Instance.SetProgressText(((int)currentProgressValue).ToString());
+                    progressValueSwitch = false;
+                    UIManager.Instance.Set_Canvas_Waiting(false);
+                    UIManager.Instance.Set_Canvas_Countdown(true);
+                    StopCoroutine("CountDownTimer");
+                    StartCoroutine("CountDownTimer");
+                }
+            }
+            UIManager.Instance.SetProgressText(((int)currentProgressValue).ToString());
+        }
 
+        if(Input.GetKeyDown(KeyCode.Alpha1))
+        GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+            GameSparkPacketReceiver.Instance.Access_SentStartToServer();
+    }
+    IEnumerator CountDownTimer()
+    {
+        UIManager.Instance.SetCountdownTimerText("3");
+        yield return new WaitForSeconds(1);
+        UIManager.Instance.SetCountdownTimerText("2");
+        yield return new WaitForSeconds(1);
+        if(GameSparkPacketReceiver.Instance.PeerID == 1)
+        StateButtonManager.Instance.OnClick_ResetGame();
+        UIManager.Instance.SetCountdownTimerText("1");
+        yield return new WaitForSeconds(1);
+        UIManager.Instance.SetCountdownTimerText("Go");
+        yield return new WaitForSeconds(.5f);
+        UIManager.Instance.SetRespawnScreen(true);
+        UIManager.Instance.Set_Canvas_Countdown(false);
+    }
+    
 
-
-
-
-
+    #region PUBLIC FUNCTIONS
     public void Global_SendState(MENUSTATE _state)
     {
+        UIManager.Instance.GameUpdateText.text += "\n\tSuppose To Do This State: "+_state;
         StateManager.Instance.Access_ChangeState(_state);
 
+        GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, 0);
@@ -283,9 +340,6 @@ public class TronGameManager : GameStatsTweaker {
             GetRTSession.SendData(OPCODE_CLASS.MenuStateOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
     }
-
-
-    #region PUBLIC FUNCTIONS
     public void Access_ReInitializeGameSparks()
     {
         Destroy(CurrentGameSparksObject);
@@ -315,17 +369,4 @@ public class TronGameManager : GameStatsTweaker {
         }
     }
     #endregion
-}
-
-public enum SKILL_LIST
-{
-    Shield,
-    Stun,
-    Blind,
-    Confuse,
-    Slow,
-    Silence,
-    Fly,
-    Nitro,
-    Expand
 }

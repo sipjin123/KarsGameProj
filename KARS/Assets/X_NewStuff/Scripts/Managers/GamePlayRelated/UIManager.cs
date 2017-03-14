@@ -64,6 +64,7 @@ public class UIManager : MonoBehaviour {
         InGame_CANVAS,
         Debug_CANVAS,
         Waiting_CANVAS,
+        Countdown_CANVAS,
         MainMenu_CANVAS,
         MainMenu_StatusPreview_PANEL,
         MainMenu_CarPreview_PANEL,
@@ -93,6 +94,12 @@ public class UIManager : MonoBehaviour {
 
     [SerializeField]
     private GameObject ExplosionPanel;
+
+
+    [SerializeField]
+    private Text ProgressText, ProgressTimerText, CountdownTimerText;
+
+
     //==========================================================================================
     #region MAIN MENU VARIABLES
 
@@ -135,6 +142,10 @@ public class UIManager : MonoBehaviour {
     public void Set_Canvas_Waiting(bool _switch)
     {
         Waiting_CANVAS.SetActive(_switch);
+    }
+    public void Set_Canvas_Countdown(bool _switch)
+    {
+        Countdown_CANVAS.SetActive(_switch);
     }
     public void Set_Canvas_Debug(bool _switch)
     {
@@ -239,6 +250,19 @@ public class UIManager : MonoBehaviour {
     public void SetExplosionPanel(bool _switch)
     {
         ExplosionPanel.SetActive(_switch);
+    }
+
+    public void SetProgressText(string _val)
+    {
+        ProgressText.text = _val+"%";
+    }
+    public void SetProgressTimerText(string _val)
+    {
+        ProgressTimerText.text =  _val;
+    }
+    public void SetCountdownTimerText(string _val)
+    {
+        CountdownTimerText.text = _val;
     }
 
     #region MENU BUTTONS

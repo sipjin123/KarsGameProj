@@ -1,0 +1,1736 @@
+Initialize engine version: 5.5.0f3 (38b4efef76f0)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: NVIDIA Quadro K600 (ID=0xffa)
+    Vendor:   NVIDIA
+    VRAM:     995 MB
+    Driver:   21.21.13.6909
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\Assembly-UnityScript.dll (this message is harmless)
+Loading C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\Assembly-UnityScript.dll into Unity Child Domain
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll (this message is harmless)
+Loading C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll into Unity Child Domain
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
+Loading C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\UnityEngine.Purchasing.dll (this message is harmless)
+Loading C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\UnityEngine.Purchasing.dll into Unity Child Domain
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\BouncyCastle_GameSparks.dll (this message is harmless)
+Loading C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\BouncyCastle_GameSparks.dll into Unity Child Domain
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\GameSparks.Api.dll (this message is harmless)
+Loading C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\GameSparks.Api.dll into Unity Child Domain
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\GameSparks.dll (this message is harmless)
+Loading C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\GameSparks.dll into Unity Child Domain
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\GameSparksRT.dll (this message is harmless)
+Loading C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\GameSparksRT.dll into Unity Child Domain
+- Completed reload, in  0.255 seconds
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\System.dll (this message is harmless)
+OnLevelWasLoaded was found on ObservableMonoBehaviour
+This message has been deprecated and will be removed in a later version of Unity.
+Add a delegate to SceneManager.sceneLoaded instead to get notifications after scene loading has completed
+ 
+(Filename:  Line: 382)
+
+OnLevelWasLoaded was found on MainThreadDispatcher
+This message has been deprecated and will be removed in a later version of Unity.
+Add a delegate to SceneManager.sceneLoaded instead to get notifications after scene loading has completed
+ 
+(Filename:  Line: 382)
+
+OnLevelWasLoaded was found on TypedMonoBehaviour
+This message has been deprecated and will be removed in a later version of Unity.
+Add a delegate to SceneManager.sceneLoaded instead to get notifications after scene loading has completed
+ 
+(Filename:  Line: 382)
+
+desktop: 1920x1080 60Hz; virtual: 3840x1238 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+The referenced script on this Behaviour (Game Object 'Cube') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'Cube (4)') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'Cube (3)') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'Cube (1)') is missing!
+ 
+(Filename:  Line: 1754)
+
+The referenced script on this Behaviour (Game Object 'Cube (2)') is missing!
+ 
+(Filename:  Line: 1754)
+
+UnloadTime: 1.099639 ms
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\System.Configuration.dll (this message is harmless)
+Platform assembly: C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Managed\System.Xml.dll (this message is harmless)
+DontDestroyOnLoad only work for root GameObjects or components on root GameObjects.
+ 
+(Filename:  Line: 447)
+
+Fallback handler could not load library C:/Users/burlin.gauna/Documents/KARS/KARS/test_Data/Mono/libc
+Fallback handler could not load library C:/Users/burlin.gauna/Documents/KARS/KARS/test_Data/Mono/.\libc
+Fallback handler could not load library C:/Users/burlin.gauna/Documents/KARS/KARS/test_Data/Mono/libc
+GS: Connecting to:wss://preview.gamesparks.net/ws/E304420h8hPT?deviceOS=WP8&deviceID=e619be5a464c2cad90b1cb735525ad3a6b581c98&SDK=
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+IPv6 on!
+GS: OPENED
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+GS: RECV:{"@class": ".AuthenticatedConnectResponse","connectUrl": "wss://gsp-mae000-se08.gamesparks.net/ws/E304420h8hPT?deviceOS=WP8&deviceID=e619be5a464c2cad90b1cb735525ad3a6b581c98&SDK=","requestId": "0"}
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+GS: Connecting to:wss://gsp-mae000-se08.gamesparks.net/ws/E304420h8hPT?deviceOS=WP8&deviceID=e619be5a464c2cad90b1cb735525ad3a6b581c98&SDK=
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+IPv6 on!
+GS: OPENED
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+GS: RECV:{"@class":".AuthenticatedConnectResponse","nonce":"0295d0a9-52b0-43ec-9322-b75c57f8dfcf","requestId":"0"}
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+GS: SEND:{"@class":".AuthenticatedConnectRequest","hmac":"xh9X1SmSjBF0B4q1kBE6XowGxzHtjRJz9WmoFR+iPLc=","os":"WP8","platform":"WindowsPlayer","deviceId":"e619be5a464c2cad90b1cb735525ad3a6b581c98","authToken":"4622ea77-a0f9-411e-9ffb-87919c16a58b"}
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+GS: RECV:{"@class":".AuthenticatedConnectResponse","authToken":"29c8b569-59e2-4f3e-99fb-f6870bbebbdb","requestId":"0","sessionId":"0295d0a9-52b0-43ec-9322-b75c57f8dfcf","userId":"58c7a0cbc36f0e05658b15de"}
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+GS: Available
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+GS: SEND:{"@class":".RegistrationRequest","displayName":"3672744","userName":"3672744","password":"test","requestId":"636251034980243408_0"}
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+GS: RECV:{"@class":".RegistrationResponse","authToken":"807322ba-43cc-4202-9545-aba4ce485849","displayName":"3672744","newPlayer":true,"requestId":"636251034980243408_0","userId":"58c7a109eeaa7b054f6f02d0"}
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+GSM| Registration Successful...
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Attempting Matchmaking...
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+GS: SEND:{"@class":".MatchmakingRequest","matchShortCode":"B0ntakun","skill":0,"requestId":"636251035011298890_1"}
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+GS: RECV:{"@class":".MatchmakingResponse","requestId":"636251035011298890_1"}
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+GS: RECV:{"@class":".MatchFoundMessage","accessToken":"6tpwSjOTyo3nuoUyushV4SDA5K4b7fcOmhv+orR9lNLAJztbLGhqGaIa0mNB0SdPelAakGI45fu3qRDte4qhWa5Cxk6ttTXUXwN3ijqdzlG+kayaeX1cCSiScAfRg1dNmppuN1xw6QYz6GE30ZHX/FJuT5hE8GJ+80bqjWJAcEB0nr90/rTs9d9/HMrO9ffzSU2qSh7q04xMqXKDX30j1T6HJoELipwx5+AalluIkprFXFlD6fJC7kshHyaEaW00Bk3L0pV1zyLWC+og4pVzomjQ4dFmUgng5J4eNR23iNftZgdB1D9xTFSvKqlAfN4Irr+hCW3EiBwQuxw9UG4wg+hIwqW80m7sOqePdOxpDEieQhIsBVy0PWM5rEQFZ1fGD7dKda+c6L/MpSEuBh+ezRvC4/Pk6QoVebk5iAm8YUA=","gameId":304420,"host":"gsp-aeu-rt02.gamesparks.net","matchData":{},"matchId":"58c7a10cf12dd6054eb206ad","matchShortCode":"B0ntakun","messageId":"58c7a10cf12dd6054eb206b3","notification":true,"participants":[{"displayName":"3672744","externalIds":{ },"id":"58c7a109eeaa7b054f6f02d0","online":true,"peerId":2},{"displayName":"35662130","externalIds":{ },"id":"58c7a108f12dd6054eb20116","online":true,"peerId":1}],"playerId":"58c7a109eeaa7b054f6f02d0","port":5100,"summary":"MatchFoundMessage"}
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Writen builder: RTSessionInfo
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+GSM| Creating New RT Session Instance...
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+DontDestroyOnLoad only work for root GameObjects or components on root GameObjects.
+ 
+(Filename:  Line: 447)
+
+Starting Session
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+GSM| RT Session Connected...
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+DOING LINEAR
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+DOING LINEAR
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+State inconsistent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+String too long for TextMeshGenerator. Cutting off characters.
+ 
+(Filename:  Line: 226)
+
+DynamicHeapAllocator allocation probe 1 failed - Could not get memory for large allocation 806653680.
+DynamicHeapAllocator allocation probe 2 failed - Could not get memory for large allocation 806653680.
+DynamicHeapAllocator allocation probe 3 failed - Could not get memory for large allocation 806653680.
+DynamicHeapAllocator allocation probe 4 failed - Could not get memory for large allocation 806653680.
+DynamicHeapAllocator out of memory - Could not get memory for large allocation 806653680!
+Could not allocate memory: System out of memory!
+Trying to allocate: 806653680B with 16 alignment. MemoryLabel: DynamicArray
+Allocation happend at: Line:464 in 
+Memory overview
+
+[ ALLOC_DEFAULT ] used: 30049056B | peak: 0B | reserved: 38394736B 
+[ ALLOC_TEMP_JOB ] used: 0B | peak: 0B | reserved: 3145728B 
+[ ALLOC_GFX ] used: 1578800B | peak: 0B | reserved: 5242880B 
+[ ALLOC_CACHEOBJECTS ] used: 221520B | peak: 0B | reserved: 10485760B 
+[ ALLOC_TYPETREE ] used: 0B | peak: 0B | reserved: 0B 
+[ ALLOC_PROFILER ] used: 0B | peak: 0B | reserved: 0B 
+[ ALLOC_TEMP_THREAD ] used: 32768B | peak: 0B | reserved: 3244032B 
+Could not allocate memory: System out of memory!
+Trying to allocate: 806653680B with 16 alignment. MemoryLabel: DynamicArray
+Allocation happend at: Line:464 in 
+Memory overview
+
+[ ALLOC_DEFAULT ] used: 30049056B | peak: 0B | reserved: 38394736B 
+[ ALLOC_TEMP_JOB ] used: 0B | peak: 0B | reserved: 3145728B 
+[ ALLOC_GFX ] used: 1578800B | peak: 0B | reserved: 5242880B 
+[ ALLOC_CACHEOBJECTS ] used: 221520B | peak: 0B | reserved: 10485760B 
+[ ALLOC_TYPETREE ] used: 0B | peak: 0B | reserved: 0B 
+[ ALLOC_PROFILER ] used: 0B | peak: 0B | reserved: 0B 
+[ ALLOC_TEMP_THREAD ] used: 32768B | peak: 0B | reserved: 3244032B 
+
+ 
+(Filename:  Line: 996)
+
+Crash!!!
+SymInit: Symbol-SearchPath: '.;C:\Users\burlin.gauna\Documents\KARS\KARS;C:\Users\burlin.gauna\Documents\KARS\KARS;C:\WINDOWS;C:\WINDOWS\system32;SRV*C:\websymbols*http://msdl.microsoft.com/download/symbols;', symOptions: 530, UserName: 'burlin.gauna'
+OS-Version: 10.0.14393 () 0x100-0x1
+C:\Users\burlin.gauna\Documents\KARS\KARS\test.exe:test.exe (00970000), size: 19062784 (result: 0), SymType: '-exported-', PDB: 'C:\Users\burlin.gauna\Documents\KARS\KARS\test.exe', fileVersion: 5.5.0.46319
+C:\WINDOWS\SYSTEM32\ntdll.dll:ntdll.dll (779B0000), size: 1585152 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\ntdll.dll', fileVersion: 10.0.14393.479
+C:\WINDOWS\System32\KERNEL32.DLL:KERNEL32.DLL (76790000), size: 917504 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\KERNEL32.DLL', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\KERNELBASE.dll:KERNELBASE.dll (768C0000), size: 1708032 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\KERNELBASE.dll', fileVersion: 10.0.14393.479
+C:\WINDOWS\System32\USER32.dll:USER32.dll (76E20000), size: 1437696 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\USER32.dll', fileVersion: 10.0.14393.576
+C:\WINDOWS\System32\win32u.dll:win32u.dll (77020000), size: 86016 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\win32u.dll', fileVersion: 10.0.14393.51
+C:\WINDOWS\System32\GDI32.dll:GDI32.dll (775B0000), size: 176128 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\GDI32.dll', fileVersion: 10.0.14393.206
+C:\WINDOWS\System32\gdi32full.dll:gdi32full.dll (76140000), size: 1421312 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\gdi32full.dll', fileVersion: 10.0.14393.576
+C:\WINDOWS\System32\ole32.dll:ole32.dll (76A90000), size: 958464 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\ole32.dll', fileVersion: 10.0.14393.576
+C:\WINDOWS\System32\combase.dll:combase.dll (74510000), size: 2166784 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\combase.dll', fileVersion: 10.0.14393.576
+C:\WINDOWS\System32\ucrtbase.dll:ucrtbase.dll (75EC0000), size: 917504 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\ucrtbase.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\RPCRT4.dll:RPCRT4.dll (75FA0000), size: 790528 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\RPCRT4.dll', fileVersion: 10.0.14393.82
+C:\WINDOWS\System32\SspiCli.dll:SspiCli.dll (74450000), size: 122880 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\SspiCli.dll', fileVersion: 10.0.14393.576
+C:\WINDOWS\System32\CRYPTBASE.dll:CRYPTBASE.dll (74440000), size: 40960 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\CRYPTBASE.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\bcryptPrimitives.dll:bcryptPrimitives.dll (76C50000), size: 368640 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\bcryptPrimitives.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\sechost.dll:sechost.dll (76740000), size: 266240 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\sechost.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\SHLWAPI.dll:SHLWAPI.dll (74750000), size: 286720 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\SHLWAPI.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\msvcrt.dll:msvcrt.dll (77790000), size: 778240 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\msvcrt.dll', fileVersion: 7.0.14393.0
+C:\WINDOWS\System32\ADVAPI32.dll:ADVAPI32.dll (76B90000), size: 487424 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\ADVAPI32.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\SHELL32.dll:SHELL32.dll (74A80000), size: 20811776 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\SHELL32.dll', fileVersion: 10.0.14393.693
+C:\WINDOWS\System32\cfgmgr32.dll:cfgmgr32.dll (76C10000), size: 221184 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\cfgmgr32.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\windows.storage.dll:windows.storage.dll (77040000), size: 5693440 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\windows.storage.dll', fileVersion: 10.0.14393.479
+C:\WINDOWS\System32\powrprof.dll:powrprof.dll (76870000), size: 282624 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\powrprof.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\kernel.appcore.dll:kernel.appcore.dll (74A70000), size: 53248 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\kernel.appcore.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\shcore.dll:shcore.dll (74470000), size: 557056 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\shcore.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\profapi.dll:profapi.dll (77850000), size: 61440 (result: 0), SymType: '-nosymbols-', PDB: 'C:\WINDOWS\System32\profapi.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\WS2_32.dll:WS2_32.dll (77720000), size: 405504 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\WS2_32.dll', fileVersion: 10.0.14393.206
+C:\WINDOWS\System32\OLEAUT32.dll:OLEAUT32.dll (76F80000), size: 606208 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\OLEAUT32.dll', fileVersion: 10.0.14393.447
+C:\WINDOWS\System32\msvcp_win.dll:msvcp_win.dll (76070000), size: 503808 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\msvcp_win.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\IMM32.dll:IMM32.dll (76100000), size: 151552 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\IMM32.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\HID.DLL:HID.DLL (6AB30000), size: 40960 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\HID.DLL', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\VERSION.dll:VERSION.dll (74430000), size: 32768 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\VERSION.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\OPENGL32.dll:OPENGL32.dll (68E60000), size: 917504 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\OPENGL32.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\WINMM.dll:WINMM.dll (6DAA0000), size: 147456 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\WINMM.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\DNSAPI.dll:DNSAPI.dll (6F4D0000), size: 507904 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\DNSAPI.dll', fileVersion: 10.0.14393.206
+C:\WINDOWS\System32\NSI.dll:NSI.dll (76B80000), size: 28672 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\NSI.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\IPHLPAPI.DLL:IPHLPAPI.DLL (6F2C0000), size: 192512 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\IPHLPAPI.DLL', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\WINHTTP.dll:WINHTTP.dll (6D270000), size: 655360 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\WINHTTP.dll', fileVersion: 10.0.14393.351
+C:\WINDOWS\SYSTEM32\GLU32.dll:GLU32.dll (50580000), size: 151552 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\GLU32.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\DDRAW.dll:DDRAW.dll (50D30000), size: 970752 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\DDRAW.dll', fileVersion: 10.0.14393.447
+C:\WINDOWS\SYSTEM32\winmmbase.dll:winmmbase.dll (6DA70000), size: 143360 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\winmmbase.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\DCIMAN32.dll:DCIMAN32.dll (01BC0000), size: 28672 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\DCIMAN32.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\system32\uxtheme.dll:uxtheme.dll (741C0000), size: 479232 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\system32\uxtheme.dll', fileVersion: 10.0.14393.0
+C:\Program Files\NVIDIA Corporation\nview\nview.dll:nview.dll (6DD00000), size: 2027520 (result: 0), SymType: '-exported-', PDB: 'C:\Program Files\NVIDIA Corporation\nview\nview.dll', fileVersion: 6.14.10.14633
+C:\WINDOWS\System32\PSAPI.DLL:PSAPI.DLL (74500000), size: 24576 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\PSAPI.DLL', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\dwmapi.dll:dwmapi.dll (6F020000), size: 126976 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\dwmapi.dll', fileVersion: 10.0.14393.206
+C:\WINDOWS\SYSTEM32\ntmarta.dll:ntmarta.dll (74320000), size: 163840 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\ntmarta.dll', fileVersion: 10.0.14393.0
+C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Mono\mono.dll:mono.dll (10000000), size: 2297856 (result: 0), SymType: '-exported-', PDB: 'C:\Users\burlin.gauna\Documents\KARS\KARS\test_Data\Mono\mono.dll', fileVersion: 1.0.0.1
+C:\WINDOWS\SYSTEM32\MSWSOCK.dll:MSWSOCK.dll (73680000), size: 319488 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\MSWSOCK.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\MSCTF.dll:MSCTF.dll (775E0000), size: 1265664 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\MSCTF.dll', fileVersion: 10.0.14393.479
+C:\WINDOWS\SYSTEM32\d3d11.dll:d3d11.dll (620A0000), size: 2289664 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\d3d11.dll', fileVersion: 10.0.14393.479
+C:\WINDOWS\SYSTEM32\dxgi.dll:dxgi.dll (68630000), size: 540672 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\dxgi.dll', fileVersion: 10.0.14393.479
+C:\WINDOWS\System32\DriverStore\FileRepository\nv_dispiwu.inf_amd64_9ff5ab165faead52\nvwgf2um.dll:nvwgf2um.dll (5CE80000), size: 17760256 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\DriverStore\FileRepository\nv_dispiwu.inf_amd64_9ff5ab165faead52\nvwgf2um.dll', fileVersion: 21.21.13.6909
+C:\WINDOWS\SYSTEM32\bcrypt.dll:bcrypt.dll (743A0000), size: 110592 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\bcrypt.dll', fileVersion: 10.0.14393.576
+C:\WINDOWS\System32\clbcatq.dll:clbcatq.dll (766B0000), size: 540672 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\clbcatq.dll', fileVersion: 2001.12.10941.16384
+C:\WINDOWS\system32\wbem\wbemprox.dll:wbemprox.dll (5C420000), size: 53248 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\system32\wbem\wbemprox.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\wbemcomn.dll:wbemcomn.dll (5C430000), size: 421888 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\wbemcomn.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\system32\wbem\wbemsvc.dll:wbemsvc.dll (5C400000), size: 65536 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\system32\wbem\wbemsvc.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\system32\wbem\fastprox.dll:fastprox.dll (5C330000), size: 794624 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\system32\wbem\fastprox.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\MMDevApi.dll:MMDevApi.dll (61D60000), size: 360448 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\MMDevApi.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\PROPSYS.dll:PROPSYS.dll (74070000), size: 1372160 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\PROPSYS.dll', fileVersion: 7.0.14393.0
+C:\WINDOWS\System32\DEVOBJ.dll:DEVOBJ.dll (74350000), size: 139264 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\DEVOBJ.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\wdmaud.drv:wdmaud.drv (64970000), size: 233472 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\wdmaud.drv', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\ksuser.dll:ksuser.dll (5E110000), size: 28672 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\ksuser.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\AVRT.dll:AVRT.dll (57DD0000), size: 36864 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\AVRT.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\AUDIOSES.DLL:AUDIOSES.DLL (61E90000), size: 503808 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\AUDIOSES.DLL', fileVersion: 10.0.14393.447
+C:\WINDOWS\SYSTEM32\wintypes.dll:wintypes.dll (61DC0000), size: 847872 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\wintypes.dll', fileVersion: 10.0.14393.576
+C:\WINDOWS\SYSTEM32\msacm32.drv:msacm32.drv (6AFA0000), size: 40960 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\msacm32.drv', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\MSACM32.dll:MSACM32.dll (69F20000), size: 98304 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\MSACM32.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\midimap.dll:midimap.dll (6B310000), size: 32768 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\midimap.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.14393.447_none_89c64d28dafea4b9\comctl32.dll:comctl32.dll (6E860000), size: 2138112 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.14393.447_none_89c64d28dafea4b9\comctl32.dll', fileVersion: 6.10.14393.447
+C:\WINDOWS\SYSTEM32\xinput1_3.dll:xinput1_3.dll (00400000), size: 90112 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\xinput1_3.dll', fileVersion: 9.18.944.0
+C:\WINDOWS\System32\SETUPAPI.dll:SETUPAPI.dll (762A0000), size: 4239360 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\SETUPAPI.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\CRYPTSP.dll:CRYPTSP.dll (703D0000), size: 77824 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\CRYPTSP.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\system32\rsaenh.dll:rsaenh.dll (703A0000), size: 192512 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\system32\rsaenh.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\dhcpcsvc6.DLL:dhcpcsvc6.DLL (6EF00000), size: 77824 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\dhcpcsvc6.DLL', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\dhcpcsvc.DLL:dhcpcsvc.DLL (6EEE0000), size: 81920 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\dhcpcsvc.DLL', fileVersion: 10.0.14393.0
+C:\Program Files (x86)\Bonjour\mdnsNSP.dll:mdnsNSP.dll (6EFF0000), size: 135168 (result: 0), SymType: '-exported-', PDB: 'C:\Program Files (x86)\Bonjour\mdnsNSP.dll', fileVersion: 3.1.0.1
+C:\Windows\System32\rasadhlp.dll:rasadhlp.dll (6EFE0000), size: 32768 (result: 0), SymType: '-exported-', PDB: 'C:\Windows\System32\rasadhlp.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\System32\fwpuclnt.dll:fwpuclnt.dll (6EF90000), size: 299008 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\System32\fwpuclnt.dll', fileVersion: 10.0.14393.0
+C:\WINDOWS\SYSTEM32\dbghelp.dll:dbghelp.dll (6F0B0000), size: 1331200 (result: 0), SymType: '-exported-', PDB: 'C:\WINDOWS\SYSTEM32\dbghelp.dll', fileVersion: 10.0.14321.1024
+
+========== OUTPUTING STACK TRACE ==================
+
+0x00EFCE0E (test) physx::shdfnd::ErrorHandler::getMaxCallbackNum
+0x00EFD2F2 (test) physx::shdfnd::ErrorHandler::getMaxCallbackNum
+0x00F00A61 (test) physx::shdfnd::ErrorHandler::getMaxCallbackNum
+0x00F2CBFE (test) physx::shdfnd::ErrorHandler::getMaxCallbackNum
+0x05AB36F6 (Mono JIT Code) (wrapper managed-to-native) UnityEngine.TextGenerator:INTERNAL_CALL_Populate_Internal_cpp (UnityEngine.TextGenerator,string,UnityEngine.Font,UnityEngine.Color&,int,single,single,UnityEngine.FontStyle,bool,bool,int,int,int,int,bool,UnityEngine.TextAnchor,single,single,single,single,bool,bool,uint&)
+0x05AB3642 (Mono JIT Code) UnityEngine.TextGenerator:Populate_Internal_cpp (string,UnityEngine.Font,UnityEngine.Color,int,single,single,UnityEngine.FontStyle,bool,bool,int,int,int,int,bool,UnityEngine.TextAnchor,single,single,single,single,bool,bool,uint&)
+0x05AB338B (Mono JIT Code) UnityEngine.TextGenerator:Populate_Internal (string,UnityEngine.Font,UnityEngine.Color,int,single,single,UnityEngine.FontStyle,bool,bool,int,int,UnityEngine.VerticalWrapMode,UnityEngine.HorizontalWrapMode,bool,UnityEngine.TextAnchor,UnityEngine.Vector2,UnityEngine.Vector2,bool,bool,UnityEngine.TextGenerationError&)
+0x05AB3103 (Mono JIT Code) UnityEngine.TextGenerator:PopulateAlways (string,UnityEngine.TextGenerationSettings)
+0x05AB2E40 (Mono JIT Code) UnityEngine.TextGenerator:PopulateWithError (string,UnityEngine.TextGenerationSettings)
+0x05AB2CA2 (Mono JIT Code) UnityEngine.TextGenerator:PopulateWithErrors (string,UnityEngine.TextGenerationSettings,UnityEngine.GameObject)
+0x05AB2165 (Mono JIT Code) UnityEngine.UI.Text:OnPopulateMesh (UnityEngine.UI.VertexHelper)
+0x05AAEA68 (Mono JIT Code) UnityEngine.UI.Graphic:DoMeshGeneration ()
+0x05AAE933 (Mono JIT Code) UnityEngine.UI.Graphic:UpdateGeometry ()
+0x05AB1FB1 (Mono JIT Code) UnityEngine.UI.Text:UpdateGeometry ()
+0x05AAE859 (Mono JIT Code) UnityEngine.UI.Graphic:Rebuild (UnityEngine.UI.CanvasUpdate)
+0x05AA9EC4 (Mono JIT Code) UnityEngine.UI.CanvasUpdateRegistry:PerformUpdate ()
+0x05AA9C28 (Mono JIT Code) UnityEngine.Canvas:SendWillRenderCanvases ()
+0x05A4025B (Mono JIT Code) (wrapper runtime-invoke) object:runtime_invoke_void (object,intptr,intptr,intptr)
+0x100F173F (mono) mono_set_defaults
+0x1005D839 (mono) mono_runtime_invoke
+0x00BDBCFE (test) physx::shdfnd::Foundation::getPAUtils
+0x00C0351A (test) physx::shdfnd::Foundation::getTempAllocFreeTable
+0x00F39BBC (test) physx::shdfnd::ErrorHandler::getMaxCallbackNum
+0x00B20E77 (test) physx::shdfnd::Allocator::`default constructor closure'
+0x01028087 (test) physx::shdfnd::ErrorHandler::getMaxCallbackNum
+0x010C74F8 (test) physx::shdfnd::Foundation::getErrorMutex
+0x010FFDB8 (test) physx::shdfnd::Foundation::getErrorMutex
+0x767A62C4 (KERNEL32) BaseThreadInitThunk
+0x77A10FD9 (ntdll) RtlSubscribeWnfStateChangeNotification
+0x77A10FA4 (ntdll) RtlSubscribeWnfStateChangeNotification
+
+========== END OF STACKTRACE ===========
+
+**** Crash! ****

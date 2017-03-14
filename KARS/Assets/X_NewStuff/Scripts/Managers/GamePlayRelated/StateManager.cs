@@ -158,15 +158,17 @@ public class StateManager : MonoBehaviour {
         //DEACTIVATE ALL SKILLS PANEL
         //DEACTIVATE ALL SKILLS ICON IN GAME
         UIManager.Instance.ActivatePlayerPanel(0);
-        foreach (Transform t in UIManager.Instance.Player1_SkillsParent.transform)
+        for (int i = 0; i < 2; i++)
         {
-            t.gameObject.SetActive(false);
+            foreach (Transform t in UIManager.Instance.Player1_SkillsParent[i].transform)
+            {
+                t.gameObject.SetActive(false);
+            }
+            foreach (Transform t in UIManager.Instance.Player2_SkillsParent[i].transform)
+            {
+                t.gameObject.SetActive(false);
+            }
         }
-        foreach (Transform t in UIManager.Instance.Player2_SkillsParent.transform)
-        {
-            t.gameObject.SetActive(false);
-        }
-
         RegisterGameSpark.Instance.Access_StopFindingPlayers();
         //GAMESPARKS DISCONNECTION
         try

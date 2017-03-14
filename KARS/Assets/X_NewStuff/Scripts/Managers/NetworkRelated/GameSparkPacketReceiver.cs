@@ -176,6 +176,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     if (!InitiateNetwork)
                     {
                         PowerUpManager.Instance.StartNetwork();
+                        
                         for (int i = 0; i < _carPool.Count; i++)
                         {
                             _carPool[i].InitCam();

@@ -38,7 +38,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     private GameObject Player2Panel;
 
-    public GameObject Player1_SkillsParent, Player2_SkillsParent;
+    public GameObject[] Player1_SkillsParent, Player2_SkillsParent;
     public GameObject Player1_SkillsRoster, Player2_SkillsRoster;
 
     public GameObject[] SkillIcons;
@@ -47,6 +47,10 @@ public class UIManager : MonoBehaviour {
     private Image[] 
         Player1_SkillBlockers, 
         Player2_SkillBlockers;
+    [SerializeField]
+    private Text[]
+        Player1_SkillSlotNames,
+        Player2_SkillSlotNames;
 
     //SCREENS
     #region SCREENS
@@ -201,16 +205,19 @@ public class UIManager : MonoBehaviour {
             Player2Panel.SetActive(false);
         }
     }
-    public void StartCooldDownForBlockers(int _player, int _slot, float _currentVal, float _maxVal)
+    public void StartCooldDownForBlockers(int _player, int _slot, float _currentVal, float _maxVal,string _name)
     {
         Image imgToCd = null;
+        Text textToRefer = null;
         if(_player == 1)
         {
             imgToCd = Player1_SkillBlockers[_slot];
+            textToRefer = Player1_SkillSlotNames[_slot];
         }
         else if (_player == 2)
         {
             imgToCd = Player2_SkillBlockers[_slot];
+            textToRefer = Player2_SkillSlotNames[_slot];
         }
         else
         {
@@ -218,13 +225,14 @@ public class UIManager : MonoBehaviour {
         }
 
         imgToCd.fillAmount = _currentVal / _maxVal;
-        if(imgToCd.fillAmount > .98f)
+        textToRefer.text = _name+"\n"+ ((int)(_maxVal - _currentVal));
+        if (imgToCd.fillAmount > .98f)
         {
-            imgToCd.enabled = false;
+            imgToCd.gameObject.SetActive( false );
         }
         else
         {
-            imgToCd.enabled = true;
+            imgToCd.gameObject.SetActive( true );
         }
     }
 

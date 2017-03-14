@@ -241,6 +241,7 @@ public class TronGameManager : GameStatsTweaker {
         //READY LOCAL PLAYER 
         if (_player == 0)
         {
+            UIManager.Instance.GameUpdateText.text += "\nRETRYING TO Delay Start Player: " + _player;
             DelayStartChecker(_player);
             yield return null;
         }
@@ -258,6 +259,7 @@ public class TronGameManager : GameStatsTweaker {
         }
         catch
         {
+            UIManager.Instance.GameUpdateText.text += "\nRETRYING TO Delay Start Player: " + _player;
             DelayStartChecker(_player);
         }
     }

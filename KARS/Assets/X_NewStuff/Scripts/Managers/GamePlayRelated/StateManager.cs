@@ -65,40 +65,16 @@ public class StateManager : MonoBehaviour {
                 break;
 
 
-<<<<<<< HEAD
-            case MENUSTATE.MATCH_FIND:
-                {
-                    RegisterGameSpark.Instance.Access_LoginAuthentication();
-                    TronGameManager.Instance.ClearLogs();
-                    TronGameManager.Instance.StartProgressSession();
-                    TronGameManager.Instance.BlockMatchFinding = false;
-                    ResetAllMainMenuPanels();
-                    UIManager.Instance.Set_Canvas_Waiting(true);
-=======
 
             case MENUSTATE.CANCEL_MATCH_FIND:
                 {
                     ResetGameVariables();
                     Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
->>>>>>> 3e3b2bc (Sorting files)
                 }
                 break;
             case MENUSTATE.MATCH_FOUND:
                 {
                     UIManager.Instance.Set_Canvas_Main(false);
-<<<<<<< HEAD
-
-                    GameSparkPacketHandler.Instance.sendResult = "none";
-                    //TEST PLS RETURN LATER
-                    //TronGameManager.Instance.ReceiveSignalToStartGame();
-                }
-                break;
-
-            case MENUSTATE.CANCEL_MATCH_FIND:
-                {
-                    AccessResetGameVariables();
-                    Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
-=======
                     TronGameManager.Instance.ReceiveSignalToStartGame();
                 }
                 break;
@@ -109,36 +85,23 @@ public class StateManager : MonoBehaviour {
                     ResetAllMainMenuPanels();
                     UIManager.Instance.Set_Canvas_Waiting(true);
                     RegisterGameSpark.Instance.Access_LoginAuthentication();
->>>>>>> 3e3b2bc (Sorting files)
                 }
                 break;
             case MENUSTATE.RESTART_GAME:
                 {
                     UIManager.Instance.SetResultScreen(false);
-<<<<<<< HEAD
-                    GameSparkPacketHandler.Instance.Access_ResetClock();
-
-                    for (int i = 0; i < TronGameManager.Instance.PlayerObjects.Length; i++)
-                    {
-                        GameObject _obj = TronGameManager.Instance.PlayerObjects[i].gameObject;
-=======
                     GameSparkPacketReceiver.Instance.Access_ResetClock();
 
                     for (int i = 0; i < GameSparkPacketReceiver.Instance._carPool.Count; i++)
                     {
                         GameObject _obj = GameSparkPacketReceiver.Instance._carPool[i].gameObject;
->>>>>>> 3e3b2bc (Sorting files)
                         Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
                         Car_Movement _carMovement = _obj.GetComponent<Car_Movement>();
 
                         //_carMovement._trailCollision.SetEmiision(false);
                         //_carMovement._trailCollision.Reset_Mesh();
                         _GameSparks_DataSender.InitCam();
-<<<<<<< HEAD
-                        _GameSparks_DataSender.SetHealth( 6);
-=======
                         _GameSparks_DataSender.Health = 6;
->>>>>>> 3e3b2bc (Sorting files)
                         _carMovement.Die();
                     }
                 }
@@ -147,27 +110,6 @@ public class StateManager : MonoBehaviour {
                 {
                     UIManager.Instance.Set_Canvas_InGame(true);
                     UIManager.Instance.SetRespawnScreen(true);
-<<<<<<< HEAD
-                    
-                    UIManager.Instance.SetResultScreen(false);
-                }
-                break;
-            case MENUSTATE.PRE_RESULT:
-                {
-                }
-                break;
-            case MENUSTATE.RESULT:
-                {
-                    if (GameSparkPacketHandler.Instance.Get_hasReceived_PreResult() == false)
-                        UIManager.Instance.SetDisconnectedPanel(true);
-
-                    TronGameManager.Instance.BlockMatchFinding = true;
-                    //RESULTS SCREEN
-                    UIManager.Instance.Set_Canvas_Waiting(false);
-                    UIManager.Instance.Set_Canvas_GameInit(false);
-                    UIManager.Instance.SetResultScreen(true);
-
-=======
 
                     UIManager.Instance.Set_Canvas_Waiting(false);
                     UIManager.Instance.SetResultScreen(false);
@@ -178,7 +120,6 @@ public class StateManager : MonoBehaviour {
                     TronGameManager.Instance.BlockMatchFinding = true;
                     //RESULTS SCREEN
                     UIManager.Instance.SetResultScreen(true);
->>>>>>> 3e3b2bc (Sorting files)
                     if(int.Parse( UIManager.Instance.Var_HP_1.text) >int.Parse(UIManager.Instance.Var_HP_2.text))
                     {
                         UIManager.Instance.SetPlayerWin(true, 1);
@@ -188,21 +129,12 @@ public class StateManager : MonoBehaviour {
                         UIManager.Instance.SetPlayerWin(true, 2);
                     }
                     UIManager.Instance.MirrorPlayerHp();
-<<<<<<< HEAD
-                    AccessResetGameVariables();
-=======
                     ResetGameVariables();
->>>>>>> 3e3b2bc (Sorting files)
                 }
                 break;
             case MENUSTATE.RETURN_TO_MAIN_MENU:
                 {
-<<<<<<< HEAD
-                    AccessResetGameVariables();
-                    GameSparkPacketHandler.Instance.Access_ResetNetwork();
-=======
 
->>>>>>> 3e3b2bc (Sorting files)
                     //UI SETUP
                     ResetAllMainMenuPanels();
                     UIManager.Instance.Set_Canvas_Main(true);
@@ -212,36 +144,20 @@ public class StateManager : MonoBehaviour {
                     UIManager.Instance.SetRespawnScreen(false);
                     UIManager.Instance.Set_Canvas_InGame(false);
                     UIManager.Instance.Set_Canvas_Waiting(false);
-<<<<<<< HEAD
-                    UIManager.Instance.Set_Canvas_GameInit(false);
-                    UIManager.Instance.SetDisconnectedPanel(false);
-=======
->>>>>>> 3e3b2bc (Sorting files)
                 }
                 break;
         }
     }
 
-<<<<<<< HEAD
-    public void AccessResetGameVariables()
-    {
-        //PLAYER OBJECT RESET
-        GameSparkPacketHandler.Instance.Access_ReInitializeGameSparks();
-        GameSparkPacketHandler.Instance.Access_PlayerReset();
-
-        GameSparkPacketHandler.Instance.AccessResetBoolList();
-=======
     void ResetGameVariables()
     {
         //PLAYER OBJECT RESET
         TronGameManager.Instance.Access_ReInitializeGameSparks();
         TronGameManager.Instance.Access_PlayerReset();
->>>>>>> 3e3b2bc (Sorting files)
 
         //DEACTIVATE ALL SKILLS PANEL
         //DEACTIVATE ALL SKILLS ICON IN GAME
         UIManager.Instance.ActivatePlayerPanel(0);
-<<<<<<< HEAD
         for (int i = 0; i < 2; i++)
         {
             foreach (Transform t in UIManager.Instance.Player1_SkillsParent[i].transform)
@@ -253,36 +169,18 @@ public class StateManager : MonoBehaviour {
                 t.gameObject.SetActive(false);
             }
         }
-=======
-        foreach (Transform t in UIManager.Instance.Player1_SkillsParent.transform)
-        {
-            t.gameObject.SetActive(false);
-        }
-        foreach (Transform t in UIManager.Instance.Player2_SkillsParent.transform)
-        {
-            t.gameObject.SetActive(false);
-        }
-
->>>>>>> 3e3b2bc (Sorting files)
         RegisterGameSpark.Instance.Access_StopFindingPlayers();
         //GAMESPARKS DISCONNECTION
         try
         {
-<<<<<<< HEAD
-            GameSparkPacketHandler.Instance.GetRTSession().Disconnect();
-=======
             GameSparkPacketReceiver.Instance.GetRTSession().Disconnect();
->>>>>>> 3e3b2bc (Sorting files)
         }
         catch
         {
             UIManager.Instance.GameUpdateText.text += "\nNonExisting RT Session";
         }
         GS.Disconnect();
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 3e3b2bc (Sorting files)
     }
 }

@@ -625,47 +625,71 @@ public class Car_DataReceiver : Car_Network_Interpolation
     void InitSkillsFunc()
     {
 
-        Transform skillParent;
+        Transform[] skillParent = new Transform[2];
         Transform skillRoster;
+
+
+        //DETERMINING SKILL HOLDERS
         if (GameSparkPacketReceiver.Instance.PeerID == 1)
         {
-            skillParent = UIManager.Instance.Player1_SkillsParent.transform;
+            skillParent[0] = UIManager.Instance.Player1_SkillsParent[0].transform;
+            skillParent[1] = UIManager.Instance.Player1_SkillsParent[1].transform;
             skillRoster = UIManager.Instance.Player1_SkillsRoster.transform;
         }
         else
         {
-            skillParent = UIManager.Instance.Player2_SkillsParent.transform;
+            skillParent[0] = UIManager.Instance.Player2_SkillsParent[0].transform;
+            skillParent[1] = UIManager.Instance.Player2_SkillsParent[1].transform;
             skillRoster = UIManager.Instance.Player2_SkillsRoster.transform;
         }
 
-        foreach (Transform T in skillParent)
+        //CLEARING LISTENERS
+        for (int i = 0; i < skillParent.Length; i++)
         {
-            if (Network_ID == 1)
+            foreach (Transform T in skillParent[i])
             {
-                T.GetComponent<Button>().onClick.RemoveListener(() => CDThisSkillSlot(0, T.gameObject));
-                T.GetComponent<Button>().onClick.RemoveListener(() => CDThisSkillSlot(1, T.gameObject));
-                T.SetParent(UIManager.Instance.Player1_SkillsRoster.transform);
-            }
-            if (Network_ID == 2)
-            {
-                T.GetComponent<Button>().onClick.RemoveListener(() => CDThisSkillSlot(0, T.gameObject));
-                T.GetComponent<Button>().onClick.RemoveListener(() => CDThisSkillSlot(1, T.gameObject));
-                T.SetParent(UIManager.Instance.Player2_SkillsRoster.transform);
+                if (Network_ID == 1)
+                {
+                    T.SetParent(UIManager.Instance.Player1_SkillsRoster.transform);
+                }
+                if (Network_ID == 2)
+                {
+                    T.SetParent(UIManager.Instance.Player2_SkillsRoster.transform);
+                }
             }
         }
+
+        /*
+        foreach (Transform T in skillRoster)
+        {
+            if (T.gameObject.name == TronGameManager.Instance.selected_currentSkill_Text[0].text)
+            {
+                T.GetComponent<Button>().onClick.RemoveListener(() => CDThisSkillSlot(0, T.gameObject));
+                T.GetComponent<Button>().onClick.RemoveListener(() => CDThisSkillSlot(1, T.gameObject));
+                T.GetComponent<Button>().onClick.RemoveAllListeners();
+
+                T.GetComponent<Button>().onClick.AddListener(() => CDThisSkillSlot(0, T.gameObject));
+                CooldownName[0] = T.name;
+                ButtonObject[0] = T;
+                coolDown_Timer[0] = 0;
+                CooldownCap[0] = CheckCoolDownCap(TronGameManager.Instance.selected_currentSkill_Text[0].text);
+
+                UIManager.Instance.StartCooldDownForBlockers(Network_ID, 0, CooldownCap[0], CooldownCap[0], CooldownName[0]);
+                T.SetParent(skillParent[0]);
+                T.localScale = Vector3.one;
+                T.localPosition = Vector3.zero;
+                T.gameObject.SetActive(true);
+
+                Debug.LogError("Skill 1 should be: " + T.name);
+                break;
+            }
+        }*/
 
         foreach (Transform T in skillRoster)
         {
             if (T.gameObject.name == TronGameManager.Instance.selected_currentSkill_Text[0].text)
             {
-                T.SetParent(skillParent);
-                T.localScale = Vector3.one;
-                T.gameObject.SetActive(true);
-                T.GetComponent<Button>().onClick.AddListener(() => CDThisSkillSlot(0, T.gameObject));
-                Debug.LogError("injected a func 0");
-                CooldownCap[0] = CheckCoolDownCap(TronGameManager.Instance.selected_currentSkill_Text[0].text);
-
-                coolDown_Timer[0] = 0;
+                SetThisSkillButton(0, T, skillParent[0]);
                 break;
             }
         }
@@ -673,26 +697,40 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             if (T.gameObject.name == TronGameManager.Instance.selected_currentSkill_Text[1].text)
             {
-                T.SetParent(skillParent);
-                T.localScale = Vector3.one;
-                T.gameObject.SetActive(true);
-                T.GetComponent<Button>().onClick.AddListener(() => CDThisSkillSlot(1, T.gameObject));
-                Debug.LogError("injected a func 1");
-                CooldownCap[1] = CheckCoolDownCap(TronGameManager.Instance.selected_currentSkill_Text[1].text);
-                coolDown_Timer[1] = 0;
+                SetThisSkillButton(1, T, skillParent[1]);
                 break;
             }
         }
     }
 
+    void SetThisSkillButton(int _var, Transform T, Transform SkillParent)
+    {
+        T.GetComponent<Button>().onClick.RemoveListener(() => CDThisSkillSlot(0, T.gameObject));
+        T.GetComponent<Button>().onClick.RemoveListener(() => CDThisSkillSlot(1, T.gameObject));
+        T.GetComponent<Button>().onClick.RemoveAllListeners();
+
+        T.GetComponent<Button>().onClick.AddListener(() => CDThisSkillSlot(_var, T.gameObject));
+        CooldownName[_var] = T.name;
+        ButtonObject[_var] = T;
+        coolDown_Timer[_var] = 0;
+        CooldownCap[_var] = CheckCoolDownCap(TronGameManager.Instance.selected_currentSkill_Text[_var].text);
+
+        UIManager.Instance.StartCooldDownForBlockers(Network_ID, _var, CooldownCap[_var], CooldownCap[_var], CooldownName[_var]);
+        T.SetParent(SkillParent);
+        T.localScale = Vector3.one;
+        T.localPosition = Vector3.zero;
+        T.gameObject.SetActive(true);
+
+        Debug.LogError("Skill "+ _var + " should be: " + T.name);
+    }
+
     float CheckCoolDownCap(string _val)
     {
         SKILL_LIST test = (SKILL_LIST)Enum.Parse(typeof(SKILL_LIST), _val);
-        Debug.LogError("SKILL IS: " + test);
         switch(test)
         {
             case SKILL_LIST.Blind:
-                    return TronGameManager.Instance.BlindDuration;
+                return TronGameManager.Instance.BlindDuration;
             case SKILL_LIST.Confuse:
                 return TronGameManager.Instance.ConfuseDuration;
             case SKILL_LIST.Expand:
@@ -743,10 +781,12 @@ public class Car_DataReceiver : Car_Network_Interpolation
     //================================================================================================================================
     public void CDThisSkillSlot(int _val , GameObject _obj)
     {
-        Debug.LogError("SKILL COOLDOWN: " + _val + " " + _obj.name);
+        Debug.LogError("was clicked by: " + _obj.name);
         coolDown_Switch[_val] = true;
     }
 
+    Transform[] ButtonObject = new Transform[2];
+    string[] CooldownName = new string[2];
     float[] CooldownCap = new float[2];
     bool [] coolDown_Switch = new bool[2];
     float []coolDown_Timer = new float[2];
@@ -759,7 +799,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
             {
                 if (coolDown_Timer[q] < CooldownCap[q])
                 {
-                    UIManager.Instance.StartCooldDownForBlockers(Network_ID, q, coolDown_Timer[q], CooldownCap[q]);
+                    UIManager.Instance.StartCooldDownForBlockers(Network_ID, q, coolDown_Timer[q], CooldownCap[q],CooldownName[q]);
                     coolDown_Timer[q] += Time.deltaTime;
                 }
                 else

@@ -68,6 +68,7 @@ public class TrailCollision : MonoBehaviour
         Node.Add(Guide2.transform.position);
         CurrentVertex += 2;
         CurrentTriangle += 6;
+        _meshCollider.sharedMesh = _mesh;
     }
 
     void Minus()
@@ -79,7 +80,6 @@ public class TrailCollision : MonoBehaviour
         Node.Remove(Node[0]);
         Node.Remove(Node[0]);
 
-        _meshCollider.sharedMesh = _mesh;
     }
     #endregion
     //=============================================================================================================================================================

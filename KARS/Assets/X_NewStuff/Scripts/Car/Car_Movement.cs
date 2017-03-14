@@ -78,6 +78,21 @@ public class Car_Movement : MonoBehaviour
 
     float NitrosSpeed;
 
+    [SerializeField]
+    private bool disableWheels;
+
+    public bool DisableWheels
+    {
+        get
+        {
+            return disableWheels;
+        }
+
+        set
+        {
+            disableWheels = value;
+        }
+    }
 
     #endregion
     //==========================================================================================================================
@@ -138,7 +153,7 @@ public class Car_Movement : MonoBehaviour
         myRigid.angularDrag = _tronGameManager.AngularDrag_Value;
         myRigid.mass = _tronGameManager.Mass_Value;
 
-        if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
+        if (!isDead && !disableWheels && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
             if (accelerationSpeed_Counter < accelerationSpeed_Max)
             {
@@ -194,7 +209,7 @@ public class Car_Movement : MonoBehaviour
                         transform.position = new Vector3(transform.position.x,
                                                             -2,
                                                             transform.position.z);
-                        StopCoroutine("DelayRespawn");
+                        //StopCoroutine("DelayRespawn");
                         StartCoroutine("DelayRespawn");
                         accelerationSpeed_Counter = 0;
                     }
@@ -220,6 +235,7 @@ public class Car_Movement : MonoBehaviour
             return _currentTurningForce / turningForce;
         }
     }
+
     bool _moveLeft, _moveRight;
 
 
@@ -303,7 +319,7 @@ public class Car_Movement : MonoBehaviour
     #region COLLISION
     void OnTriggerEnter(Collider hit)
     {
-        if (!isDead && StartGame && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
+        if (!isDead && !disableWheels && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
         {
             if (hit.gameObject.tag == "Wall" || hit.gameObject.tag == "Trail" || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
             {

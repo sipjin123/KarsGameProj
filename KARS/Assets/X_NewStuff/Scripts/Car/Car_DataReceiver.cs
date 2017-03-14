@@ -544,6 +544,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
             if (TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().GetReady()
                 && TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().GetReady())
             {
+                TronGameManager.Instance.SetProgressValueHolder(20);
                 GameSparkPacketReceiver.Instance.Access_SentStartToServer();
                 UIManager.Instance.GameUpdateText.text += "\nPhase 5: Both players are ready";
 
@@ -561,7 +562,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             try
             {
-                TronGameManager.Instance.SetProgressValueHolder(10);
+                TronGameManager.Instance.SetProgressValueHolder(20);
                 UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY START THIS PLAYER";
                 _carMovement.SetStartGame(_switch);
                 //UIManager.Instance.Set_Canvas_Waiting(false);

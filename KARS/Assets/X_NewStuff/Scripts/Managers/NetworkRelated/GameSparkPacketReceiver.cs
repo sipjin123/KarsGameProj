@@ -7,65 +7,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-<<<<<<< HEAD
-public class GameSparkPacketReceiver : MonoBehaviour {
-    //=============================================================================================================================
-    #region VARIABLES
-    protected bool InitiateNetwork;
-
-    //NETWORK INITIALIZERS
-    protected bool
-    hasReceived_StartMessage,
-    hasReceived_ReadyMessage,
-    hasReceived_AvatarMessage,
-    hasReceived_PreREsult,
-    hasReceived_OnMatchFound;
-
-    public bool Get_hasReceived_PreResult()
-    {
-        return hasReceived_PreREsult;
-    }
-    public void Set_hasReceived_PreResult(bool _var)
-    {
-        hasReceived_PreREsult = _var;
-    }
-
-    //GAME ID
-    protected int peerID = 0;
-    public int GetPeerID()
-    {
-        return peerID;
-    }
-
-    //GAME TIME INIT
-    [SerializeField]
-    protected DateTime gameShouldStartAt;
-    public DateTime Get_gameShouldStartAt()
-    {
-        return gameShouldStartAt;
-    }
-
-    //GAME TIME
-    [SerializeField]
-    protected Text ActualTime;
-    protected float FiveSecUpdateTime;
-
-    protected double gameClockINT;
-    public double GetGameClockINT()
-    {
-        return gameClockINT;
-    }
-
-    //GAMESPARKS
-    protected GameSparksRTUnity gameSparksRTUnity;
-    protected RTSessionInfo sessionInfo;
-
-    [SerializeField]
-    protected GameObject GameSparksObject;
-    [SerializeField]
-    protected GameObject CurrentGameSparksObject;
-
-=======
 public class GameSparkPacketReceiver : MonoBehaviour
 {
 
@@ -104,244 +45,10 @@ public class GameSparkPacketReceiver : MonoBehaviour
     //GAMESPARKS SESSION INITIALIZATION
     #region GAMESPARKS SESSION INITIALIZATION
     private GameSparksRTUnity gameSparksRTUnity;
->>>>>>> 3e3b2bc (Sorting files)
     public GameSparksRTUnity GetRTSession()
     {
         return gameSparksRTUnity;
     }
-<<<<<<< HEAD
-    #endregion
-    //=============================================================================================================================
-    #region DATA RECEIVE
-    protected void OnPacketReceived(RTPacket _packet)
-    {
-        switch (_packet.OpCode)
-        {
-            #region SERVER TIME
-            case 101:
-                {
-                    CalculateTimeDelta(_packet);
-                }
-                break;
-            case 102:
-                {
-                    FiveSecUpdateTime += 5;
-                    UIManager.Instance.GameTimeText.text = FiveSecUpdateTime.ToString();
-                    SyncClock(_packet);
-                    //UPDATES GAME TIME EVERY 5 SECONDS
-                    if (!InitiateNetwork)
-                    {
-                        PowerUpManager.Instance.StartNetwork();
-
-                        for (int i = 0; i < TronGameManager.Instance.PlayerObjects.Length; i++)
-                        {
-                            TronGameManager.Instance.PlayerObjects[i].GetComponent<Car_DataReceiver>().InitCam();
-                        }
-                        InitiateNetwork = true;
-                        UIManager.Instance.GameUpdateText.text += "\n-=-=-=-=-=-=-=- NET INIT";
-                        //TEST PLS RETURN LATER
-                        TronGameManager.Instance.ReceiveSignalToStartGame();
-                    }
-                }
-                break;
-            #endregion
-            case 111:
-                {
-                    //UPDATES PLAYER MOVEMENT
-                    #region MOVEMENT
-
-                    NetworkPlayerData netPlayerData;
-                    netPlayerData.playerID = _packet.Data.GetInt(1).Value;
-                    netPlayerData.playerPos = new Vector3(_packet.Data.GetFloat(2).Value, _packet.Data.GetFloat(3).Value, _packet.Data.GetFloat(4).Value);
-                    netPlayerData.playerRot = _packet.Data.GetVector3(5).Value;
-                    netPlayerData.timeStamp = _packet.Data.GetDouble(7).Value;
-
-                    NetworkDataFilter.Instance.ReceiveNetworkPlayerData(netPlayerData);
-                    #endregion
-                }
-                break;
-            case 113:
-                {
-                    //UPDATES PLAYER POWERUPS AND MESH SWITCH
-                    #region UPDATES PLAYER POWERUPS AND MESH SWITCH
-                    NetworkPlayerEvent _netPlayerEvent = new NetworkPlayerEvent();
-                    _netPlayerEvent.playerID = _packet.Data.GetInt(1).Value;
-                    _netPlayerEvent.playerStatusSwitch = _packet.Data.GetInt(2).Value == 1 ? true : false;
-                    _netPlayerEvent.playerStatus = (NetworkPlayerStatus)_packet.Data.GetInt(3).Value;
-
-                    //UIManager.Instance.GameUpdateText.text += "\n\t\tOPCODE_DATA RECEIVE: " + _netPlayerEvent.playerStatus;
-                    if (_netPlayerEvent.playerStatus == NetworkPlayerStatus.SET_READY)
-                    {
-                        if (hasReceived_ReadyMessage == false)
-                        {
-                            hasReceived_ReadyMessage = true;
-                            TronGameManager.Instance.SetProgressValueHolder(10);
-                            GameSparkPacketHandler.Instance.Access_SentReadyToServer();
-                            UIManager.Instance.GameUpdateText.text += "\n\t>>>OPCODE RECEIVE: READY";
-                        }
-                        else
-                        {
-                            UIManager.Instance.GameUpdateText.text += "\n\t>>>OPCODE BLOCKED: READY";
-                            return;
-                        }
-                    }
-                    if (_netPlayerEvent.playerStatus == NetworkPlayerStatus.SET_START && _netPlayerEvent.playerID == 2)
-                    {
-                        if (hasReceived_StartMessage == false)
-                        {
-                            hasReceived_StartMessage = true;
-                            TronGameManager.Instance.SetProgressValueHolder(10);
-                            GameSparkPacketHandler.Instance.Access_SentStartToServer();
-                            UIManager.Instance.GameUpdateText.text += "\n\t>>>OPCODE RECEIVE: START";
-                        }
-                        else
-                        {
-                            UIManager.Instance.GameUpdateText.text += "\n\t>>>OPCODE BLOCKED: START";
-                            return;
-                        }
-
-                        gameShouldStartAt = DateTime.Parse(_packet.Data.GetString(4));
-                    }
-                    //UIManager.instance.GameUpdateText.text += "\nData Translation for Disable"+_netPlayerEvent.playerStatus;
-                    NetworkDataFilter.Instance.ReceiveNetworkPlayerEvent(_netPlayerEvent);
-                    #endregion
-                }
-                break;
-            case 114:
-                {
-                    //CAR AVATAR SWITCH
-                    #region CAR AVATAR SWITCH
-                    int receivedPlayerToMove = 0;
-                    receivedPlayerToMove = _packet.Data.GetInt(1).Value;
-
-                    UIManager.Instance.GameUpdateText.text += "\n\t>>>OPCODE RECEIVE: CAR AVATAR";
-                    for (int i = 0; i < TronGameManager.Instance.PlayerObjects.Length; i++)
-                    {
-                        GameObject _obj = TronGameManager.Instance.PlayerObjects[i].gameObject;
-                        Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
-
-                        if (_GameSparks_DataSender.GetNetwork_ID() == receivedPlayerToMove)
-                        {
-                            if (hasReceived_AvatarMessage == false)
-                            {
-                                hasReceived_AvatarMessage = true;
-                                UIManager.Instance.SetMatchCancelButton(false);
-                                TronGameManager.Instance.SetProgressValueHolder(50);
-                                GameSparkPacketHandler.Instance.Access_SentAvatarToServer();
-                                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY RECEIVED AVATAR: " + _packet.Data.GetInt(2).Value;
-                                UIManager.Instance.GameUpdateText.text += "\n=========================================================";
-                                _GameSparks_DataSender.SetCarAvatar(_packet.Data.GetInt(2).Value);
-                                return;
-                            }
-                            else
-                            {
-                                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: BLOCKED AVATAR: " + _packet.Data.GetInt(2).Value;
-                                return;
-                            }
-                        }
-                    }
-
-                    #endregion
-                }
-                break;
-            case 115:
-                {
-                    //MISSLE DATA RECEIVE
-                    #region MISSLE DATA RECEIVE
-                    int missleIndex = _packet.Data.GetInt(1).Value;
-                    int PlayerController = _packet.Data.GetInt(2).Value;
-                    List<GameObject> _objList = new List<GameObject>();
-
-                    if (peerID == 1)
-                        _objList = PowerUpManager.Instance.MissleList_Player2;
-                    else if (peerID == 2)
-                        _objList = PowerUpManager.Instance.MissleList_Player1;
-
-                    if (PlayerController != peerID)
-                    {
-                        for (int i = 0; i < _objList.Count; i++)
-                        {
-                            if (missleIndex == _objList[i].GetComponent<MissleScript>().Missle_ID)
-                            {
-                                MissleScript _missleScript = _objList[i].GetComponent<MissleScript>();
-
-                                Vector3 temp = new Vector3(_packet.Data.GetFloat(3).Value, _packet.Data.GetFloat(4).Value, _packet.Data.GetFloat(5).Value);
-
-                                if (_packet.Data.GetInt(7).Value == 0)
-                                {
-                                    _missleScript.SetSYnc(temp, _packet.Data.GetVector3(6).Value);
-                                    _missleScript.gameObject.SetActive(false);
-                                    _missleScript.transform.SetParent(_missleScript.missleParent);
-                                    return;
-                                }
-                                else
-                                {
-                                    _missleScript.SetSYnc(temp, _packet.Data.GetVector3(6).Value);
-                                    _missleScript.gameObject.SetActive(true);
-                                    AudioManager.Instance.SpawnableAudio(temp, AUDIO_CLIP.MISSLE_ACTIVE);
-                                    _missleScript.transform.SetParent(null);
-                                }
-                            }
-                        }
-                    }
-                    #endregion
-                }
-                break;
-            case 118:
-                {
-                    //UPDATES PLAYER HEALTH AND TRAIL VALUE
-                    #region UPDATES PLAYER HEALTH AND TRAIL VALUE
-                    NetworkPlayerVariables _netPlayerVar = new NetworkPlayerVariables();
-                    _netPlayerVar.playerID = _packet.Data.GetInt(1).Value;
-                    _netPlayerVar.playerVariable = (NetworkPlayerVariableList)_packet.Data.GetInt(2).Value;
-                    _netPlayerVar.variableValue = _packet.Data.GetFloat(3).Value;
-
-                    NetworkDataFilter.Instance.ReceivedNetworkPlayerVariable(_netPlayerVar);
-                    #endregion
-                }
-                break;
-            case 066:
-                {
-                    //MENUSTATE
-                    int receivedPlayerID = _packet.Data.GetInt(1).Value;
-                    int receivedMenuState = _packet.Data.GetInt(2).Value;
-                    StateManager.Instance.Access_ChangeState((MENUSTATE)receivedMenuState);
-                }
-                break;
-            case 121:
-                {
-                    int receivedPlayerID = _packet.Data.GetInt(1).Value;
-                    int receivedMenuState = _packet.Data.GetInt(2).Value;
-                    string receivedMSG = _packet.Data.GetString(3);
-
-                    GameSparkPacketHandler.Instance.sendResult = receivedMSG;
-                    UIManager.Instance.GameUpdateText.text += "\nI RECEIVE: " + receivedMSG;
-                            GameSparkPacketHandler.Instance.Global_SendONLYState(MENUSTATE.PRE_RESULT);
-                }
-                break;
-        }
-
-    }
-    #endregion
-    //=============================================================================================================================
-    #region CLOCK SYNC
-
-    protected DateTime serverClock;
-    public DateTime GetServerClock()
-    {
-        return serverClock;
-    }
-
-    protected int timeDelta, latency, roundTrip;
-
-    public virtual void IntTimeStamp()
-    {
-        StopCoroutine("SendTimeStamp");
-        StartCoroutine("SendTimeStamp");
-    }
-    protected IEnumerator SendTimeStamp()
-    {
-=======
 
     public RTSessionInfo sessionInfo;
     public void StartNewRTSession(RTSessionInfo _info)
@@ -411,7 +118,6 @@ public class GameSparkPacketReceiver : MonoBehaviour
     private IEnumerator SendTimeStamp()
     {
 
->>>>>>> 3e3b2bc (Sorting files)
         using (RTData data = RTData.Get())
         {
             data.SetLong(1, (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds);
@@ -420,17 +126,12 @@ public class GameSparkPacketReceiver : MonoBehaviour
         yield return new WaitForSeconds(0f);
         StartCoroutine(SendTimeStamp());
     }
-<<<<<<< HEAD
-
-    /// Calculates the time-difference between the client and server
-=======
-     DateTime serverClock;
+    public DateTime serverClock;
     private int timeDelta, latency, roundTrip;
 
     /// <summary>
     /// Calculates the time-difference between the client and server
     /// </summary>
->>>>>>> 3e3b2bc (Sorting files)
     public void CalculateTimeDelta(RTPacket _packet)
     {
         // calculate the time taken from the packet to be sent from the client and then for the server to return it //
@@ -457,9 +158,6 @@ public class GameSparkPacketReceiver : MonoBehaviour
         */
     }
     #endregion
-<<<<<<< HEAD
-}
-=======
     //====================================================================================
     #region DATA RECEIVE
     private void OnPacketReceived(RTPacket _packet)
@@ -524,6 +222,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     if (_netPlayerEvent.playerStatus == NetworkPlayerStatus.SET_START)
                     {
                         UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE RECEIVE: START";
+                        GAMEshudStartAT = DateTime.Parse( _packet.Data.GetString(4) );
                     }
                     //UIManager.instance.GameUpdateText.text += "\nData Translation for Disable"+_netPlayerEvent.playerStatus;
                     NetworkDataFilter.Instance.ReceiveNetworkPlayerEvent(_netPlayerEvent);
@@ -549,7 +248,6 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     }
                     UIManager.Instance.GameUpdateText.text += "\nPhase 6: Car has been Selected: "+ _packet.Data.GetInt(2).Value;
 
-                    _tronGameManager.SetProgressValueHolder(10);
                     #endregion
                 }
                 break;
@@ -687,6 +385,19 @@ public class GameSparkPacketReceiver : MonoBehaviour
         }
     }
 
+    public void Access_SentReadyToServer()
+    {
+        //SEND READY
+        GameSparksRTUnity RT = GetRTSession();
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, PeerID);
+            data.SetInt(2, 1);
+            data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
+            RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+        }
+        UIManager.Instance.GameUpdateText.text += "\n\n\t***OPCODE SEND: READY\n";
+    }
     public void Access_SentStartToServer()
     {
         //SEND START
@@ -699,11 +410,13 @@ public class GameSparkPacketReceiver : MonoBehaviour
                 data.SetInt(1, i + 1);
                 data.SetInt(2, 1);
                 data.SetInt(3, (int)NetworkPlayerStatus.SET_START);
+                data.SetString(4, serverClock.AddSeconds(5).ToString() );
+                UIManager.Instance.GameUpdateText.text += "\n\tcurrent game time: " + serverClock;
+                UIManager.Instance.GameUpdateText.text += "\n\tGAME SHUD START AT: " + serverClock.AddSeconds(10);
                 RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                _tronGameManager.SetProgressValueHolder(10);
             }
         }
-        UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE SEND: MESH";
+        UIManager.Instance.GameUpdateText.text += "\n\n\t***OPCODE SEND: MESH";
         //SEND MESH
         RT = GetRTSession();
         _tronGameManager.PlayerObjects[PeerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(_tronGameManager.SelectedSkin);
@@ -713,32 +426,8 @@ public class GameSparkPacketReceiver : MonoBehaviour
             data.SetInt(2, _tronGameManager.SelectedSkin);
             RT.SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
-        UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE SEND: START";
-    }
-    public void Access_SentReadyToServer()
-    {
-        //SEND READY
-        GameSparksRTUnity RT = GetRTSession();
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, PeerID);
-            data.SetInt(2, 1);
-            data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
-            RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-        UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE SEND: MESH";
-
-        //SEND MESH
-        RT = GetRTSession();
-        _tronGameManager.PlayerObjects[PeerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(_tronGameManager.SelectedSkin);
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, PeerID);
-            data.SetInt(2, _tronGameManager.SelectedSkin);
-            RT.SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-        UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE SEND: READY";
+        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: START\n";
     }
     #endregion
+    public DateTime GAMEshudStartAT ;
 }
->>>>>>> 3e3b2bc (Sorting files)

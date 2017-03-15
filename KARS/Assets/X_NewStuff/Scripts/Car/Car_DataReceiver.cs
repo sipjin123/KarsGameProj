@@ -559,52 +559,13 @@ public class Car_DataReceiver : Car_Network_Interpolation
             ExplosionSwitch = _switch;
         }
 
-
-
-
-
-
         if (_netStatus == NetworkPlayerStatus.SET_READY)
         {
-            _carMovement.SetReady(_switch);
-            UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY READY THIS PLAYER: "+Network_ID;
-
-            UIManager.Instance.GameUpdateText.text += "\n\t" + TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().GetReady() + " - " 
-                                                             + TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().GetReady();
-
-            //2 PLAYERS READY
-            if (TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().GetReady()
-                && TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().GetReady())
-            {
-                TronGameManager.Instance.SetProgressValueHolder(20);
-                GameSparkPacketReceiver.Instance.Access_SentStartToServer();
-                UIManager.Instance.GameUpdateText.text += "\nPhase 5: Both players are ready";
-
-            }
-            else
-            {
-                GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
-
-                StopCoroutine("delayRestartReady");
-                StartCoroutine(delayRestartReady(_switch, _netStatus));
-                UIManager.Instance.GameUpdateText.text += "\n\tBoth players are NOT ready, tryng again";
-            }
+            Process_Ready();
         }
         if (_netStatus == NetworkPlayerStatus.SET_START)
         {
-            try
-            {
-                TronGameManager.Instance.SetProgressValueHolder(10);
-                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY START THIS PLAYER";
-                _carMovement.SetStartGame(_switch);
-                //UIManager.Instance.Set_Canvas_Waiting(false);
-            }
-            catch
-            {
-                StopCoroutine("delayRestartReady");
-                StartCoroutine(delayRestartReady(_switch, _netStatus));
-                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO START, RETRYING";
-            }
+            Process_Start();
         }
     }
 
@@ -815,6 +776,73 @@ public class Car_DataReceiver : Car_Network_Interpolation
                     coolDown_Timer[q] = 0;
                 }
             }
+        }
+    }
+
+
+
+
+
+    void Process_Ready()
+    {
+        _carMovement.SetReady(true);
+        UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY READY THIS PLAYER: " + Network_ID;
+
+        UIManager.Instance.GameUpdateText.text += "\n\t\t" + TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().GetReady() + " - "
+                                                         + TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().GetReady();
+
+        //2 PLAYERS READY
+        if (TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().GetReady()
+            && TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().GetReady())
+        {
+            TronGameManager.Instance.SetProgressValueHolder(20);
+            GameSparkPacketReceiver.Instance.Access_SentStartToServer();
+        }
+        else
+        {
+            UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO READY THIS PLAYER_____ RETRYNG  CODE 000";
+            GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
+
+            //TO RETURN
+            /*
+            StopCoroutine("delayRestartReady");
+            StartCoroutine(delayRestartReady(_switch, _netStatus));
+            UIManager.Instance.GameUpdateText.text += "\n\tBoth players are NOT ready, tryng again";
+            */
+        }
+    }
+
+    void Process_Start()
+    {
+        if(_carMovement.GetReady() == false)
+        {
+            UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO START THIS PLAYER_____ RETRYNG CODE 001";
+            GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
+            return;
+        }
+        try
+        {
+            _carMovement.SetStartGame(true);
+            if (Network_ID == 2)
+            {
+                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY START THIS PLAYER";
+                UIManager.Instance.GameUpdateText.text += "\n\t\t" + TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().GetReady() + " - "
+                                                                 + TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().GetReady();
+                TronGameManager.Instance.SetProgressValueHolder(10);
+            }
+            //UIManager.Instance.Set_Canvas_Waiting(false);
+        }
+        catch
+        {
+            UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO START THIS PLAYER_____ RETRYNG  CODE 002";
+            GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
+
+            //TO RETURN
+            /*
+                StopCoroutine("delayRestartReady");
+                StartCoroutine(delayRestartReady(_switch, _netStatus));
+                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO START, RETRYING";
+                */
         }
     }
 }

@@ -187,6 +187,8 @@ public class GameSparkPacketReceiver : MonoBehaviour
                         }
                         InitiateNetwork = true;
                         UIManager.Instance.GameUpdateText.text += "\n-=-=-=-=-=-=-=- NET INIT";
+                        //TEST PLS RETURN LATER
+                        TronGameManager.Instance.ReceiveSignalToStartGame();
                     }
                 }
                 break;
@@ -220,7 +222,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     {
                         UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE RECEIVE: READY";
                     }
-                    if (_netPlayerEvent.playerStatus == NetworkPlayerStatus.SET_START)
+                    if (_netPlayerEvent.playerStatus == NetworkPlayerStatus.SET_START && _netPlayerEvent.playerID == 2)
                     {
                         UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE RECEIVE: START";
                         GAMEshudStartAT = DateTime.Parse( _packet.Data.GetString(4) );
@@ -237,6 +239,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
                     int receivedPlayerToMove = 0;
                     receivedPlayerToMove = _packet.Data.GetInt(1).Value;
 
+                    UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE RECEIVE: CAR AVATAR";
                     for (int i = 0; i < _carPool.Count; i++)
                     {
                         GameObject _obj = _carPool[i].gameObject;
@@ -244,10 +247,12 @@ public class GameSparkPacketReceiver : MonoBehaviour
 
                         if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
                         {
+                            TronGameManager.Instance.SetProgressValueHolder(10);
+                            UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY RECEIVED AVATAR: " + _packet.Data.GetInt(2).Value;
+                            UIManager.Instance.GameUpdateText.text += "\n=========================================================";
                             _GameSparks_DataSender.SetCarAvatar(_packet.Data.GetInt(2).Value);
                         }
                     }
-                    UIManager.Instance.GameUpdateText.text += "\nPhase 6: Car has been Selected: "+ _packet.Data.GetInt(2).Value;
 
                     #endregion
                 }
@@ -399,7 +404,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
             RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
         UIManager.Instance.GameUpdateText.text += "\n=========================================================";
-        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: READY\n";
+        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: READY";
     }
     public void Access_SentStartToServer()
     {
@@ -418,9 +423,17 @@ public class GameSparkPacketReceiver : MonoBehaviour
             }
         }
         UIManager.Instance.GameUpdateText.text += "\n=========================================================";
-        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: MESH";
+        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: START";
+
+        StopCoroutine("DelaySendMesh");
+        StartCoroutine("DelaySendMesh");
+    }
+    #endregion
+    IEnumerator DelaySendMesh()
+    {
+        yield return new WaitForSeconds(1);
         //SEND MESH
-        RT = GetRTSession();
+        GameSparksRTUnity RT = GetRTSession();
         _tronGameManager.PlayerObjects[PeerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(_tronGameManager.SelectedSkin);
         using (RTData data = RTData.Get())
         {
@@ -428,8 +441,9 @@ public class GameSparkPacketReceiver : MonoBehaviour
             data.SetInt(2, _tronGameManager.SelectedSkin);
             RT.SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
-        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: START\n";
+        UIManager.Instance.GameUpdateText.text += "\n=========================================================";
+        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: MESH";
     }
-    #endregion
+
     public DateTime GAMEshudStartAT ;
 }

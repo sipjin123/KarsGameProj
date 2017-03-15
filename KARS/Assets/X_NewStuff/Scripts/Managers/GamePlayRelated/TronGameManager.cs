@@ -343,6 +343,7 @@ public class TronGameManager : GameStatsTweaker {
         UIManager.Instance.SetRespawnScreen(false);
         UIManager.Instance.Set_Canvas_Countdown(false);
         UIManager.Instance.Set_Canvas_Waiting(false);
+        UIManager.Instance.Set_Canvas_GameInit(true);
         PlayerObjects[0].GetComponent<Car_Movement>().DisableWheels = false;
         PlayerObjects[1].GetComponent<Car_Movement>().DisableWheels = false;
         if (GameSparkPacketReceiver.Instance.PeerID == 2)

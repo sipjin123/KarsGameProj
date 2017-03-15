@@ -75,7 +75,8 @@ public class StateManager : MonoBehaviour {
             case MENUSTATE.MATCH_FOUND:
                 {
                     UIManager.Instance.Set_Canvas_Main(false);
-                    TronGameManager.Instance.ReceiveSignalToStartGame();
+                    //TEST PLS RETURN LATER
+                    //TronGameManager.Instance.ReceiveSignalToStartGame();
                 }
                 break;
             case MENUSTATE.MATCH_FIND:

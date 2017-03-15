@@ -277,15 +277,16 @@ public class GameSparkPacketReceiver : MonoBehaviour
                                 if (_packet.Data.GetInt(7).Value == 0)
                                 {
                                     _missleScript.SetSYnc(temp, _packet.Data.GetVector3(6).Value);
-                                    _missleScript.transform.SetParent(_missleScript.missleParent);
                                     _missleScript.gameObject.SetActive(false);
+                                    _missleScript.transform.SetParent(_missleScript.missleParent);
                                     return;
                                 }
                                 else
                                 {
-                                    _missleScript.gameObject.SetActive(true);
-                                    _missleScript.transform.SetParent(null);
                                     _missleScript.SetSYnc(temp, _packet.Data.GetVector3(6).Value);
+                                    _missleScript.gameObject.SetActive(true);
+                                    AudioManager.Instance.SpawnableAudio(temp, AUDIO_CLIP.MISSLE_ACTIVE);
+                                    _missleScript.transform.SetParent(null);
                                 }
                             }
                         }

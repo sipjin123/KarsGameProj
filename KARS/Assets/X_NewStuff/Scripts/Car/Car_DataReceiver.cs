@@ -250,9 +250,10 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 {
                     if (BlindSwitch == false)
                     {
-                        BlindSwitch = true;
-                        BlindObjectBlocker.SetActive(true);
-                        BlindObject.SetActive(true);
+                        ReceiveDisableSTate(true, NetworkPlayerStatus.ACTIVATE_BLIND);
+                        //BlindSwitch = true;
+                        //BlindObjectBlocker.SetActive(true);
+                        //BlindObject.SetActive(true);
 
                         SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_BLIND);
                         StartCoroutine("StartBlindTimer");
@@ -263,8 +264,9 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 {
                     if (StunSwitch == false)
                     {
-                        StunSwitch = true;
-                        StunObject.SetActive(true);
+                        ReceiveDisableSTate(true, NetworkPlayerStatus.ACTIVATE_STUN);
+                        //StunSwitch = true;
+                        //StunObject.SetActive(true);
 
                         SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_STUN);
                         StartCoroutine("StartStunTimer");
@@ -275,8 +277,9 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 {
                     if (ConfuseSwitch == false)
                     {
-                        ConfuseSwitch = true;
-                        ConfuseObject.SetActive(true);
+                        ReceiveDisableSTate(true, NetworkPlayerStatus.ACTIVATE_CONFUSE);
+                        //ConfuseSwitch = true;
+                        //ConfuseObject.SetActive(true);
 
                         SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_CONFUSE);
                         StartCoroutine("StartConfuseTimer");
@@ -287,8 +290,9 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 {
                     if (SlowSwitch == false)
                     {
-                        SlowSwitch = true;
-                        SlowObject.SetActive(true);
+                        ReceiveDisableSTate(true, NetworkPlayerStatus.ACTIVATE_SLOW);
+                        //SlowSwitch = true;
+                        //SlowObject.SetActive(true);
 
                         SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_SLOW);
                         StartCoroutine("StartSlowTimer");
@@ -299,9 +303,10 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 {
                     if (SilenceSwitch == false)
                     {
-                        SilenceSwitch = true;
-                        SilenceObject.SetActive(true);
-                        SilenceBlocker.SetActive(true);
+                        ReceiveDisableSTate(true, NetworkPlayerStatus.ACTIVATE_SILENCE);
+                        //SilenceSwitch = true;
+                        //SilenceObject.SetActive(true);
+                        //SilenceBlocker.SetActive(true);
 
                         SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_SILENCE);
                         StartCoroutine("StartSilenceTimer");
@@ -311,8 +316,9 @@ public class Car_DataReceiver : Car_Network_Interpolation
             case NetworkPlayerStatus.ACTIVATE_EXPLOSION:
                 {
                     {
-                        ExplosionSwitch = true;
-                        ExplosionObject.SetActive(true);
+                        ReceiveDisableSTate(true, NetworkPlayerStatus.ACTIVATE_EXPLOSION);
+                        //ExplosionSwitch = true;
+                        //ExplosionObject.SetActive(true);
 
                         SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_EXPLOSION);
                     }
@@ -501,28 +507,48 @@ public class Car_DataReceiver : Car_Network_Interpolation
     {
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_STUN)
         {
+            if(_switch)
+            {
+                AudioManager.Instance.SpawnableAudio(transform.position, AUDIO_CLIP.MISSLE_HIT);
+            }
             StunObject.SetActive(_switch);
             StunSwitch = _switch;
         }
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_BLIND)
         {
+            if (_switch)
+            {
+                AudioManager.Instance.SpawnableAudio(transform.position, AUDIO_CLIP.MISSLE_HIT);
+            }
             BlindObjectBlocker.SetActive(_switch);
             BlindObject.SetActive(_switch);
             BlindSwitch = _switch;
         }
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_CONFUSE)
         {
+            if (_switch)
+            {
+                AudioManager.Instance.SpawnableAudio(transform.position, AUDIO_CLIP.MISSLE_HIT);
+            }
             ConfuseObject.SetActive(_switch);
             ConfuseSwitch = _switch;
             _carMovement.FlipCarSwitch = _switch;
         }
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_SLOW)
         {
+            if (_switch)
+            {
+                AudioManager.Instance.SpawnableAudio(transform.position, AUDIO_CLIP.MISSLE_HIT);
+            }
             SlowObject.SetActive(_switch);
             SlowSwitch = _switch;
         }
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_SILENCE)
         {
+            if (_switch)
+            {
+                AudioManager.Instance.SpawnableAudio(transform.position, AUDIO_CLIP.MISSLE_HIT);
+            }
             SilenceObject.SetActive(_switch);
             SilenceBlocker.SetActive(_switch);
             SilenceSwitch = _switch;
@@ -532,6 +558,12 @@ public class Car_DataReceiver : Car_Network_Interpolation
             ExplosionObject.SetActive(_switch);
             ExplosionSwitch = _switch;
         }
+
+
+
+
+
+
         if (_netStatus == NetworkPlayerStatus.SET_READY)
         {
             _carMovement.SetReady(_switch);
@@ -562,7 +594,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             try
             {
-                TronGameManager.Instance.SetProgressValueHolder(20);
+                TronGameManager.Instance.SetProgressValueHolder(10);
                 UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY START THIS PLAYER";
                 _carMovement.SetStartGame(_switch);
                 //UIManager.Instance.Set_Canvas_Waiting(false);

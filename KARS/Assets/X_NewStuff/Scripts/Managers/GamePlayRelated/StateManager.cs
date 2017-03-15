@@ -119,7 +119,10 @@ public class StateManager : MonoBehaviour {
                 {
                     TronGameManager.Instance.BlockMatchFinding = true;
                     //RESULTS SCREEN
+                    UIManager.Instance.Set_Canvas_Waiting(false);
+                    UIManager.Instance.Set_Canvas_GameInit(false);
                     UIManager.Instance.SetResultScreen(true);
+
                     if(int.Parse( UIManager.Instance.Var_HP_1.text) >int.Parse(UIManager.Instance.Var_HP_2.text))
                     {
                         UIManager.Instance.SetPlayerWin(true, 1);
@@ -134,7 +137,7 @@ public class StateManager : MonoBehaviour {
                 break;
             case MENUSTATE.RETURN_TO_MAIN_MENU:
                 {
-
+                    GameSparkPacketReceiver.Instance.InitiateNetwork = false;
                     //UI SETUP
                     ResetAllMainMenuPanels();
                     UIManager.Instance.Set_Canvas_Main(true);
@@ -144,6 +147,7 @@ public class StateManager : MonoBehaviour {
                     UIManager.Instance.SetRespawnScreen(false);
                     UIManager.Instance.Set_Canvas_InGame(false);
                     UIManager.Instance.Set_Canvas_Waiting(false);
+                    UIManager.Instance.Set_Canvas_GameInit(false);
                 }
                 break;
         }

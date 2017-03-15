@@ -122,6 +122,7 @@ public class PowerUpManager : MonoBehaviour {
 
     public void LaunchMissleFromBUtton(int _misNum)
     {
+
         if (GameSparkPacketReceiver.Instance.PeerID == 2)
         {
             LockOnTarget(2, Player1,(MissleScript.MISSLE_TYPE)_misNum);

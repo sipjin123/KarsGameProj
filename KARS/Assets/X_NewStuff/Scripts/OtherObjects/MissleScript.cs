@@ -161,6 +161,7 @@ public class MissleScript : MonoBehaviour {
         // Debug.LogError("locking on to object "+_obj.gameObject.name);
         transform.position = _sender.transform.position;
         transform.rotation = _sender.GetComponent<Car_Movement>().CarRotationObject.transform.rotation;
+        AudioManager.Instance.SpawnableAudio(transform.position, AUDIO_CLIP.MISSLE_ACTIVE);
         objectToHit = _obj;
         transform.SetParent(null);
         lockOnObject = true;
@@ -176,6 +177,14 @@ public class MissleScript : MonoBehaviour {
         gameObject.SetActive(false);
     }
     #endregion
+    void OnTriggerEnter(Collider hit)
+    {
+        if(hit.gameObject.tag == "Wall")
+        {
+            ResetMissle();
+        }
+        
+    }
     //================================================================================================================================
     void SendToSErverTheCollision()
     {
@@ -224,20 +233,6 @@ public class MissleScript : MonoBehaviour {
                         }
                         break;
                 }
-
-
-                /*
-                GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
-                using (RTData data = RTData.Get())
-                {
-                    data.SetInt(1, objectToHit.GetComponent<Car_DataReceiver>().Network_ID);
-                    data.SetInt(2, 1);
-                    data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_STUN);
-
-                    GetRTSession.SendData(113, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-                }*/
-
-
             }
         }
         catch { }

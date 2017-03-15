@@ -6,7 +6,8 @@ public class Car_Movement : MonoBehaviour
 {
     //==========================================================================================================================
     #region VARIABLES
-
+    [SerializeField]
+    private AudioSource engineSounds;
 
     [SerializeField]
     private Camera_Behaviour _camBehaviour;
@@ -173,6 +174,7 @@ public class Car_Movement : MonoBehaviour
                 }
                 accelerationSpeed_Counter += Time.fixedDeltaTime * ((accelerationSpeed_Max) / accelerationTimer);
             }
+            engineSounds.pitch = (accelerationSpeed_Counter / accelerationSpeed_Max)*3;
             //_characterController.Move(CarRotationObject.transform.forward * ((ComputedValues() * ReduceValues() )* Time.fixedDeltaTime));
 
 
@@ -237,7 +239,7 @@ public class Car_Movement : MonoBehaviour
     }
 
     bool _moveLeft, _moveRight;
-
+    float driftTimer;
 
 
     void InputSystem()
@@ -262,6 +264,7 @@ public class Car_Movement : MonoBehaviour
         }
         else
         {
+            driftTimer = 0;
             _camBehaviour.ReturnToDefault();
             for (int i = 0; i < Wheels.Length; i++)
             {
@@ -280,6 +283,7 @@ public class Car_Movement : MonoBehaviour
     }
     public void ReleaseRight()
     {
+        driftTimer = 0;
         _moveRight = false;
     }
     public void HoldLeft()
@@ -289,6 +293,7 @@ public class Car_Movement : MonoBehaviour
     }
     public void ReleaseLeft()
     {
+        driftTimer = 0;
         _moveLeft = false;
     }
 
@@ -301,6 +306,10 @@ public class Car_Movement : MonoBehaviour
             Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, 35, 90)), WheelLerpSpeed);
         }
         _currentTurningForce -= turningRate;
+        driftTimer += Time.deltaTime;
+        if(driftTimer > 1)
+            AudioManager.Instance.Play_Loop(AUDIO_CLIP.CAR_DRIFT);
+        
         _currentTurningForce = Mathf.Clamp(_currentTurningForce, -turningForce, turningForce);
     }
     void MoveLeft()
@@ -311,6 +320,9 @@ public class Car_Movement : MonoBehaviour
             Wheels[i].localRotation = Quaternion.Lerp(Wheels[i].localRotation, Quaternion.Euler(new Vector3(0, -35, 90)), WheelLerpSpeed);
         }
         _currentTurningForce += turningRate;
+        driftTimer += Time.deltaTime;
+        if (driftTimer > 1)
+            AudioManager.Instance.Play_Loop(AUDIO_CLIP.CAR_DRIFT);
         _currentTurningForce = Mathf.Clamp(_currentTurningForce, -turningForce, turningForce);
     }
     #endregion
@@ -378,6 +390,7 @@ public class Car_Movement : MonoBehaviour
                 {
                     MyCarDataReceiver.ResetTrail(false);
                     MyCarDataReceiver.ReduceHealth();
+                    engineSounds.mute = true;
                 }
             }
         }
@@ -417,15 +430,8 @@ public class Car_Movement : MonoBehaviour
         {
         }
 
-        if (_tronGameManager.NetworkStart == false)
-        {
-            try
-            {
-                //GetComponent<AI_Behaviour>().enabled = true;
-            }
-            catch { }
-            _trailCollision.SetEmiision(true);
-        }
+        _trailCollision.SetEmiision(true);
+        engineSounds.mute = false;
     }
     #endregion
 

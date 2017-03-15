@@ -266,6 +266,8 @@ public class TronGameManager : GameStatsTweaker {
     float progressTimer;
     public void SetProgressValueHolder(float _val)
     {
+
+        UIManager.Instance.GameUpdateText.text += "\n\t___ADDED: "+_val+" %";
         progressValueHolder += _val;
     }
     public void StartProgressSession()
@@ -297,7 +299,6 @@ public class TronGameManager : GameStatsTweaker {
                 }
                 if (currentProgressValue >= 99)
                 {
-                    Debug.LogError("DONE PROGRESSING ");
                     serverSecures = true;
                     currentProgressValue = 100;
                     UIManager.Instance.SetProgressText(((int)currentProgressValue).ToString());
@@ -318,15 +319,11 @@ public class TronGameManager : GameStatsTweaker {
                 {
                     StopCoroutine("DelaySecTimer");
                     StartCoroutine("DelaySecTimer");
+                    AudioManager.Instance.Play_Oneshot(AUDIO_CLIP.CAR_START);
                     serverSecures = false;
                 }
             }
         }
-
-        if(Input.GetKeyDown(KeyCode.Alpha1))
-        GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-            GameSparkPacketReceiver.Instance.Access_SentStartToServer();
     }
     #endregion
     IEnumerator DelaySecTimer()

@@ -35,7 +35,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
     }
 
     float FiveSecUpdateTime;
-    bool InitiateNetwork;
+     public bool InitiateNetwork;
     #endregion
     //=========================================================================================================================================================================
     //
@@ -83,9 +83,9 @@ public class GameSparkPacketReceiver : MonoBehaviour
         gameSparksRTUnity.Connect(); // when the config is set, connect the game
 
 
-        UIManager.Instance.GameUpdateText.text += "\nPhase 3: OnMatchFound";
+        UIManager.Instance.GameUpdateText.text += "\nPhase 1 & 2 & 3: OnMatchFound";
         StateManager.Instance.Access_ChangeState(MENUSTATE.MATCH_FOUND);
-        _tronGameManager.SetProgressValueHolder(10);
+        _tronGameManager.SetProgressValueHolder(30);
     }
 
     private void OnPlayerConnectedToGame(int _peerId)
@@ -186,6 +186,7 @@ public class GameSparkPacketReceiver : MonoBehaviour
                             _carPool[i].InitCam();
                         }
                         InitiateNetwork = true;
+                        UIManager.Instance.GameUpdateText.text += "\n-=-=-=-=-=-=-=- NET INIT";
                     }
                 }
                 break;
@@ -397,7 +398,8 @@ public class GameSparkPacketReceiver : MonoBehaviour
             data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
             RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
-        UIManager.Instance.GameUpdateText.text += "\n\n\t***OPCODE SEND: READY\n";
+        UIManager.Instance.GameUpdateText.text += "\n=========================================================";
+        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: READY\n";
     }
     public void Access_SentStartToServer()
     {
@@ -412,12 +414,11 @@ public class GameSparkPacketReceiver : MonoBehaviour
                 data.SetInt(2, 1);
                 data.SetInt(3, (int)NetworkPlayerStatus.SET_START);
                 data.SetString(4, serverClock.AddSeconds(5).ToString() );
-                UIManager.Instance.GameUpdateText.text += "\n\tcurrent game time: " + serverClock;
-                UIManager.Instance.GameUpdateText.text += "\n\tGAME SHUD START AT: " + serverClock.AddSeconds(10);
                 RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
             }
         }
-        UIManager.Instance.GameUpdateText.text += "\n\n\t***OPCODE SEND: MESH";
+        UIManager.Instance.GameUpdateText.text += "\n=========================================================";
+        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: MESH";
         //SEND MESH
         RT = GetRTSession();
         _tronGameManager.PlayerObjects[PeerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(_tronGameManager.SelectedSkin);

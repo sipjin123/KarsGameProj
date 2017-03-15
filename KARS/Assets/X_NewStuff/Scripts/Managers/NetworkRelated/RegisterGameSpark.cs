@@ -127,8 +127,6 @@ public class RegisterGameSpark : MonoBehaviour {
             return;
         }
 
-        UIManager.Instance.GameUpdateText.text += "\nPhase 2: Find Players";
-        _tronGameManager.SetProgressValueHolder(10);
         Debug.LogError("Attempting Matchmaking...");
         new MatchmakingRequest()
             .SetMatchShortCode("B0ntakun") 
@@ -209,16 +207,12 @@ public class RegisterGameSpark : MonoBehaviour {
 
     private void OnRegistration(RegistrationResponse _resp)
     {
-        UIManager.Instance.GameUpdateText.text += "\nPhase 1: Registered Player";
-        _tronGameManager.SetProgressValueHolder(10);
         StartCoroutine("DelayFindPlayer");
 
         ConnectionStatus.text += "Registered " + _resp.UserId;
     }
     private void OnAuthentication(AuthenticationResponse _resp)
     {
-        UIManager.Instance.GameUpdateText.text += "\nPhase 1: Authenticated Player";
-        _tronGameManager.SetProgressValueHolder(10);
         StartCoroutine("DelayFindPlayer");
 
         ConnectionStatus.text += "Authenticated " + _resp.UserId;

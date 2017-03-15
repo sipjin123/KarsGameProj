@@ -7455,7 +7455,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &432
 GameObject:
   m_ObjectHideFlags: 0
@@ -7609,7 +7609,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &441
 GameObject:
   m_ObjectHideFlags: 0
@@ -96772,6 +96772,7 @@ MonoBehaviour:
   _carPool:
   - {fileID: 3480}
   - {fileID: 3897}
+  InitiateNetwork: 0
   gameTimeInt: 0
   ActualTime: {fileID: 3127}
   playerPingOffset: 1000

@@ -62,9 +62,7 @@ public class Car_Movement : MonoBehaviour
 
 
     bool isDead;
-
-    bool signalSent;
-    float DieTimer;
+    
 
     //SINGLE PLAYER
     public float AIMode_HpBar;
@@ -154,7 +152,7 @@ public class Car_Movement : MonoBehaviour
         myRigid.angularDrag = _tronGameManager.AngularDrag_Value;
         myRigid.mass = _tronGameManager.Mass_Value;
 
-        if (!isDead && !disableWheels && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
+        if (!isDead && !disableWheels && NetworkCapable())
         {
             if (accelerationSpeed_Counter < accelerationSpeed_Max)
             {
@@ -196,27 +194,6 @@ public class Car_Movement : MonoBehaviour
             }
             InputSystem();
 
-        }
-        else
-        {
-            if (isDead)
-            {
-                DieTimer += Time.fixedDeltaTime;
-                if (DieTimer > 1)
-                {
-                    if (!signalSent)
-                    {
-                        signalSent = true;
-
-                        transform.position = new Vector3(transform.position.x,
-                                                            -2,
-                                                            transform.position.z);
-                        //StopCoroutine("DelayRespawn");
-                        StartCoroutine("DelayRespawn");
-                        accelerationSpeed_Counter = 0;
-                    }
-                }
-            }
         }
 
     }
@@ -331,22 +308,14 @@ public class Car_Movement : MonoBehaviour
     #region COLLISION
     void OnTriggerEnter(Collider hit)
     {
-        if (!isDead && !disableWheels && ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart))
+        if (!isDead && !disableWheels && NetworkCapable())
         {
             if (hit.gameObject.tag == "Wall" || hit.gameObject.tag == "Trail" || (hit.gameObject.tag == "Car" && hit.gameObject.name != gameObject.name))
             {
-                if (!TronGameManager.Instance.NetworkStart)
-                {
-                    if (localShieldIsActive == false)
-                    {
-                        Die();
-                    }
-                    return;
-                }
-
                 if (MyCarDataReceiver.GetShieldSwitch() == false)
                 {
                     MyCarDataReceiver.Activate_StateFromButton(NetworkPlayerStatus.ACTIVATE_EXPLOSION);
+                    UIManager.Instance.SetExplosionPanel(true);
                     Die();
                 }
             }
@@ -358,42 +327,32 @@ public class Car_Movement : MonoBehaviour
     #region PLAYER DEATH
     public void Die()
     {
-        if (!isDead)
+        if (NetworkCapable())
         {
-            isDead = true;
-            myRigid.Sleep();
-            myRigid.useGravity = false;
-            if ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID) || !TronGameManager.Instance.NetworkStart)
+            if (!isDead)
             {
-                transform.position = new Vector3(transform.position.x,
-                                                    -2,
-                                                    transform.position.z);
+                isDead = true;
+                myRigid.Sleep();
+                myRigid.useGravity = false;
+                transform.position = new Vector3(transform.position.x,  -2,  transform.position.z);
 
-                UIManager.Instance.SetExplosionPanel(true);
-                if (_tronGameManager.NetworkStart == false)
-                {
-                    if (gameObject.name == "Car1")
-                    {
-                        AIMode_HpBar -= 1;
-                        _tronGameManager.ReduceHPOfPlayer(1, AIMode_HpBar);
-                    }
-                    _trailCollision.SetEmiision(false);
-                    try
-                    {
-                        GetComponent<AI_Behaviour>().enabled = false;
-                    }
-                    catch
-                    {
-                    }
-                }
-                else
-                {
-                    MyCarDataReceiver.ResetTrail(false);
-                    MyCarDataReceiver.ReduceHealth();
-                    engineSounds.mute = true;
-                }
+                MyCarDataReceiver.ResetTrail(false);
+                MyCarDataReceiver.ReduceHealth();
+                engineSounds.mute = true;
+
+                StopCoroutine("DelayRespawn");
+                StartCoroutine("DelayRespawn");
+                accelerationSpeed_Counter = 0;
             }
         }
+    }
+    bool NetworkCapable()
+    {
+        if ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID))
+        {
+            return true;
+        }
+        return false;
     }
     IEnumerator DelayRespawn()
     {
@@ -419,8 +378,6 @@ public class Car_Movement : MonoBehaviour
         myRigid.useGravity = true;
 
         isDead = false;
-        signalSent = false;
-        DieTimer = 0;
         yield return new WaitForSeconds(.5f);
         try
         {

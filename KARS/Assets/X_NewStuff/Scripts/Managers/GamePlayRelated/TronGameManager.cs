@@ -289,8 +289,8 @@ public class TronGameManager : GameStatsTweaker {
             UIManager.Instance.SetProgressTimerText(((int)progressTimer).ToString());
             if (progressValueHolder > 0)
             {
-                progressValueHolder -= Time.deltaTime * 10;
-                currentProgressValue += Time.deltaTime * 10;
+                progressValueHolder -= Time.deltaTime * 20;
+                currentProgressValue += Time.deltaTime * 20;
                 if (currentProgressValue >= 70 && currentProgressValue < 70.5)
                 {
                     currentProgressValue = 71;
@@ -317,6 +317,8 @@ public class TronGameManager : GameStatsTweaker {
             {
                 if (GameSparkPacketReceiver.Instance.serverClock > GameSparkPacketReceiver.Instance.GAMEshudStartAT.AddSeconds(-3))
                 {
+                    if (GameSparkPacketReceiver.Instance.PeerID == 2)
+                        StateButtonManager.Instance.OnClick_ResetGame();
                     StopCoroutine("DelaySecTimer");
                     StartCoroutine("DelaySecTimer");
                     AudioManager.Instance.Play_Oneshot(AUDIO_CLIP.CAR_START);
@@ -330,12 +332,19 @@ public class TronGameManager : GameStatsTweaker {
     {
         UIManager.Instance.Set_Canvas_Countdown(true);
         UIManager.Instance.SetCountdownTimerText("3");
+
         yield return new WaitForSeconds(1);
+
         UIManager.Instance.SetCountdownTimerText("2");
+
         yield return new WaitForSeconds(1);
+
         UIManager.Instance.SetCountdownTimerText("1");
+
         yield return new WaitForSeconds(.5f);
+
         UIManager.Instance.SetCountdownTimerText("Go");
+
         yield return new WaitForSeconds(.5f);
 
         UIManager.Instance.GameUpdateText.text += "\nGAME START NOW!!";
@@ -346,8 +355,6 @@ public class TronGameManager : GameStatsTweaker {
         UIManager.Instance.Set_Canvas_GameInit(true);
         PlayerObjects[0].GetComponent<Car_Movement>().DisableWheels = false;
         PlayerObjects[1].GetComponent<Car_Movement>().DisableWheels = false;
-        if (GameSparkPacketReceiver.Instance.PeerID == 2)
-            StateButtonManager.Instance.OnClick_ResetGame();
     }
 
     #region PUBLIC FUNCTIONS

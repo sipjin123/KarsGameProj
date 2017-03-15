@@ -432,6 +432,7 @@ public class Car_Movement : MonoBehaviour
 
         _trailCollision.SetEmiision(true);
         engineSounds.mute = false;
+        UIManager.Instance.Set_Canvas_GameInit(false);
     }
     #endregion
 

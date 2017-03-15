@@ -64,6 +64,7 @@ public class UIManager : MonoBehaviour {
         InGame_CANVAS,
         Debug_CANVAS,
         Waiting_CANVAS,
+        GameInit_CANVAS,
         Countdown_CANVAS,
         MainMenu_CANVAS,
         MainMenu_StatusPreview_PANEL,
@@ -150,6 +151,10 @@ public class UIManager : MonoBehaviour {
     public void Set_Canvas_Debug(bool _switch)
     {
         Debug_CANVAS.SetActive(_switch);
+    }
+    public void Set_Canvas_GameInit(bool _switch)
+    {
+        GameInit_CANVAS.SetActive(_switch);
     }
     #endregion
 

@@ -426,7 +426,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
         if (Health <= 0)
         {
-            TronGameManager.Instance.Global_SendState(MENUSTATE.RESULT);
+            GameSparkPacketHandler.Instance.Global_SendState(MENUSTATE.RESULT);
         }
     }
 

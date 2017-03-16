@@ -29,12 +29,12 @@ public class StateButtonManager : MonoBehaviour {
     public void OnClick_ResetGame()//FOR DEBUG PURPOSES ONLY
     {
         AudioManager.Instance.Play_Oneshot(AUDIO_CLIP.BUTTON);
-        TronGameManager.Instance.Global_SendState(MENUSTATE.RESTART_GAME);
+        GameSparkPacketHandler.Instance.Global_SendState(MENUSTATE.RESTART_GAME);
     }
     public void OnClick_QuitGame()//FOR DEBUG PURPOSES ONLY
     {
         AudioManager.Instance.Play_Oneshot(AUDIO_CLIP.BUTTON);
-        TronGameManager.Instance.Global_SendState(MENUSTATE.RETURN_TO_MAIN_MENU);
+        GameSparkPacketHandler.Instance.Global_SendState(MENUSTATE.RETURN_TO_MAIN_MENU);
     }
     public void OnClick_ViewCarStats()
     {

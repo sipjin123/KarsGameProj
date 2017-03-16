@@ -28,7 +28,7 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
 
         if (FiveSecUpdateTime >= 180)
         {
-            TronGameManager.Instance.Global_SendState(MENUSTATE.RESTART_GAME);
+            Global_SendState(MENUSTATE.RESTART_GAME);
         }
     }
     #endregion
@@ -196,7 +196,28 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
     #endregion
     //=============================================================================================================================
 
-    
+
+    public GameObject GameSparksObject;
+    public GameObject CurrentGameSparksObject;
+    public void Global_SendState(MENUSTATE _state)
+    {
+        UIManager.Instance.GameUpdateText.text += "\n\tSuppose To Do This State: " + _state;
+        StateManager.Instance.Access_ChangeState(_state);
+
+        using (RTData data = RTData.Get())
+        {
+            data.SetInt(1, 0);
+            data.SetInt(2, (int)_state);
+            GetRTSession().SendData(OPCODE_CLASS.MenuStateOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
+        }
+    }
+    public void Access_ReInitializeGameSparks()
+    {
+        Destroy(CurrentGameSparksObject);
+        CurrentGameSparksObject = Instantiate(GameSparksObject, transform.position, Quaternion.identity);
+    }
+
+
     //FOR TESTING
     public double playerPingOffset = 1000f;
     public MethodUsed _curMethod;

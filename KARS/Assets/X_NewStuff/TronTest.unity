@@ -96770,6 +96770,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ActualTime: {fileID: 3127}
+  GameSparksObject: {fileID: 1007833976576084, guid: 7e16afcdd1e24a54099074c02f7dfd39,
+    type: 2}
+  CurrentGameSparksObject: {fileID: 423}
   playerPingOffset: 1000
   _curMethod: 0
 --- !u!114 &3260
@@ -106257,16 +106260,10 @@ MonoBehaviour:
   spawnPlayerPosition:
   - {fileID: 1171}
   - {fileID: 1009}
-  GameSparksObject: {fileID: 1007833976576084, guid: 7e16afcdd1e24a54099074c02f7dfd39,
-    type: 2}
-  CurrentGameSparksObject: {fileID: 423}
   SelectedCarHighlights:
   - {fileID: 280}
   - {fileID: 411}
   - {fileID: 698}
-  SkillListCount: 9
-  SkillButtonParent: {fileID: 2669}
-  SkillButton: {fileID: 34}
   NetworkStart: 0
   singlePlayerUI: {fileID: 516}
   carMeshList:
@@ -106290,6 +106287,9 @@ MonoBehaviour:
   - {fileID: 3292}
   - {fileID: 4096}
   SkillPanel: {fileID: 509}
+  SkillListCount: 9
+  SkillButtonParent: {fileID: 2669}
+  SkillButton: {fileID: 34}
 --- !u!114 &3566
 MonoBehaviour:
   m_ObjectHideFlags: 0

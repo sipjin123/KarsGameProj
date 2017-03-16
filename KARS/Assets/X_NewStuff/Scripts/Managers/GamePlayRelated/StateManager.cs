@@ -158,7 +158,7 @@ public class StateManager : MonoBehaviour {
     public void AccessResetGameVariables()
     {
         //PLAYER OBJECT RESET
-        TronGameManager.Instance.Access_ReInitializeGameSparks();
+        GameSparkPacketHandler.Instance.Access_ReInitializeGameSparks();
         TronGameManager.Instance.Access_PlayerReset();
 
         GameSparkPacketHandler.Instance.ResetBoolList();

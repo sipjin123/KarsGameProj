@@ -7,7 +7,6 @@ public class UIManager : MonoBehaviour {
 
     //SINGLETON
     public static UIManager Instance { get { return instance; } }
-    
     private static UIManager instance;
     void Awake()
     {
@@ -22,16 +21,9 @@ public class UIManager : MonoBehaviour {
     public Text NetworkTimeText, GameTimeText;
     #endregion
 
-    //POWERUP ICONS
-    [Header("POWERUPS")]
-    public Image SpeedBar_1;
-    public Image SpeedBar_2;
-    public Text SpeedTexT_1, SpeedText_2, 
-                SpeedTimeText_1, SpeedTimeText_2, 
-                SpeedMaxText_1, SpeedMaxText_2;
-    
-    
+
     //SKILLS
+    #region SKILLS
     [Header("PLAYER UI")]
     [SerializeField]
     private GameObject Player1Panel;
@@ -51,6 +43,7 @@ public class UIManager : MonoBehaviour {
     private Text[]
         Player1_SkillSlotNames,
         Player2_SkillSlotNames;
+    #endregion
 
     //SCREENS
     #region SCREENS
@@ -76,6 +69,8 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     //STATS
+    #region STATS
+    //STATS
     [Header("STATS")]
     [SerializeField]
     private GameObject Player1_Win, Player2_Win;
@@ -85,20 +80,43 @@ public class UIManager : MonoBehaviour {
         Player1_HPResult, Player2_HPResult, 
         Player1_InGameHealthBar, Player2_InGameHealthBar;
     public Text Var_HP_1, Var_HP_2;
+    #endregion
 
-
+    //BUTTONS
+    #region BUTTONS
+    [Header("Buttons")]
     [SerializeField]
-    private GameObject 
-        SelectCarButton, 
-        SelectedCarImage, 
-        MatchCancelButton;
+    private GameObject SelectedCarImage;
+    [SerializeField]
+    private GameObject SelectCarButton;
+    [SerializeField]
+    private GameObject MatchCancelButton;
+    #endregion
 
+    //LOADING PREGAME
+    #region LOADING PREGAME
+    [Header("PREGAME LOADERS")]
+    [SerializeField]
+    private Text ProgressText;
+    [SerializeField]
+    private Text ProgressTimerText;
+    [SerializeField]
+    private Text CountdownTimerText;
+    #endregion
+
+    //POWERUP ICONS
+    [Header("POWERUPS")]
+    public Image SpeedBar_1;
+    public Image SpeedBar_2;
+    public Text SpeedTexT_1, SpeedText_2,
+                SpeedTimeText_1, SpeedTimeText_2,
+                SpeedMaxText_1, SpeedMaxText_2;
+
+
+    [Header("UNASSIGNED")]
     [SerializeField]
     private GameObject ExplosionPanel;
 
-
-    [SerializeField]
-    private Text ProgressText, ProgressTimerText, CountdownTimerText;
 
 
     //==========================================================================================
@@ -262,6 +280,7 @@ public class UIManager : MonoBehaviour {
         ExplosionPanel.SetActive(_switch);
     }
 
+    #region PRE GAME LOADING 
     public void SetProgressText(string _val)
     {
         ProgressText.text = _val+"%";
@@ -274,6 +293,7 @@ public class UIManager : MonoBehaviour {
     {
         CountdownTimerText.text = _val;
     }
+    #endregion
 
     #region MENU BUTTONS
     public void ActivateSelectCarButton(bool _switch)
@@ -286,6 +306,8 @@ public class UIManager : MonoBehaviour {
         MatchCancelButton.SetActive(_switch);
     }
     #endregion
+
+    #region DEBUG
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Delete))
@@ -306,4 +328,5 @@ public class UIManager : MonoBehaviour {
     {
         GameUpdateText.transform.position -= transform.up;
     }
+    #endregion
 }

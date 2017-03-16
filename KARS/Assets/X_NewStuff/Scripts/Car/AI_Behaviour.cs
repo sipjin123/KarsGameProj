@@ -134,7 +134,6 @@ public class AI_Behaviour : MonoBehaviour {
             if (!SHieldSwithc)
             {
                 AI_Health -= 1;
-                _tronGameManager.ReduceHPOfPlayer(2, AI_Health);
                 DIE();
             }
         }

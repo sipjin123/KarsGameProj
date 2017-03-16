@@ -14,8 +14,6 @@ public class TronGameManager : GameStatsTweaker {
 
     public Transform[] spawnPlayerPosition;
 
-    public GameObject GameSparksObject;
-    public GameObject CurrentGameSparksObject;
 
     public GameObject[] SelectedCarHighlights;
 
@@ -26,78 +24,18 @@ public class TronGameManager : GameStatsTweaker {
         set { blockMatchFinding = value; }
     }
 
-    #region SKILLS RELATED
-
-    public int SkillListCount = 9;
-
-    public Transform SkillButtonParent;
-    public GameObject SkillButton;
-
-
-    public void InitSkillList()
-    {
-        for (int i = 0; i < SkillListCount; i++)
-        {
-            GameObject temp = Instantiate(SkillButton, transform.position, Quaternion.identity) as GameObject;
-            temp.transform.SetParent(SkillButtonParent);
-            temp.transform.localScale = Vector3.one;
-
-            temp.GetComponent<Image>().sprite = UIManager.Instance.SkillIcons[i].GetComponent<Image>().sprite;
-            temp.SetActive(true);
-
-            temp.transform.GetChild(0).GetComponent<Text>().text = ((SKILL_LIST)i).ToString();
-            temp.GetComponent<Button>().onClick.AddListener(() => {
-                SelectThisSkill(temp);
-            });
-        }
-        SelectThisSkill(SkillButtonParent.GetChild(0).gameObject);
-        SelectSkillSlot(1);
-        SelectThisSkill(SkillButtonParent.GetChild(2).gameObject);
-        SelectSkillSlot(0);
-    }
-
-    public void SelectSkillSlot(int _val)
-    {
-        currentSlotIndex = _val;
-
-        skillSlotIndicator[0].SetActive(false);
-        skillSlotIndicator[1].SetActive(false);
-
-        skillSlotIndicator[_val].SetActive(true);
-    }
-    public void SelectThisSkill(GameObject _obj)
-    {
-        if (selected_currentSkill_Text[0].text == _obj.transform.GetChild(0).GetComponent<Text>().text || selected_currentSkill_Text[1].text == _obj.transform.GetChild(0).GetComponent<Text>().text)
-            return;
-
-        slotIndicator[currentSlotIndex].transform.position = _obj.transform.position;
-        
-
-        selected_currentSkill_Image[currentSlotIndex].sprite = _obj.GetComponent<Image>().sprite;
-        selected_currentSkill_Text[currentSlotIndex].text = _obj.transform.GetChild(0).GetComponent<Text>().text;
-    }
-
-    public void ToggleSkillSelection()
-    {
-        SkillPanel.SetActive(!SkillPanel.activeInHierarchy);
-    }
-    #endregion
-
-    
-
     //==================================================================================================================================
     #region VARIABLES
     public bool NetworkStart;
     public GameObject singlePlayerUI;
 
 
+    //CHARACTER SELECT
     private int selectedSkin;
     public int GetSelectedSkin()
     {
         return selectedSkin;
     }
-
-    //CHARACTER SELECT
     int carMeshIndex;
     public GameObject[] carMeshList;
     public GameObject[] StatList;
@@ -109,9 +47,19 @@ public class TronGameManager : GameStatsTweaker {
     public Image[] selected_currentSkill_Image;
     public Text[] selected_currentSkill_Text;
     public GameObject SkillPanel;
+    public int SkillListCount = 9;
+    public Transform SkillButtonParent;
+    public GameObject SkillButton;
 
+    //LOADING SCREEN
+    float progressValueHolder;
+    float currentProgressValue;
+    bool progressValueSwitch;
+    float progressTimer;
+    bool serverSecures;
     #endregion
     //==================================================================================================================================
+    //INITIALIZATION
     #region INITALIZATION
     void Awake()
     {
@@ -135,29 +83,6 @@ public class TronGameManager : GameStatsTweaker {
             PlayerObjects[i].GetComponent<Car_Movement>().CarRotationObject.eulerAngles = Vector3.zero;
         }
 
-    }
-    #endregion
-    //==================================================================================================================================
-    #region PLAYER DEATH AND HP REDUCTION
-    public void ReduceHPOfPlayer(int player, float life)
-    {
-        if (!NetworkStart)
-        {
-            UIManager.Instance.AdjustHPBarAndText(player, life);
-            if (life <= 0)
-            {
-                StartCoroutine("delaydeath");
-            }
-        }
-    }
-    IEnumerator delaydeath()
-    {
-        yield return new WaitForSeconds(1);
-
-        PlayerObjects[0].GetComponent<Car_Movement>().AIMode_HpBar = 6;
-        PlayerObjects[1].GetComponent<AI_Behaviour>().AI_Health = 6;
-        PlayerObjects[0].GetComponent<Car_Movement>().Die();
-        PlayerObjects[1].GetComponent<AI_Behaviour>().DIE();
     }
     #endregion
     //==================================================================================================================================
@@ -216,7 +141,7 @@ public class TronGameManager : GameStatsTweaker {
     }
     #endregion
     //==================================================================================================================================
-
+    //MATCH FIND INITIALIZATION
     #region PLAYER START SYNC
     public void ReceiveSignalToStartGame()
     {
@@ -236,35 +161,64 @@ public class TronGameManager : GameStatsTweaker {
         yield return new WaitForSeconds(2);
         ReceiveSignalToStartGame();
     }
-    
     private void SendStartSignalConcent()
     {
         PlayerObjects[GameSparkPacketHandler.Instance.GetPeerID() - 1].GetComponent<Car_Movement>().SetReady(true);
         GameSparkPacketHandler.Instance.Access_SentReadyToServer();
-
-        return;
-        UIManager.Instance.GameUpdateText.text += "\n\tDelay Ready Player: " + GameSparkPacketHandler.Instance.GetPeerID();
-
-        GetRTSession = GameSparkPacketHandler.Instance.GetRTSession();
-        PlayerObjects[GameSparkPacketHandler.Instance.GetPeerID() - 1].GetComponent<Car_Movement>().SetReady(true);
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, GameSparkPacketHandler.Instance.GetPeerID());
-            data.SetInt(2, 1);
-            data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
-            GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-        UIManager.Instance.GameUpdateText.text += "\nSignal Sent To Server :: Ready Player: " + GameSparkPacketHandler.Instance.GetPeerID();
-
     }
     #endregion
     //==================================================================================================================================
+    //SKILLS FUNCTION
+    #region SKILLS FUNCTION
+    public void InitSkillList()
+    {
+        for (int i = 0; i < SkillListCount; i++)
+        {
+            GameObject temp = Instantiate(SkillButton, transform.position, Quaternion.identity) as GameObject;
+            temp.transform.SetParent(SkillButtonParent);
+            temp.transform.localScale = Vector3.one;
 
+            temp.GetComponent<Image>().sprite = UIManager.Instance.SkillIcons[i].GetComponent<Image>().sprite;
+            temp.SetActive(true);
+
+            temp.transform.GetChild(0).GetComponent<Text>().text = ((SKILL_LIST)i).ToString();
+            temp.GetComponent<Button>().onClick.AddListener(() => {
+                SelectThisSkill(temp);
+            });
+        }
+        SelectThisSkill(SkillButtonParent.GetChild(0).gameObject);
+        SelectSkillSlot(1);
+        SelectThisSkill(SkillButtonParent.GetChild(2).gameObject);
+        SelectSkillSlot(0);
+    }
+    public void SelectSkillSlot(int _val)
+    {
+        currentSlotIndex = _val;
+
+        skillSlotIndicator[0].SetActive(false);
+        skillSlotIndicator[1].SetActive(false);
+
+        skillSlotIndicator[_val].SetActive(true);
+    }
+    public void SelectThisSkill(GameObject _obj)
+    {
+        if (selected_currentSkill_Text[0].text == _obj.transform.GetChild(0).GetComponent<Text>().text || selected_currentSkill_Text[1].text == _obj.transform.GetChild(0).GetComponent<Text>().text)
+            return;
+
+        slotIndicator[currentSlotIndex].transform.position = _obj.transform.position;
+
+
+        selected_currentSkill_Image[currentSlotIndex].sprite = _obj.GetComponent<Image>().sprite;
+        selected_currentSkill_Text[currentSlotIndex].text = _obj.transform.GetChild(0).GetComponent<Text>().text;
+    }
+    public void ToggleSkillSelection()
+    {
+        SkillPanel.SetActive(!SkillPanel.activeInHierarchy);
+    }
+    #endregion
+    //==================================================================================================================================
+    //LOADING SCREEN
     #region LOADING SCREEN
-    float progressValueHolder;
-    float currentProgressValue;
-    bool progressValueSwitch;
-    float progressTimer;
     public void SetProgressValueHolder(float _val)
     {
 
@@ -281,7 +235,6 @@ public class TronGameManager : GameStatsTweaker {
         PlayerObjects[0].GetComponent<Car_Movement>().DisableWheels = true;
         PlayerObjects[1].GetComponent<Car_Movement>().DisableWheels = true;
     }
-    bool serverSecures;
     void Update()
     {
         if(progressValueSwitch)
@@ -331,6 +284,8 @@ public class TronGameManager : GameStatsTweaker {
         }
     }
     #endregion
+    //==================================================================================================================================
+    //IN GAME INITIALIZATION
     IEnumerator DelaySecTimer()
     {
         AudioManager.Instance.Play_Oneshot(AUDIO_CLIP.CAR_START);
@@ -366,24 +321,6 @@ public class TronGameManager : GameStatsTweaker {
     }
 
     #region PUBLIC FUNCTIONS
-    public void Global_SendState(MENUSTATE _state)
-    {
-        UIManager.Instance.GameUpdateText.text += "\n\tSuppose To Do This State: "+_state;
-        StateManager.Instance.Access_ChangeState(_state);
-
-        GetRTSession = GameSparkPacketHandler.Instance.GetRTSession();
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, 0);
-            data.SetInt(2, (int)_state);
-            GetRTSession.SendData(OPCODE_CLASS.MenuStateOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-    }
-    public void Access_ReInitializeGameSparks()
-    {
-        Destroy(CurrentGameSparksObject);
-        CurrentGameSparksObject = Instantiate(GameSparksObject, transform.position, Quaternion.identity);
-    }
 
     public void Access_PlayerReset()
     {

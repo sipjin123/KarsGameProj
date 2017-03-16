@@ -88,7 +88,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
     #region INIT
      void StartGame(bool _switch)
     {
-        if (Network_ID == _gameSparkPacketReceiver.PeerID)
+        if (Network_ID == _gameSparkPacketReceiver.GetPeerID())
         {
             _carMovement.StartGame = _switch;
         }
@@ -404,7 +404,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 data.SetFloat(4, _pos.z);
                 data.SetVector3(5, _rot);
                 data.SetDouble(6, Network.time);
-                data.SetDouble(7, _gameSparkPacketReceiver.gameTimeInt);
+                data.SetDouble(7, _gameSparkPacketReceiver.GetGameClockINT());
 
 
                 GetRTSession.SendData(OPCODE_CLASS.MovementOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
@@ -595,9 +595,9 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
     public void InitCam()
     {
-        _gameSparkPacketReceiver = GameSparkPacketReceiver.Instance.GetComponent<GameSparkPacketReceiver>();
+        _gameSparkPacketReceiver = GameSparkPacketHandler.Instance.GetComponent<GameSparkPacketHandler>();
         GetRTSession = _gameSparkPacketReceiver.GetRTSession();
-        if (Network_ID == _gameSparkPacketReceiver.PeerID)
+        if (Network_ID == _gameSparkPacketReceiver.GetPeerID())
         {
             if (Network_ID == 0)
             {
@@ -626,7 +626,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
 
         //DETERMINING SKILL HOLDERS
-        if (GameSparkPacketReceiver.Instance.PeerID == 1)
+        if (GameSparkPacketHandler.Instance.GetPeerID() == 1)
         {
             skillParent[0] = UIManager.Instance.Player1_SkillsParent[0].transform;
             skillParent[1] = UIManager.Instance.Player1_SkillsParent[1].transform;
@@ -796,12 +796,12 @@ public class Car_DataReceiver : Car_Network_Interpolation
             && TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().GetReady())
         {
             TronGameManager.Instance.SetProgressValueHolder(20);
-            GameSparkPacketReceiver.Instance.Access_SentStartToServer();
+            GameSparkPacketHandler.Instance.Access_SentStartToServer();
         }
         else
         {
             UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO READY THIS PLAYER_____ RETRYNG  CODE 000";
-            GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
+            GameSparkPacketHandler.Instance.Access_SentReadyToServer();
 
             //TO RETURN
             /*
@@ -817,7 +817,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
         if(_carMovement.GetReady() == false)
         {
             UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO START THIS PLAYER_____ RETRYNG CODE 001";
-            GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
+            GameSparkPacketHandler.Instance.Access_SentReadyToServer();
             return;
         }
         try
@@ -835,7 +835,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
         catch
         {
             UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO START THIS PLAYER_____ RETRYNG  CODE 002";
-            GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
+            GameSparkPacketHandler.Instance.Access_SentReadyToServer();
 
             //TO RETURN
             /*

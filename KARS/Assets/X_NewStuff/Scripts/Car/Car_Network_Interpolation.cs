@@ -15,7 +15,7 @@ public class Car_Network_Interpolation : MonoBehaviour {
     float rotSpeed = .1f;
     [SerializeField]
     protected Transform _objToTranslate, _objToRotate;
-    protected GameSparkPacketReceiver _gameSparkPacketReceiver;
+    protected GameSparkPacketHandler _gameSparkPacketReceiver;
     #region STATE_UPDATER
     public struct State
     {
@@ -53,7 +53,7 @@ public class Car_Network_Interpolation : MonoBehaviour {
             state.timestamp = _receivedTimeStamp;//state.timestamp = _packet.Data.GetDouble(7).Value;
             m_BufferedState[0] = state;
 
-            PlayerPing = _gameSparkPacketReceiver.gameTimeInt - state.timestamp;
+            PlayerPing = _gameSparkPacketReceiver.GetGameClockINT() - state.timestamp;
             UIManager.Instance.PingText.text = PlayerPing.ToString();
             // Increment state count but never exceed buffer size
             m_TimestampCount = Mathf.Min(m_TimestampCount + 1, m_BufferedState.Length);
@@ -80,7 +80,7 @@ public class Car_Network_Interpolation : MonoBehaviour {
 
         try
         {
-            double currentTime = _gameSparkPacketReceiver.gameTimeInt;
+            double currentTime = _gameSparkPacketReceiver.GetGameClockINT();
             interpolationTime = 0;
 
             //REFACTOR GAME TIME
@@ -171,7 +171,7 @@ public class Car_Network_Interpolation : MonoBehaviour {
 
                 //GameObject.Find("GameUpdateText").GetComponent<Text>().text += "\nT: " + t + "=" + (interpolationTime - lhs.timestamp) + "(" + interpolationTime + "-" + lhs.timestamp + ")/" +length +"("+rhs.timestamp+"-"+lhs.timestamp+")";
 
-                if (_gameSparkPacketReceiver._curMethod == GameSparkPacketReceiver.MethodUsed.LINEAR)
+                if (_gameSparkPacketReceiver._curMethod == MethodUsed.LINEAR)
                 {
                     _objToTranslate.transform.position = Vector3.Lerp(_objToTranslate.transform.position, lhs.pos, t);
                     _objToRotate.transform.rotation = Quaternion.Lerp(_objToRotate.transform.rotation, Quaternion.Euler(lhs.rot), rotSpeed);
@@ -182,11 +182,11 @@ public class Car_Network_Interpolation : MonoBehaviour {
     }
     void Extrapolate()
     {
-        double currentTime = _gameSparkPacketReceiver.gameTimeInt;
+        double currentTime = _gameSparkPacketReceiver.GetGameClockINT();
         interpolationTime = currentTime - 0.1f;
 
         State latest = m_BufferedState[0];
-        if (_gameSparkPacketReceiver._curMethod == GameSparkPacketReceiver.MethodUsed.LINEAR)
+        if (_gameSparkPacketReceiver._curMethod == MethodUsed.LINEAR)
         {
             double timeDiff = 0;
             timeDiff = (m_BufferedState[0].timestamp - m_BufferedState[1].timestamp);

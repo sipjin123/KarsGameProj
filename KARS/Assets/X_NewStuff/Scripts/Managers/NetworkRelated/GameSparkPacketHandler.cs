@@ -15,21 +15,20 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
     void Awake()
     {
         _instance = this;
-        AccessResetBoolList();
     }
     //=============================================================================================================================
     //GAME TIME
     #region GAME TIME
     void FixedUpdate()
     {
-        serverClock  = serverClock.AddSeconds(Time.fixedDeltaTime);
+        serverClock = serverClock.AddSeconds(Time.fixedDeltaTime);
 
         gameClockINT = (float)((serverClock.Second * 1000) + serverClock.Millisecond);
         ActualTime.text = serverClock.Minute + " : " + serverClock.Second + " : " + serverClock.Millisecond + "\n" + timeDelta + " " + latency + " " + roundTrip;
 
         if (FiveSecUpdateTime >= 180)
         {
-            Global_SendState(MENUSTATE.RESTART_GAME);
+            TronGameManager.Instance.Global_SendState(MENUSTATE.RESTART_GAME);
         }
     }
     #endregion
@@ -67,13 +66,10 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
             (packet) => { OnPacketReceived(packet); });
         gameSparksRTUnity.Connect(); // when the config is set, connect the game
 
-        if (hasReceived_OnMatchFound == false)
-        {
-            UIManager.Instance.GameUpdateText.text += "\nPhase 1 & 2 & 3: OnMatchFound";
-            StateManager.Instance.Access_ChangeState(MENUSTATE.MATCH_FOUND);
-            TronGameManager.Instance.SetProgressValueHolder(30);
-            hasReceived_OnMatchFound = true;
-        }
+
+        UIManager.Instance.GameUpdateText.text += "\nPhase 1 & 2 & 3: OnMatchFound";
+        StateManager.Instance.Access_ChangeState(MENUSTATE.MATCH_FOUND);
+        TronGameManager.Instance.SetProgressValueHolder(30);
     }
 
     private void OnPlayerConnectedToGame(int _peerId)
@@ -85,7 +81,6 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
     private void OnPlayerDisconnected(int _peerId)
     {
         Debug.Log("GSM| Player Disconnected, " + _peerId);
-        UIManager.Instance.GameUpdateText.text += "\nPLAYER HAS DISCONNECTED";
         GetRTSession().Disconnect();
         GS.Disconnect();
         StateManager.Instance.Access_ChangeState(MENUSTATE.RESULT);
@@ -97,30 +92,13 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
         {
             Debug.Log("GSM| RT Session Connected...");
             peerID = RegisterGameSpark.Instance.PeerID;
-            IntTimeStamp();
+            StartCoroutine(SendTimeStamp());
         }
-    }
-    public override void IntTimeStamp()
-    {
-        base.IntTimeStamp();
     }
     #endregion
     //=============================================================================================================================
     //PUBLIC FUNCTIONS
     #region PUBLIC FUNCTIONS
-    public void Access_ReInitializeGameSparks()
-    {
-        Destroy(CurrentGameSparksObject);
-        CurrentGameSparksObject = Instantiate(GameSparksObject, transform.position, Quaternion.identity);
-    }
-    public void AccessResetBoolList()
-    {
-        hasReceived_AvatarMessage = false;
-        hasReceived_ReadyMessage = false;
-        hasReceived_StartMessage = false;
-        hasReceived_OnMatchFound = false;
-        hasReceived_PreREsult = false;
-    }
     public void Access_ResetNetwork()
     {
         InitiateNetwork = false;
@@ -149,28 +127,6 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
             _obj.GetComponent<Car_Movement>().enabled = true;
         }
     }
-    public void Access_PlayerReset()
-    {
-        GameObject[] PlayerObjects = TronGameManager.Instance.PlayerObjects;
-        Transform[] spawnPlayerPosition = TronGameManager.Instance.spawnPlayerPosition;
-        for (int i = 0; i < PlayerObjects.Length; i++)
-        {
-            PlayerObjects[i].GetComponent<Car_DataReceiver>().ClearBufferState();
-            PlayerObjects[i].SetActive(true);
-            PlayerObjects[i].GetComponent<Car_DataReceiver>().Access_ResetNetwork();
-
-            PlayerObjects[i].GetComponent<Car_DataReceiver>().Access_ResetPowerups();
-
-            PlayerObjects[i].GetComponent<Car_Movement>().CarRotationObject.eulerAngles = Vector3.zero;
-            PlayerObjects[i].transform.eulerAngles = Vector3.zero;
-            PlayerObjects[i].transform.position = spawnPlayerPosition[i].position;
-
-
-            PlayerObjects[i].GetComponent<Car_Movement>().SetStartGame(false);
-            PlayerObjects[i].GetComponent<Car_Movement>().SetReady(false);
-            PlayerObjects[i].GetComponent<Car_Movement>().enabled = false;
-        }
-    }
     #endregion
     //=============================================================================================================================
     //SEND DATA TO SERVER
@@ -184,10 +140,10 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
             data.SetInt(1, peerID);
             data.SetInt(2, 1);
             data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
-            RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
+            RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
         UIManager.Instance.GameUpdateText.text += "\n=========================================================";
-        UIManager.Instance.GameUpdateText.text += "\n\t<<<OPCODE SEND: READY";
+        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: READY";
     }
     public void Access_SentStartToServer()
     {
@@ -202,11 +158,11 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
                 data.SetInt(2, 1);
                 data.SetInt(3, (int)NetworkPlayerStatus.SET_START);
                 data.SetString(4, serverClock.AddSeconds(5).ToString() );
-                RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
+                RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
             }
         }
         UIManager.Instance.GameUpdateText.text += "\n=========================================================";
-        UIManager.Instance.GameUpdateText.text += "\n\t<<<OPCODE SEND: START";
+        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: START";
 
         StopCoroutine("DelaySendMesh");
         StartCoroutine("DelaySendMesh");
@@ -214,69 +170,22 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
     IEnumerator DelaySendMesh()
     {
         yield return new WaitForSeconds(1);
-        Access_SentAvatarToServer();
-    }
-    public void Access_SentAvatarToServer()
-    {
         //SEND MESH
         GameSparksRTUnity RT = GetRTSession();
-        TronGameManager.Instance.PlayerObjects[peerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(TronGameManager.Instance.GetSelectedSkin());
+        TronGameManager.Instance.PlayerObjects[peerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(TronGameManager.Instance.SelectedSkin);
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, peerID);
-            data.SetInt(2, TronGameManager.Instance.GetSelectedSkin());
-            RT.SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
+            data.SetInt(2, TronGameManager.Instance.SelectedSkin);
+            RT.SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
         UIManager.Instance.GameUpdateText.text += "\n=========================================================";
-        UIManager.Instance.GameUpdateText.text += "\n\t<<<OPCODE SEND: MESH";
-    }
-
-    public void Global_SendState(MENUSTATE _state)
-    {
-        UIManager.Instance.GameUpdateText.text += "\n\tSuppose To Do This State: " + _state;
-        StateManager.Instance.Access_ChangeState(_state);
-
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, 0);
-            data.SetInt(2, (int)_state);
-            GetRTSession().SendData(OPCODE_CLASS.MenuStateOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
-        }
+        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: MESH";
     }
     #endregion
     //=============================================================================================================================
 
-
-
-    public void Global_SendONLYState(MENUSTATE _state)
-    {
-        using (RTData data = RTData.Get())
-        {
-            string watToSend = "";
-            data.SetInt(1, 0);
-            data.SetInt(2, (int)_state);
-            if (sendResult == "none")
-                watToSend = "Phase1";
-            if (sendResult == "Phase1")
-            {
-                Set_hasReceived_PreResult(true);
-                watToSend = "Phase2";
-            }
-            if (sendResult == "Phase2")
-            {
-                watToSend = "Phase3";
-                Set_hasReceived_PreResult(true);
-                Global_SendState(MENUSTATE.RESULT);
-            }
-            data.SetString(3, watToSend);
-            UIManager.Instance.GameUpdateText.text += "\nI SEND: " + watToSend;
-
-            GetRTSession().SendData(121, GameSparksRT.DeliveryIntent.RELIABLE, data);
-        }
-    }
-
-    public string sendResult;
-
+    
     //FOR TESTING
     public double playerPingOffset = 1000f;
     public MethodUsed _curMethod;

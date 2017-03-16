@@ -598,24 +598,24 @@ public class GameStatsTweaker : MonoBehaviour {
 
     public void SendTrailData()
     {
-        if (GameSparkPacketReceiver.Instance.PeerID == 0)
+        if (GameSparkPacketHandler.Instance.GetPeerID() == 0)
             return;
-        PlayerObjects[GameSparkPacketReceiver.Instance.PeerID - 1].GetComponent<Car_DataReceiver>().ReceiveTrailVAlue(trailDistanceTotal);
-        PlayerObjects[GameSparkPacketReceiver.Instance.PeerID - 1].GetComponent<Car_DataReceiver>().ReceiveTrailChildVAlue(DivisibleTrailValue);
+        PlayerObjects[GameSparkPacketHandler.Instance.GetPeerID() - 1].GetComponent<Car_DataReceiver>().ReceiveTrailVAlue(trailDistanceTotal);
+        PlayerObjects[GameSparkPacketHandler.Instance.GetPeerID() - 1].GetComponent<Car_DataReceiver>().ReceiveTrailChildVAlue(DivisibleTrailValue);
 
         try
         {
-            GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+            GetRTSession = GameSparkPacketHandler.Instance.GetRTSession();
             using (RTData data = RTData.Get())
             {
-                data.SetInt(1, GameSparkPacketReceiver.Instance.PeerID);
+                data.SetInt(1, GameSparkPacketHandler.Instance.GetPeerID());
                 data.SetInt(2, (int)NetworkPlayerVariableList.TRAIL);
                 data.SetFloat(3, trailDistanceTotal);
                 GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
             }
             using (RTData data = RTData.Get())
             {
-                data.SetInt(1, GameSparkPacketReceiver.Instance.PeerID);
+                data.SetInt(1, GameSparkPacketHandler.Instance.GetPeerID());
                 data.SetInt(2, (int)NetworkPlayerVariableList.CHILD_TRAIL);
                 data.SetFloat(3, DivisibleTrailValue);
                 GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);

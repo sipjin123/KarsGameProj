@@ -92,11 +92,11 @@ public class StateManager : MonoBehaviour {
             case MENUSTATE.RESTART_GAME:
                 {
                     UIManager.Instance.SetResultScreen(false);
-                    GameSparkPacketReceiver.Instance.Access_ResetClock();
+                    GameSparkPacketHandler.Instance.Access_ResetClock();
 
-                    for (int i = 0; i < GameSparkPacketReceiver.Instance._carPool.Count; i++)
+                    for (int i = 0; i < TronGameManager.Instance.PlayerObjects.Length; i++)
                     {
-                        GameObject _obj = GameSparkPacketReceiver.Instance._carPool[i].gameObject;
+                        GameObject _obj = TronGameManager.Instance.PlayerObjects[i].gameObject;
                         Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
                         Car_Movement _carMovement = _obj.GetComponent<Car_Movement>();
 
@@ -138,7 +138,7 @@ public class StateManager : MonoBehaviour {
                 break;
             case MENUSTATE.RETURN_TO_MAIN_MENU:
                 {
-                    GameSparkPacketReceiver.Instance.InitiateNetwork = false;
+                    GameSparkPacketHandler.Instance.Access_ResetNetwork();
                     //UI SETUP
                     ResetAllMainMenuPanels();
                     UIManager.Instance.Set_Canvas_Main(true);
@@ -178,7 +178,7 @@ public class StateManager : MonoBehaviour {
         //GAMESPARKS DISCONNECTION
         try
         {
-            GameSparkPacketReceiver.Instance.GetRTSession().Disconnect();
+            GameSparkPacketHandler.Instance.GetRTSession().Disconnect();
         }
         catch
         {

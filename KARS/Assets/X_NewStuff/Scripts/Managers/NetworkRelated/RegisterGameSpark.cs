@@ -168,7 +168,7 @@ public class RegisterGameSpark : MonoBehaviour {
 
         foreach (MatchFoundMessage._Participant player in _message.Participants)
         {
-            GameSparkPacketReceiver.Instance.Access_PlayerSpawn(int.Parse( player.PeerId.ToString())); 
+            GameSparkPacketHandler.Instance.Access_PlayerSpawn(int.Parse( player.PeerId.ToString())); 
             if (_message.JSONData["playerId"].ToString() == player.Id)
             {
                 PeerID = int.Parse(player.PeerId.ToString());
@@ -180,7 +180,7 @@ public class RegisterGameSpark : MonoBehaviour {
         Debug.LogError("Writen builder: " + sessionInfo);
 
 
-        GameSparkPacketReceiver.Instance.StartNewRTSession(sessionInfo);
+        GameSparkPacketHandler.Instance.StartNewRTSession(sessionInfo);
 
     }
     #endregion

@@ -348,7 +348,7 @@ public class Car_Movement : MonoBehaviour
     }
     bool NetworkCapable()
     {
-        if ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketReceiver.Instance.PeerID))
+        if ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketHandler.Instance.GetPeerID()))
         {
             return true;
         }

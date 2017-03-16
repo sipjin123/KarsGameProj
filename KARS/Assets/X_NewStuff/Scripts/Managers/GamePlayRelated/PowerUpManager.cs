@@ -74,7 +74,7 @@ public class PowerUpManager : MonoBehaviour {
         temp = null;
         try
         {
-            ServerPeerID = (GameSparkPacketReceiver.Instance.PeerID);
+            ServerPeerID = (GameSparkPacketHandler.Instance.GetPeerID());
         }
         catch { }
     }
@@ -123,11 +123,11 @@ public class PowerUpManager : MonoBehaviour {
     public void LaunchMissleFromBUtton(int _misNum)
     {
 
-        if (GameSparkPacketReceiver.Instance.PeerID == 2)
+        if (GameSparkPacketHandler.Instance.GetPeerID() == 2)
         {
             LockOnTarget(2, Player1,(MissleScript.MISSLE_TYPE)_misNum);
         }
-        else if (GameSparkPacketReceiver.Instance.PeerID == 1)
+        else if (GameSparkPacketHandler.Instance.GetPeerID() == 1)
         {
             LockOnTarget(1, Player2, (MissleScript.MISSLE_TYPE)_misNum);
         }

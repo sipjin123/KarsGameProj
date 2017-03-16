@@ -71,7 +71,7 @@ public class MissleScript : MonoBehaviour {
         }
 
 
-        if (_playerController_ID == GameSparkPacketReceiver.Instance.PeerID)
+        if (_playerController_ID == GameSparkPacketHandler.Instance.GetPeerID())
         {
             //Debug.LogError("missle is controlling");
             transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.blue;
@@ -127,7 +127,7 @@ public class MissleScript : MonoBehaviour {
     {
         try
         {
-            GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+            GetRTSession = GameSparkPacketHandler.Instance.GetRTSession();
             using (RTData data = RTData.Get())
             {
                 data.SetInt(1, missle_ID);

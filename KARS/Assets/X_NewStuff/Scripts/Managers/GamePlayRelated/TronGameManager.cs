@@ -215,13 +215,13 @@ public class TronGameManager : GameStatsTweaker {
     public void ReceiveSignalToStartGame()
     {
         NetworkStart = true;
-        if (GameSparkPacketReceiver.Instance.PeerID == 0)
+        if (GameSparkPacketHandler.Instance.GetPeerID() == 0)
         {
             StopCoroutine("RetryToSTart");
             StartCoroutine("RetryToSTart");
             return;
         }
-        StartCoroutine("DelayStartChecker");
+        SendStartSignalConcent();
 
         StateManager.Instance.Access_ChangeState(MENUSTATE.START_GAME);
     }
@@ -231,29 +231,24 @@ public class TronGameManager : GameStatsTweaker {
         ReceiveSignalToStartGame();
     }
     
-    IEnumerator DelayStartChecker()
-    {
-        yield return new WaitForSeconds(3);
-        SendStartSignalConcent();
-    }
     private void SendStartSignalConcent()
     {
-        PlayerObjects[GameSparkPacketReceiver.Instance.PeerID - 1].GetComponent<Car_Movement>().SetReady(true);
-        GameSparkPacketReceiver.Instance.Access_SentReadyToServer();
+        PlayerObjects[GameSparkPacketHandler.Instance.GetPeerID() - 1].GetComponent<Car_Movement>().SetReady(true);
+        GameSparkPacketHandler.Instance.Access_SentReadyToServer();
 
         return;
-        UIManager.Instance.GameUpdateText.text += "\n\tDelay Ready Player: " + GameSparkPacketReceiver.Instance.PeerID;
+        UIManager.Instance.GameUpdateText.text += "\n\tDelay Ready Player: " + GameSparkPacketHandler.Instance.GetPeerID();
 
-        GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
-        PlayerObjects[GameSparkPacketReceiver.Instance.PeerID - 1].GetComponent<Car_Movement>().SetReady(true);
+        GetRTSession = GameSparkPacketHandler.Instance.GetRTSession();
+        PlayerObjects[GameSparkPacketHandler.Instance.GetPeerID() - 1].GetComponent<Car_Movement>().SetReady(true);
         using (RTData data = RTData.Get())
         {
-            data.SetInt(1, GameSparkPacketReceiver.Instance.PeerID);
+            data.SetInt(1, GameSparkPacketHandler.Instance.GetPeerID());
             data.SetInt(2, 1);
             data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
             GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
         }
-        UIManager.Instance.GameUpdateText.text += "\nSignal Sent To Server :: Ready Player: " + GameSparkPacketReceiver.Instance.PeerID;
+        UIManager.Instance.GameUpdateText.text += "\nSignal Sent To Server :: Ready Player: " + GameSparkPacketHandler.Instance.GetPeerID();
 
     }
     #endregion
@@ -305,8 +300,6 @@ public class TronGameManager : GameStatsTweaker {
                     progressValueSwitch = false;
                     UIManager.Instance.Set_Canvas_Waiting(false);
                     UIManager.Instance.Set_Canvas_Countdown(true);
-                    //StopCoroutine("CountDownTimer");
-                    //StartCoroutine("CountDownTimer");
                 }
             }
             UIManager.Instance.SetProgressText(((int)currentProgressValue).ToString());
@@ -315,9 +308,9 @@ public class TronGameManager : GameStatsTweaker {
         {
             if (serverSecures)
             {
-                if (GameSparkPacketReceiver.Instance.serverClock > GameSparkPacketReceiver.Instance.GAMEshudStartAT.AddSeconds(-3))
+                if (GameSparkPacketHandler.Instance.serverClock > GameSparkPacketHandler.Instance.Get_gameShouldStartAt().AddSeconds(-3))
                 {
-                    if (GameSparkPacketReceiver.Instance.PeerID == 2)
+                    if (GameSparkPacketHandler.Instance.GetPeerID() == 2)
                         StateButtonManager.Instance.OnClick_ResetGame();
                     StopCoroutine("DelaySecTimer");
                     StartCoroutine("DelaySecTimer");
@@ -363,7 +356,7 @@ public class TronGameManager : GameStatsTweaker {
         UIManager.Instance.GameUpdateText.text += "\n\tSuppose To Do This State: "+_state;
         StateManager.Instance.Access_ChangeState(_state);
 
-        GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
+        GetRTSession = GameSparkPacketHandler.Instance.GetRTSession();
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, 0);

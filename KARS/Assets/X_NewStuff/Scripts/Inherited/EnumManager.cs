@@ -86,3 +86,10 @@ public enum SKILL_LIST
     Nitro,
     Expand
 }
+
+public enum MethodUsed
+{
+    LINEAR,
+    CUBIC
+
+}

@@ -595,7 +595,6 @@ public class GameStatsTweaker : MonoBehaviour {
 
 
 
-
     public void SendTrailData()
     {
         if (GameSparkPacketHandler.Instance.GetPeerID() == 0)

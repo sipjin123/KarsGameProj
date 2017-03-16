@@ -33,11 +33,6 @@ public class TronGameManager : GameStatsTweaker {
     public Transform SkillButtonParent;
     public GameObject SkillButton;
 
-    public int SelectedSkin;
-    int currentSlotIndex;
-    public Image[] selected_currentSkill_Image;
-    public Text[] selected_currentSkill_Text;
-    public GameObject SkillPanel;
 
     public void InitSkillList()
     {
@@ -61,9 +56,6 @@ public class TronGameManager : GameStatsTweaker {
         SelectSkillSlot(0);
     }
 
-
-    public GameObject[] slotIndicator;
-    public GameObject[] skillSlotIndicator;
     public void SelectSkillSlot(int _val)
     {
         currentSlotIndex = _val;
@@ -97,22 +89,36 @@ public class TronGameManager : GameStatsTweaker {
     #region VARIABLES
     public bool NetworkStart;
     public GameObject singlePlayerUI;
-    
+
+
+    private int selectedSkin;
+    public int GetSelectedSkin()
+    {
+        return selectedSkin;
+    }
+
+    //CHARACTER SELECT
     int carMeshIndex;
     public GameObject[] carMeshList;
     public GameObject[] StatList;
-    
-    
 
-    
+    //SKILLS
+    int currentSlotIndex;
+    public GameObject[] slotIndicator;
+    public GameObject[] skillSlotIndicator;
+    public Image[] selected_currentSkill_Image;
+    public Text[] selected_currentSkill_Text;
+    public GameObject SkillPanel;
+
     #endregion
     //==================================================================================================================================
     #region INITALIZATION
     void Awake()
     {
-        SelectedSkin = 1;
+        selectedSkin = 1;
         _instance = this;
         Initer();
+        StartProgressSession();
     }
     public override void Initer()
     {
@@ -163,7 +169,7 @@ public class TronGameManager : GameStatsTweaker {
     }
     public void OnClick_SelectCarButton()
     {
-        SelectedSkin = carMeshIndex;
+        selectedSkin = carMeshIndex;
         Access_UpdateCarSelection();
     }
     public void NextCar()
@@ -197,9 +203,9 @@ public class TronGameManager : GameStatsTweaker {
 
         for (int i = 0; i < SelectedCarHighlights.Length; i++)
             SelectedCarHighlights[i].SetActive(false);
-        SelectedCarHighlights[SelectedSkin].SetActive(true);
+        SelectedCarHighlights[selectedSkin].SetActive(true);
 
-        if(carMeshIndex == SelectedSkin)
+        if(carMeshIndex == selectedSkin)
         {
             UIManager.Instance.ActivateSelectCarButton(false);
         }
@@ -282,16 +288,10 @@ public class TronGameManager : GameStatsTweaker {
         {
             progressTimer += Time.deltaTime;
             UIManager.Instance.SetProgressTimerText(((int)progressTimer).ToString());
-            if (progressValueHolder > 0)
+            if (progressValueHolder >= -.1f)
             {
                 progressValueHolder -= Time.deltaTime * 20;
                 currentProgressValue += Time.deltaTime * 20;
-                if (currentProgressValue >= 70 && currentProgressValue < 70.5)
-                {
-                    currentProgressValue = 71;
-                    SetProgressValueHolder(29);
-                    serverSecures = false;
-                }
                 if (currentProgressValue >= 99)
                 {
                     serverSecures = true;
@@ -301,6 +301,10 @@ public class TronGameManager : GameStatsTweaker {
                     UIManager.Instance.Set_Canvas_Waiting(false);
                     UIManager.Instance.Set_Canvas_Countdown(true);
                 }
+                else
+                {
+                    serverSecures = false;
+                }
             }
             UIManager.Instance.SetProgressText(((int)currentProgressValue).ToString());
         }
@@ -308,14 +312,20 @@ public class TronGameManager : GameStatsTweaker {
         {
             if (serverSecures)
             {
-                if (GameSparkPacketHandler.Instance.serverClock > GameSparkPacketHandler.Instance.Get_gameShouldStartAt().AddSeconds(-3))
+                try
                 {
-                    if (GameSparkPacketHandler.Instance.GetPeerID() == 2)
-                        StateButtonManager.Instance.OnClick_ResetGame();
-                    StopCoroutine("DelaySecTimer");
-                    StartCoroutine("DelaySecTimer");
-                    AudioManager.Instance.Play_Oneshot(AUDIO_CLIP.CAR_START);
-                    serverSecures = false;
+                    DateTime tempDate = GameSparkPacketHandler.Instance.Get_gameShouldStartAt();
+                    if (GameSparkPacketHandler.Instance.GetServerClock() > tempDate.AddSeconds(-3))
+                    {
+                        StopCoroutine("DelaySecTimer");
+                        StartCoroutine("DelaySecTimer");
+                        serverSecures = false;
+                    }
+                }
+                catch(ArgumentException e)
+                {
+                    Debug.LogError("error checking CLOCK");
+                    Debug.LogError(e.Message);
                 }
             }
         }
@@ -323,7 +333,12 @@ public class TronGameManager : GameStatsTweaker {
     #endregion
     IEnumerator DelaySecTimer()
     {
+        AudioManager.Instance.Play_Oneshot(AUDIO_CLIP.CAR_START);
+        if (GameSparkPacketHandler.Instance.GetPeerID() == 2)
+            StateButtonManager.Instance.OnClick_ResetGame();
         UIManager.Instance.Set_Canvas_Countdown(true);
+        UIManager.Instance.SetCountdownTimerText("loading...");
+        yield return new WaitForSeconds(2);
         UIManager.Instance.SetCountdownTimerText("3");
 
         yield return new WaitForSeconds(1);
@@ -342,9 +357,9 @@ public class TronGameManager : GameStatsTweaker {
 
         UIManager.Instance.GameUpdateText.text += "\nGAME START NOW!!";
 
-        UIManager.Instance.SetRespawnScreen(false);
         UIManager.Instance.Set_Canvas_Countdown(false);
         UIManager.Instance.Set_Canvas_Waiting(false);
+        if(UIManager.Instance.GetRespawnScreen())
         UIManager.Instance.Set_Canvas_GameInit(true);
         PlayerObjects[0].GetComponent<Car_Movement>().DisableWheels = false;
         PlayerObjects[1].GetComponent<Car_Movement>().DisableWheels = false;
@@ -393,4 +408,5 @@ public class TronGameManager : GameStatsTweaker {
         }
     }
     #endregion
+
 }

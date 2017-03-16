@@ -88,7 +88,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
     #region INIT
      void StartGame(bool _switch)
     {
-        if (Network_ID == _gameSparkPacketReceiver.GetPeerID())
+        if (Network_ID == gameSparksPacketHandler.GetPeerID())
         {
             _carMovement.StartGame = _switch;
         }
@@ -404,7 +404,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 data.SetFloat(4, _pos.z);
                 data.SetVector3(5, _rot);
                 data.SetDouble(6, Network.time);
-                data.SetDouble(7, _gameSparkPacketReceiver.GetGameClockINT());
+                data.SetDouble(7, gameSparksPacketHandler.GetGameClockINT());
 
 
                 GetRTSession.SendData(OPCODE_CLASS.MovementOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
@@ -595,9 +595,9 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
     public void InitCam()
     {
-        _gameSparkPacketReceiver = GameSparkPacketHandler.Instance.GetComponent<GameSparkPacketHandler>();
-        GetRTSession = _gameSparkPacketReceiver.GetRTSession();
-        if (Network_ID == _gameSparkPacketReceiver.GetPeerID())
+        gameSparksPacketHandler = GameSparkPacketHandler.Instance.GetComponent<GameSparkPacketHandler>();
+        GetRTSession = gameSparksPacketHandler.GetRTSession();
+        if (Network_ID == gameSparksPacketHandler.GetPeerID())
         {
             if (Network_ID == 0)
             {
@@ -795,7 +795,6 @@ public class Car_DataReceiver : Car_Network_Interpolation
         if (TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().GetReady()
             && TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().GetReady())
         {
-            TronGameManager.Instance.SetProgressValueHolder(20);
             GameSparkPacketHandler.Instance.Access_SentStartToServer();
         }
         else
@@ -814,10 +813,12 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
     void Process_Start()
     {
+        
         if(_carMovement.GetReady() == false)
         {
             UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO START THIS PLAYER_____ RETRYNG CODE 001";
-            GameSparkPacketHandler.Instance.Access_SentReadyToServer();
+            //GameSparkPacketHandler.Instance.Access_SentReadyToServer();
+            GameSparkPacketHandler.Instance.Access_SentStartToServer();
             return;
         }
         try
@@ -828,7 +829,10 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY START THIS PLAYER";
                 UIManager.Instance.GameUpdateText.text += "\n\t\t" + TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().GetReady() + " - "
                                                                  + TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().GetReady();
-                TronGameManager.Instance.SetProgressValueHolder(10);
+                if (TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().GetReady() != TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().GetReady())
+                {
+                    UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: READY PHASE HAS BEEN SKIPEED";
+                }
             }
             //UIManager.Instance.Set_Canvas_Waiting(false);
         }

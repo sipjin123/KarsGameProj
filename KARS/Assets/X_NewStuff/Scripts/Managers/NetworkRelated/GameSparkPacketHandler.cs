@@ -21,7 +21,7 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
     #region GAME TIME
     void FixedUpdate()
     {
-        serverClock = serverClock.AddSeconds(Time.fixedDeltaTime);
+        serverClock  = serverClock.AddSeconds(Time.fixedDeltaTime);
 
         gameClockINT = (float)((serverClock.Second * 1000) + serverClock.Millisecond);
         ActualTime.text = serverClock.Minute + " : " + serverClock.Second + " : " + serverClock.Millisecond + "\n" + timeDelta + " " + latency + " " + roundTrip;
@@ -66,10 +66,13 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
             (packet) => { OnPacketReceived(packet); });
         gameSparksRTUnity.Connect(); // when the config is set, connect the game
 
-
-        UIManager.Instance.GameUpdateText.text += "\nPhase 1 & 2 & 3: OnMatchFound";
-        StateManager.Instance.Access_ChangeState(MENUSTATE.MATCH_FOUND);
-        TronGameManager.Instance.SetProgressValueHolder(30);
+        if (hasReceived_OnMatchFound == false)
+        {
+            UIManager.Instance.GameUpdateText.text += "\nPhase 1 & 2 & 3: OnMatchFound";
+            StateManager.Instance.Access_ChangeState(MENUSTATE.MATCH_FOUND);
+            TronGameManager.Instance.SetProgressValueHolder(30);
+            hasReceived_OnMatchFound = true;
+        }
     }
 
     private void OnPlayerConnectedToGame(int _peerId)
@@ -92,8 +95,12 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
         {
             Debug.Log("GSM| RT Session Connected...");
             peerID = RegisterGameSpark.Instance.PeerID;
-            StartCoroutine(SendTimeStamp());
+            IntTimeStamp();
         }
+    }
+    public override void IntTimeStamp()
+    {
+        base.IntTimeStamp();
     }
     #endregion
     //=============================================================================================================================
@@ -140,10 +147,10 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
             data.SetInt(1, peerID);
             data.SetInt(2, 1);
             data.SetInt(3, (int)NetworkPlayerStatus.SET_READY);
-            RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
         }
         UIManager.Instance.GameUpdateText.text += "\n=========================================================";
-        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: READY";
+        UIManager.Instance.GameUpdateText.text += "\n\t<<<OPCODE SEND: READY";
     }
     public void Access_SentStartToServer()
     {
@@ -158,11 +165,11 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
                 data.SetInt(2, 1);
                 data.SetInt(3, (int)NetworkPlayerStatus.SET_START);
                 data.SetString(4, serverClock.AddSeconds(5).ToString() );
-                RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                RT.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
             }
         }
         UIManager.Instance.GameUpdateText.text += "\n=========================================================";
-        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: START";
+        UIManager.Instance.GameUpdateText.text += "\n\t<<<OPCODE SEND: START";
 
         StopCoroutine("DelaySendMesh");
         StartCoroutine("DelaySendMesh");
@@ -170,17 +177,21 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
     IEnumerator DelaySendMesh()
     {
         yield return new WaitForSeconds(1);
+        Access_SentAvatarToServer();
+    }
+    public void Access_SentAvatarToServer()
+    {
         //SEND MESH
         GameSparksRTUnity RT = GetRTSession();
-        TronGameManager.Instance.PlayerObjects[peerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(TronGameManager.Instance.SelectedSkin);
+        TronGameManager.Instance.PlayerObjects[peerID - 1].GetComponent<Car_DataReceiver>().SetCarAvatar(TronGameManager.Instance.GetSelectedSkin());
         using (RTData data = RTData.Get())
         {
             data.SetInt(1, peerID);
-            data.SetInt(2, TronGameManager.Instance.SelectedSkin);
-            RT.SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            data.SetInt(2, TronGameManager.Instance.GetSelectedSkin());
+            RT.SendData(OPCODE_CLASS.MeshOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
         }
         UIManager.Instance.GameUpdateText.text += "\n=========================================================";
-        UIManager.Instance.GameUpdateText.text += "\n\t***OPCODE SEND: MESH";
+        UIManager.Instance.GameUpdateText.text += "\n\t<<<OPCODE SEND: MESH";
     }
     #endregion
     //=============================================================================================================================

@@ -107,11 +107,34 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                     //UIManager.Instance.GameUpdateText.text += "\n\t\tOPCODE_DATA RECEIVE: " + _netPlayerEvent.playerStatus;
                     if (_netPlayerEvent.playerStatus == NetworkPlayerStatus.SET_READY)
                     {
-                        UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE RECEIVE: READY";
+                        if (hasReceived_ReadyMessage == false)
+                        {
+                            hasReceived_ReadyMessage = true;
+                            TronGameManager.Instance.SetProgressValueHolder(10);
+                            GameSparkPacketHandler.Instance.Access_SentReadyToServer();
+                            UIManager.Instance.GameUpdateText.text += "\n\t>>>OPCODE RECEIVE: READY";
+                        }
+                        else
+                        {
+                            UIManager.Instance.GameUpdateText.text += "\n\t>>>OPCODE BLOCKED: READY";
+                            return;
+                        }
                     }
                     if (_netPlayerEvent.playerStatus == NetworkPlayerStatus.SET_START && _netPlayerEvent.playerID == 2)
                     {
-                        UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE RECEIVE: START";
+                        if (hasReceived_StartMessage == false)
+                        {
+                            hasReceived_StartMessage = true;
+                            TronGameManager.Instance.SetProgressValueHolder(10);
+                            GameSparkPacketHandler.Instance.Access_SentStartToServer();
+                            UIManager.Instance.GameUpdateText.text += "\n\t>>>OPCODE RECEIVE: START";
+                        }
+                        else
+                        {
+                            UIManager.Instance.GameUpdateText.text += "\n\t>>>OPCODE BLOCKED: START";
+                            return;
+                        }
+
                         gameShouldStartAt = DateTime.Parse(_packet.Data.GetString(4));
                     }
                     //UIManager.instance.GameUpdateText.text += "\nData Translation for Disable"+_netPlayerEvent.playerStatus;
@@ -126,7 +149,7 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                     int receivedPlayerToMove = 0;
                     receivedPlayerToMove = _packet.Data.GetInt(1).Value;
 
-                    UIManager.Instance.GameUpdateText.text += "\n\t==OPCODE RECEIVE: CAR AVATAR";
+                    UIManager.Instance.GameUpdateText.text += "\n\t>>>OPCODE RECEIVE: CAR AVATAR";
                     for (int i = 0; i < TronGameManager.Instance.PlayerObjects.Length; i++)
                     {
                         GameObject _obj = TronGameManager.Instance.PlayerObjects[i].gameObject;
@@ -134,10 +157,22 @@ public class GameSparkPacketReceiver : MonoBehaviour {
 
                         if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
                         {
-                            TronGameManager.Instance.SetProgressValueHolder(10);
-                            UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY RECEIVED AVATAR: " + _packet.Data.GetInt(2).Value;
-                            UIManager.Instance.GameUpdateText.text += "\n=========================================================";
-                            _GameSparks_DataSender.SetCarAvatar(_packet.Data.GetInt(2).Value);
+                            if (hasReceived_AvatarMessage == false)
+                            {
+                                hasReceived_AvatarMessage = true;
+                                UIManager.Instance.SetMatchCancelButton(false);
+                                TronGameManager.Instance.SetProgressValueHolder(50);
+                                GameSparkPacketHandler.Instance.Access_SentAvatarToServer();
+                                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY RECEIVED AVATAR: " + _packet.Data.GetInt(2).Value;
+                                UIManager.Instance.GameUpdateText.text += "\n=========================================================";
+                                _GameSparks_DataSender.SetCarAvatar(_packet.Data.GetInt(2).Value);
+                                return;
+                            }
+                            else
+                            {
+                                UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: BLOCKED AVATAR: " + _packet.Data.GetInt(2).Value;
+                                return;
+                            }
                         }
                     }
 
@@ -214,9 +249,22 @@ public class GameSparkPacketReceiver : MonoBehaviour {
     #endregion
     //=============================================================================================================================
     #region CLOCK SYNC
+
+    protected DateTime serverClock;
+    public DateTime GetServerClock()
+    {
+        return serverClock;
+    }
+
+    protected int timeDelta, latency, roundTrip;
+
+    public virtual void IntTimeStamp()
+    {
+        StopCoroutine("SendTimeStamp");
+        StartCoroutine("SendTimeStamp");
+    }
     protected IEnumerator SendTimeStamp()
     {
-
         using (RTData data = RTData.Get())
         {
             data.SetLong(1, (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds);
@@ -225,8 +273,6 @@ public class GameSparkPacketReceiver : MonoBehaviour {
         yield return new WaitForSeconds(0f);
         StartCoroutine(SendTimeStamp());
     }
-    public DateTime serverClock;
-    protected int timeDelta, latency, roundTrip;
 
     /// Calculates the time-difference between the client and server
     public void CalculateTimeDelta(RTPacket _packet)
@@ -255,4 +301,19 @@ public class GameSparkPacketReceiver : MonoBehaviour {
         */
     }
     #endregion
+
+
+    void Awake()
+    {
+        ResetBoolList();
+    }
+    protected bool hasReceived_StartMessage, hasReceived_ReadyMessage, hasReceived_AvatarMessage, hasReceived_OnMatchFound;
+    public void ResetBoolList()
+    {
+        hasReceived_AvatarMessage = false;
+        hasReceived_ReadyMessage = false;
+        hasReceived_StartMessage = false;
+        hasReceived_OnMatchFound = false;
+    }
+
 }

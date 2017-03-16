@@ -359,7 +359,8 @@ public class Car_Movement : MonoBehaviour
         yield return new WaitForSeconds(2);
         UIManager.Instance.SetRespawnScreen(true);
         UIManager.Instance.SetExplosionPanel(false);
-        yield return new WaitForSeconds(5);
+        UIManager.Instance.Set_Canvas_GameInit(false);
+        yield return new WaitForSeconds(3);
 
         MyCarDataReceiver.SendNetworkDisable(false, NetworkPlayerStatus.ACTIVATE_EXPLOSION);
         MyCarDataReceiver.ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_EXPLOSION);

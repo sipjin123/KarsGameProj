@@ -14,12 +14,14 @@ public class Camera_Behaviour : MonoBehaviour {
     }
     public void RotateRight(float multiplier)
     {
+        return;
         lerper = 0;
         Cam_Y += (RotateSpeed * multiplier) * Time.fixedDeltaTime;
         transform.localRotation = Quaternion.Euler( new Vector3(0, Cam_Y, 0));
     }
     public void RotateLeft(float multiplier)
     {
+        return;
         lerper = 0;
         Cam_Y -= (RotateSpeed * multiplier) * Time.fixedDeltaTime;
         transform.localRotation = Quaternion.Euler( new Vector3(0, Cam_Y, 0));
@@ -27,6 +29,7 @@ public class Camera_Behaviour : MonoBehaviour {
     float lerper;
     public void ReturnToDefault()
     {
+        return;
         lerper += .01f;
         Cam_Y = transform.localRotation.y;
         transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(0, 0, 0), lerper);

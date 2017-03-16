@@ -163,6 +163,11 @@ public class UIManager : MonoBehaviour {
     {
         RespawningScreen.SetActive(_switch);
     }
+
+    public bool GetRespawnScreen()
+    {
+        return RespawningScreen.activeInHierarchy;
+    }
     public void SetResultScreen(bool _switch)
     {
         InGame_Result_PANEL.SetActive(_switch);
@@ -293,4 +298,12 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+    public void MoveUpLog()
+    {
+        GameUpdateText.transform.position += transform.up;
+    }
+    public void MoveDownLog()
+    {
+        GameUpdateText.transform.position -= transform.up;
+    }
 }

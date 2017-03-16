@@ -65,11 +65,14 @@ public class StateManager : MonoBehaviour {
                 break;
 
 
-
-            case MENUSTATE.CANCEL_MATCH_FIND:
+            case MENUSTATE.MATCH_FIND:
                 {
-                    ResetGameVariables();
-                    Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
+                    RegisterGameSpark.Instance.Access_LoginAuthentication();
+                    TronGameManager.Instance.ClearLogs();
+                    TronGameManager.Instance.StartProgressSession();
+                    TronGameManager.Instance.BlockMatchFinding = false;
+                    ResetAllMainMenuPanels();
+                    UIManager.Instance.Set_Canvas_Waiting(true);
                 }
                 break;
             case MENUSTATE.MATCH_FOUND:
@@ -79,14 +82,11 @@ public class StateManager : MonoBehaviour {
                     //TronGameManager.Instance.ReceiveSignalToStartGame();
                 }
                 break;
-            case MENUSTATE.MATCH_FIND:
+
+            case MENUSTATE.CANCEL_MATCH_FIND:
                 {
-                    RegisterGameSpark.Instance.Access_LoginAuthentication();
-                    TronGameManager.Instance.ClearLogs();
-                    TronGameManager.Instance.StartProgressSession();
-                    TronGameManager.Instance.BlockMatchFinding = false;
-                    ResetAllMainMenuPanels();
-                    UIManager.Instance.Set_Canvas_Waiting(true);
+                    AccessResetGameVariables();
+                    Access_ChangeState(MENUSTATE.RETURN_TO_MAIN_MENU);
                 }
                 break;
             case MENUSTATE.RESTART_GAME:
@@ -133,11 +133,12 @@ public class StateManager : MonoBehaviour {
                         UIManager.Instance.SetPlayerWin(true, 2);
                     }
                     UIManager.Instance.MirrorPlayerHp();
-                    ResetGameVariables();
+                    AccessResetGameVariables();
                 }
                 break;
             case MENUSTATE.RETURN_TO_MAIN_MENU:
                 {
+                    AccessResetGameVariables();
                     GameSparkPacketHandler.Instance.Access_ResetNetwork();
                     //UI SETUP
                     ResetAllMainMenuPanels();
@@ -154,11 +155,13 @@ public class StateManager : MonoBehaviour {
         }
     }
 
-    void ResetGameVariables()
+    public void AccessResetGameVariables()
     {
         //PLAYER OBJECT RESET
         TronGameManager.Instance.Access_ReInitializeGameSparks();
         TronGameManager.Instance.Access_PlayerReset();
+
+        GameSparkPacketHandler.Instance.ResetBoolList();
 
         //DEACTIVATE ALL SKILLS PANEL
         //DEACTIVATE ALL SKILLS ICON IN GAME
@@ -185,6 +188,5 @@ public class StateManager : MonoBehaviour {
             UIManager.Instance.GameUpdateText.text += "\nNonExisting RT Session";
         }
         GS.Disconnect();
-        
     }
 }

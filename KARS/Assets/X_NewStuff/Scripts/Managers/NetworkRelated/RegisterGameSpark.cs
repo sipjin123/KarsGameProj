@@ -151,7 +151,6 @@ public class RegisterGameSpark : MonoBehaviour {
             UIManager.Instance.GameUpdateText.text += "\n\t\t-BLOCKED MATCH FINDING";
             return;
         }
-        UIManager.Instance.SetMatchCancelButton(false);
         //NOTES
         /*
         _message.Host

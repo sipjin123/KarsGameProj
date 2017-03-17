@@ -148,7 +148,6 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-
     #region CANVAS
     public void Set_Canvas_Main(bool _switch)
     {
@@ -177,11 +176,33 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region IN GAME UI
+    public void ActivatePlayerPanel(int _player)
+    {
+        if (_player == 1)
+        {
+            Player1Panel.SetActive(true);
+            Player2Panel.SetActive(false);
+        }
+        else if (_player == 2)
+        {
+            Player1Panel.SetActive(false);
+            Player2Panel.SetActive(true);
+        }
+        else
+        {
+            Player1Panel.SetActive(false);
+            Player2Panel.SetActive(false);
+        }
+    }
     public void SetRespawnScreen(bool _switch)
     {
         RespawningScreen.SetActive(_switch);
     }
 
+    public void SetExplosionPanel(bool _switch)
+    {
+        ExplosionPanel.SetActive(_switch);
+    }
     public bool GetRespawnScreen()
     {
         return RespawningScreen.activeInHierarchy;
@@ -190,6 +211,38 @@ public class UIManager : MonoBehaviour {
     {
         InGame_Result_PANEL.SetActive(_switch);
     }
+
+    public void StartCooldDownForBlockers(int _player, int _slot, float _currentVal, float _maxVal, string _name)
+    {
+        Image imgToCd = null;
+        Text textToRefer = null;
+        if (_player == 1)
+        {
+            imgToCd = Player1_SkillBlockers[_slot];
+            textToRefer = Player1_SkillSlotNames[_slot];
+        }
+        else if (_player == 2)
+        {
+            imgToCd = Player2_SkillBlockers[_slot];
+            textToRefer = Player2_SkillSlotNames[_slot];
+        }
+        else
+        {
+            return;
+        }
+
+        imgToCd.fillAmount = _currentVal / _maxVal;
+        textToRefer.text = _name + "\n" + ((int)(_maxVal - _currentVal));
+        if (imgToCd.fillAmount > .98f)
+        {
+            imgToCd.gameObject.SetActive(false);
+        }
+        else
+        {
+            imgToCd.gameObject.SetActive(true);
+        }
+    }
+
     #endregion
 
     #region PLAYER STATS
@@ -225,60 +278,6 @@ public class UIManager : MonoBehaviour {
         }
     }
     #endregion
-
-    public void ActivatePlayerPanel(int _player)
-    {
-        if(_player == 1)
-        {
-            Player1Panel.SetActive(true);
-            Player2Panel.SetActive(false);
-        }
-        else if (_player == 2)
-        {
-            Player1Panel.SetActive(false);
-            Player2Panel.SetActive(true);
-        }
-        else
-        {
-            Player1Panel.SetActive(false);
-            Player2Panel.SetActive(false);
-        }
-    }
-    public void StartCooldDownForBlockers(int _player, int _slot, float _currentVal, float _maxVal,string _name)
-    {
-        Image imgToCd = null;
-        Text textToRefer = null;
-        if(_player == 1)
-        {
-            imgToCd = Player1_SkillBlockers[_slot];
-            textToRefer = Player1_SkillSlotNames[_slot];
-        }
-        else if (_player == 2)
-        {
-            imgToCd = Player2_SkillBlockers[_slot];
-            textToRefer = Player2_SkillSlotNames[_slot];
-        }
-        else
-        {
-            return;
-        }
-
-        imgToCd.fillAmount = _currentVal / _maxVal;
-        textToRefer.text = _name+"\n"+ ((int)(_maxVal - _currentVal));
-        if (imgToCd.fillAmount > .98f)
-        {
-            imgToCd.gameObject.SetActive( false );
-        }
-        else
-        {
-            imgToCd.gameObject.SetActive( true );
-        }
-    }
-
-    public void SetExplosionPanel(bool _switch)
-    {
-        ExplosionPanel.SetActive(_switch);
-    }
 
     #region PRE GAME LOADING 
     public void SetProgressText(string _val)

@@ -159,9 +159,9 @@ public class StateManager : MonoBehaviour {
     {
         //PLAYER OBJECT RESET
         GameSparkPacketHandler.Instance.Access_ReInitializeGameSparks();
-        TronGameManager.Instance.Access_PlayerReset();
+        GameSparkPacketHandler.Instance.Access_PlayerReset();
 
-        GameSparkPacketHandler.Instance.ResetBoolList();
+        GameSparkPacketHandler.Instance.AccessResetBoolList();
 
         //DEACTIVATE ALL SKILLS PANEL
         //DEACTIVATE ALL SKILLS ICON IN GAME

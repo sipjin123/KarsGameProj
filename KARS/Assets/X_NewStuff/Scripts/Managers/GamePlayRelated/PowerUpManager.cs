@@ -127,10 +127,20 @@ public class PowerUpManager : MonoBehaviour {
 
     public void ResetMissles()
     {
-        for(int i = 0; i < MissleList_Player1.Count;i++)
+        try
         {
-            MissleList_Player2[i].GetComponent<MissleScript>().ResetMissle();
-            MissleList_Player1[i].GetComponent<MissleScript>().ResetMissle();
+            for (int i = 0; i < MissleList_Player1.Count; i++)
+            {
+                MissleList_Player1[i].GetComponent<MissleScript>().ResetMissle();
+            }
+            for (int i = 0; i < MissleList_Player2.Count; i++)
+            {
+                MissleList_Player1[i].GetComponent<MissleScript>().ResetMissle();
+            }
+        }
+        catch
+        {
+            Debug.LogError("cant restart powe ups");
         }
     }
 }

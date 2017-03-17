@@ -78,6 +78,8 @@ public class StateManager : MonoBehaviour {
             case MENUSTATE.MATCH_FOUND:
                 {
                     UIManager.Instance.Set_Canvas_Main(false);
+
+                    GameSparkPacketHandler.Instance.sendResult = "none";
                     //TEST PLS RETURN LATER
                     //TronGameManager.Instance.ReceiveSignalToStartGame();
                 }
@@ -116,8 +118,15 @@ public class StateManager : MonoBehaviour {
                     UIManager.Instance.SetResultScreen(false);
                 }
                 break;
+            case MENUSTATE.PRE_RESULT:
+                {
+                }
+                break;
             case MENUSTATE.RESULT:
                 {
+                    if (GameSparkPacketHandler.Instance.Get_hasReceived_PreResult() == false)
+                        UIManager.Instance.SetDisconnectedPanel(true);
+
                     TronGameManager.Instance.BlockMatchFinding = true;
                     //RESULTS SCREEN
                     UIManager.Instance.Set_Canvas_Waiting(false);
@@ -150,6 +159,7 @@ public class StateManager : MonoBehaviour {
                     UIManager.Instance.Set_Canvas_InGame(false);
                     UIManager.Instance.Set_Canvas_Waiting(false);
                     UIManager.Instance.Set_Canvas_GameInit(false);
+                    UIManager.Instance.SetDisconnectedPanel(false);
                 }
                 break;
         }

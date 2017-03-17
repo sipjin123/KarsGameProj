@@ -17,7 +17,17 @@ public class GameSparkPacketReceiver : MonoBehaviour {
     hasReceived_StartMessage,
     hasReceived_ReadyMessage,
     hasReceived_AvatarMessage,
+    hasReceived_PreREsult,
     hasReceived_OnMatchFound;
+
+    public bool Get_hasReceived_PreResult()
+    {
+        return hasReceived_PreREsult;
+    }
+    public void Set_hasReceived_PreResult(bool _var)
+    {
+        hasReceived_PreREsult = _var;
+    }
 
     //GAME ID
     protected int peerID = 0;
@@ -254,6 +264,17 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                     int receivedPlayerID = _packet.Data.GetInt(1).Value;
                     int receivedMenuState = _packet.Data.GetInt(2).Value;
                     StateManager.Instance.Access_ChangeState((MENUSTATE)receivedMenuState);
+                }
+                break;
+            case 121:
+                {
+                    int receivedPlayerID = _packet.Data.GetInt(1).Value;
+                    int receivedMenuState = _packet.Data.GetInt(2).Value;
+                    string receivedMSG = _packet.Data.GetString(3);
+
+                    GameSparkPacketHandler.Instance.sendResult = receivedMSG;
+                    UIManager.Instance.GameUpdateText.text += "\nI RECEIVE: " + receivedMSG;
+                            GameSparkPacketHandler.Instance.Global_SendONLYState(MENUSTATE.PRE_RESULT);
                 }
                 break;
         }

@@ -36,6 +36,8 @@ public enum MENUSTATE
     RESTART_GAME,
     MATCH_FIND,
     START_GAME,
+
+    PRE_RESULT,
     RESULT,
     RETURN_TO_MAIN_MENU
 }

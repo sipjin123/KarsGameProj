@@ -118,6 +118,13 @@ public class UIManager : MonoBehaviour {
     private GameObject ExplosionPanel;
 
 
+    [SerializeField]
+    private GameObject DisconnectPanel;
+
+    public void SetDisconnectedPanel(bool _switch)
+    {
+        DisconnectPanel.SetActive(_switch);
+    }
 
     //==========================================================================================
     #region MAIN MENU VARIABLES

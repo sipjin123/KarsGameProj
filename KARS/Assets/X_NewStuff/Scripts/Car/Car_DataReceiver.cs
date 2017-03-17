@@ -450,12 +450,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
             data.SetInt(1, network_ID);
             data.SetInt(2, (int)NetworkPlayerVariableList.HEALTH);
             data.SetFloat(3, health);
-            GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE, data);
-        }
-
-        if (health <= 0)
-        {
-            GameSparkPacketHandler.Instance.Global_SendState(MENUSTATE.RESULT);
+            GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
         }
     }
 

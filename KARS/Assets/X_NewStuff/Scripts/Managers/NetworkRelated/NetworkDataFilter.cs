@@ -70,6 +70,11 @@ public class NetworkDataFilter : MonoBehaviour
             int receivedPlayerID = _networkPlayerVariables.playerID;
             float receivedPlayerHealth = _networkPlayerVariables.variableValue;
             UIManager.Instance.AdjustHPBarAndText(receivedPlayerID, receivedPlayerHealth);
+
+            if (receivedPlayerHealth <= 0)
+            {
+                GameSparkPacketHandler.Instance.Global_SendONLYState(MENUSTATE.PRE_RESULT);
+            }
         }
         else if (_networkPlayerVariables.playerVariable == NetworkPlayerVariableList.TRAIL)
         {

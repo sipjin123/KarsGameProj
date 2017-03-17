@@ -85,6 +85,7 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
     private void OnPlayerDisconnected(int _peerId)
     {
         Debug.Log("GSM| Player Disconnected, " + _peerId);
+        UIManager.Instance.GameUpdateText.text += "\nPLAYER HAS DISCONNECTED";
         GetRTSession().Disconnect();
         GS.Disconnect();
         StateManager.Instance.Access_ChangeState(MENUSTATE.RESULT);
@@ -118,6 +119,7 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
         hasReceived_ReadyMessage = false;
         hasReceived_StartMessage = false;
         hasReceived_OnMatchFound = false;
+        hasReceived_PreREsult = false;
     }
     public void Access_ResetNetwork()
     {
@@ -246,6 +248,34 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
 
 
 
+    public void Global_SendONLYState(MENUSTATE _state)
+    {
+        using (RTData data = RTData.Get())
+        {
+            string watToSend = "";
+            data.SetInt(1, 0);
+            data.SetInt(2, (int)_state);
+            if (sendResult == "none")
+                watToSend = "Phase1";
+            if (sendResult == "Phase1")
+            {
+                Set_hasReceived_PreResult(true);
+                watToSend = "Phase2";
+            }
+            if (sendResult == "Phase2")
+            {
+                watToSend = "Phase3";
+                Set_hasReceived_PreResult(true);
+                Global_SendState(MENUSTATE.RESULT);
+            }
+            data.SetString(3, watToSend);
+            UIManager.Instance.GameUpdateText.text += "\nI SEND: " + watToSend;
+
+            GetRTSession().SendData(121, GameSparksRT.DeliveryIntent.RELIABLE, data);
+        }
+    }
+
+    public string sendResult;
 
     //FOR TESTING
     public double playerPingOffset = 1000f;

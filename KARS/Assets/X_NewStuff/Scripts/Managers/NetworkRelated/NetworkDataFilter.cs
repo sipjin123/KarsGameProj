@@ -46,25 +46,8 @@ public class NetworkDataFilter : MonoBehaviour
             }
         }
 
-        if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_STUN ||
-            _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_BLIND ||
-            _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_CONFUSE ||
-            _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_SLOW ||
-            _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_SILENCE ||
-            _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_EXPLOSION ||
-            _networkPlayerEvent.playerStatus == NetworkPlayerStatus.SET_START ||
-            _networkPlayerEvent.playerStatus == NetworkPlayerStatus.SET_READY)
-        {
-            carReceiver.ReceiveDisableSTate(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
-        }
-        else if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_SHIELD ||
-                 _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_FLY ||
-                 _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_FLY ||
-                 _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_EXPAND)
-        {
-            carReceiver.ReceivePowerUpState(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
-        }
-        else if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_TRAIL)
+        carReceiver.ReceivePlayerSTate(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
+        if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_TRAIL)
         {
             carMovement._trailCollision.SetEmiision(_networkPlayerEvent.playerStatusSwitch);
         }

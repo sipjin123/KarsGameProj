@@ -106,23 +106,11 @@ public class PowerUpManager : MonoBehaviour {
             MissleList_Player2[MissleList_Player2.Count - 1] = temp;
         }
     }
-    /*
-    void ClientSendToServerMissleLock(int sender, int receiver)
-    {
-        GetRTSession = GameSparkPacketReceiver.Instance.GetRTSession();
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, sender);
-            data.SetInt(2, receiver);
-            GetRTSession.SendData(MeshOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
-        }
-    }*/
     #endregion
     //=======================================================================================================================
 
     public void LaunchMissleFromBUtton(int _misNum)
     {
-
         if (GameSparkPacketHandler.Instance.GetPeerID() == 2)
         {
             LockOnTarget(2, Player1,(MissleScript.MISSLE_TYPE)_misNum);
@@ -134,6 +122,15 @@ public class PowerUpManager : MonoBehaviour {
         else
         {
             LockOnTarget(0,Player2, (MissleScript.MISSLE_TYPE)_misNum);
+        }
+    }
+
+    public void ResetMissles()
+    {
+        for(int i = 0; i < MissleList_Player1.Count;i++)
+        {
+            MissleList_Player2[i].GetComponent<MissleScript>().ResetMissle();
+            MissleList_Player1[i].GetComponent<MissleScript>().ResetMissle();
         }
     }
 }

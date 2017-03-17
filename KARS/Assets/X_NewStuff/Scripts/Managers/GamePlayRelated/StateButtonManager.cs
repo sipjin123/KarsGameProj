@@ -15,7 +15,6 @@ public class StateButtonManager : MonoBehaviour {
         AudioManager.Instance.Play_Oneshot(AUDIO_CLIP.BUTTON);
         StateManager.Instance.Access_ChangeState(MENUSTATE.MATCH_FIND);
     }
-
     public void OnClick_CancelMathcFind()
     {
         AudioManager.Instance.Play_Oneshot(AUDIO_CLIP.BUTTON);

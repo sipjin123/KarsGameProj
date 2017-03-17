@@ -19,21 +19,25 @@ public class Car_DataReceiver : Car_Network_Interpolation
     float health;
 
     //NETWORK STUFF
+    #region NETWORK
     private bool ifMy_Network_Player;
     private int network_ID;
     [SerializeField]
     private Camera NetworkCam;
     [SerializeField]
     private AudioListener audioListener;
+    #endregion
 
     //SKILLS 
+    #region SKILLS
     bool initSkills;
     Transform[] ButtonObject = new Transform[2];
     string[] CooldownName = new string[2];
     float[] CooldownCap = new float[2];
-    bool[] coolDown_Switch = new bool[2];
     float[] coolDown_Timer = new float[2];
-
+    bool[] coolDown_Switch = new bool[2];
+    #endregion
+    
     //POWER UP AND DEBUFF
     #region DEBUFF AND POWERUPS
     //NITROS---------
@@ -98,7 +102,8 @@ public class Car_DataReceiver : Car_Network_Interpolation
     private GameObject ExplosionObject;
     #endregion
 
-    // PUBLIC GET/SET VARIABLES
+    //PUBLIC GET/SET VARIABLES
+    #region PUBLIC GET/SET VARIABLES
     public int GetNetwork_ID()
     {
         return network_ID;
@@ -107,6 +112,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
     {
         health = _val;
     }
+    #endregion
     #endregion
     //================================================================================================================================
     void Awake()
@@ -143,11 +149,11 @@ public class Car_DataReceiver : Car_Network_Interpolation
         }
         if (Input.GetKeyDown(KeyCode.Comma))
         {
-            ResetTrail(true);
+            SendNetworkStatus(true,NetworkPlayerStatus.ACTIVATE_TRAIL);
         }
         if (Input.GetKeyDown(KeyCode.Period))
         {
-            ResetTrail(false);
+            SendNetworkStatus(false, NetworkPlayerStatus.ACTIVATE_TRAIL);
         }
     }
     #endregion
@@ -157,36 +163,36 @@ public class Car_DataReceiver : Car_Network_Interpolation
     {
         yield return new WaitForSeconds(TronGameManager.Instance.ConfuseDuration);
         ConfuseSwitch = false;
-        ReceiveDisableSTate(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
-        SendNetworkDisable(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
+        ReceivePlayerSTate(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
+        SendNetworkStatus(ConfuseSwitch, NetworkPlayerStatus.ACTIVATE_CONFUSE);
     }
     IEnumerator StartStunTimer()
     {
         yield return new WaitForSeconds(TronGameManager.Instance.const_StunDuration);
         StunSwitch = false;
-        ReceiveDisableSTate(StunSwitch, NetworkPlayerStatus.ACTIVATE_STUN);
-        SendNetworkDisable(StunSwitch, NetworkPlayerStatus.ACTIVATE_STUN);
+        ReceivePlayerSTate(StunSwitch, NetworkPlayerStatus.ACTIVATE_STUN);
+        SendNetworkStatus(StunSwitch, NetworkPlayerStatus.ACTIVATE_STUN);
     }
     IEnumerator StartBlindTimer()
     {
         yield return new WaitForSeconds(TronGameManager.Instance.BlindDuration);
         BlindSwitch = false;
-        ReceiveDisableSTate(BlindSwitch, NetworkPlayerStatus.ACTIVATE_BLIND);
-        SendNetworkDisable(BlindSwitch, NetworkPlayerStatus.ACTIVATE_BLIND);
+        ReceivePlayerSTate(BlindSwitch, NetworkPlayerStatus.ACTIVATE_BLIND);
+        SendNetworkStatus(BlindSwitch, NetworkPlayerStatus.ACTIVATE_BLIND);
     }
     IEnumerator StartSlowTimer()
     {
         yield return new WaitForSeconds(TronGameManager.Instance.BlindDuration);
         SlowSwitch = false;
-        ReceiveDisableSTate(SlowSwitch, NetworkPlayerStatus.ACTIVATE_SLOW);
-        SendNetworkDisable(SlowSwitch, NetworkPlayerStatus.ACTIVATE_SLOW);
+        ReceivePlayerSTate(SlowSwitch, NetworkPlayerStatus.ACTIVATE_SLOW);
+        SendNetworkStatus(SlowSwitch, NetworkPlayerStatus.ACTIVATE_SLOW);
     }
     IEnumerator StartSilenceTimer()
     {
         yield return new WaitForSeconds(TronGameManager.Instance.BlindDuration);
         SilenceSwitch = false;
-        ReceiveDisableSTate(SilenceSwitch, NetworkPlayerStatus.ACTIVATE_SILENCE);
-        SendNetworkDisable(SilenceSwitch, NetworkPlayerStatus.ACTIVATE_SILENCE);
+        ReceivePlayerSTate(SilenceSwitch, NetworkPlayerStatus.ACTIVATE_SILENCE);
+        SendNetworkStatus(SilenceSwitch, NetworkPlayerStatus.ACTIVATE_SILENCE);
     }
     #endregion
     #region BUFF COOLDOWNS
@@ -195,21 +201,21 @@ public class Car_DataReceiver : Car_Network_Interpolation
         yield return new WaitForSeconds(5);
         ShieldSwitch = false;
         ShieldObject.SetActive(false);
-        SendNetworkPowerUp(false, NetworkPlayerStatus.ACTIVATE_SHIELD);
+        SendNetworkStatus(false, NetworkPlayerStatus.ACTIVATE_SHIELD);
     }
     IEnumerator CoolDown_Fly()
     {
         yield return new WaitForSeconds(5);
         FlySwitch = false;
         FlyObject.SetActive(false);
-        SendNetworkPowerUp(false, NetworkPlayerStatus.ACTIVATE_FLY);
+        SendNetworkStatus(false, NetworkPlayerStatus.ACTIVATE_FLY);
     }
     IEnumerator CoolDown_Expand()
     {
         yield return new WaitForSeconds(5);
         ExpandSwitch = false;
         ExpandObject.SetActive(false);
-        SendNetworkPowerUp(false, NetworkPlayerStatus.ACTIVATE_EXPAND);
+        SendNetworkStatus(false, NetworkPlayerStatus.ACTIVATE_EXPAND);
     }
     IEnumerator CoolDown_Nitro()
     {
@@ -252,6 +258,9 @@ public class Car_DataReceiver : Car_Network_Interpolation
         ExpandObject.SetActive(false);
 
         NitroSwitch = false;
+
+        ExplosionObject.SetActive(false);
+        ExplosionSwitch = false;
     }
     public void Access_ResetNetwork()
     {
@@ -271,12 +280,12 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 {
                     if (BlindSwitch == false)
                     {
-                        ReceiveDisableSTate(true, NetworkPlayerStatus.ACTIVATE_BLIND);
+                        ReceivePlayerSTate(true, NetworkPlayerStatus.ACTIVATE_BLIND);
                         //BlindSwitch = true;
                         //BlindObjectBlocker.SetActive(true);
                         //BlindObject.SetActive(true);
 
-                        SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_BLIND);
+                        SendNetworkStatus(true, NetworkPlayerStatus.ACTIVATE_BLIND);
                         StartCoroutine("StartBlindTimer");
                     }
                 }
@@ -285,11 +294,11 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 {
                     if (StunSwitch == false)
                     {
-                        ReceiveDisableSTate(true, NetworkPlayerStatus.ACTIVATE_STUN);
+                        ReceivePlayerSTate(true, NetworkPlayerStatus.ACTIVATE_STUN);
                         //StunSwitch = true;
                         //StunObject.SetActive(true);
 
-                        SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_STUN);
+                        SendNetworkStatus(true, NetworkPlayerStatus.ACTIVATE_STUN);
                         StartCoroutine("StartStunTimer");
                     }
                 }
@@ -298,11 +307,11 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 {
                     if (ConfuseSwitch == false)
                     {
-                        ReceiveDisableSTate(true, NetworkPlayerStatus.ACTIVATE_CONFUSE);
+                        ReceivePlayerSTate(true, NetworkPlayerStatus.ACTIVATE_CONFUSE);
                         //ConfuseSwitch = true;
                         //ConfuseObject.SetActive(true);
 
-                        SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_CONFUSE);
+                        SendNetworkStatus(true, NetworkPlayerStatus.ACTIVATE_CONFUSE);
                         StartCoroutine("StartConfuseTimer");
                     }
                 }
@@ -311,11 +320,11 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 {
                     if (SlowSwitch == false)
                     {
-                        ReceiveDisableSTate(true, NetworkPlayerStatus.ACTIVATE_SLOW);
+                        ReceivePlayerSTate(true, NetworkPlayerStatus.ACTIVATE_SLOW);
                         //SlowSwitch = true;
                         //SlowObject.SetActive(true);
 
-                        SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_SLOW);
+                        SendNetworkStatus(true, NetworkPlayerStatus.ACTIVATE_SLOW);
                         StartCoroutine("StartSlowTimer");
                     }
                 }
@@ -324,12 +333,12 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 {
                     if (SilenceSwitch == false)
                     {
-                        ReceiveDisableSTate(true, NetworkPlayerStatus.ACTIVATE_SILENCE);
+                        ReceivePlayerSTate(true, NetworkPlayerStatus.ACTIVATE_SILENCE);
                         //SilenceSwitch = true;
                         //SilenceObject.SetActive(true);
                         //SilenceBlocker.SetActive(true);
 
-                        SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_SILENCE);
+                        SendNetworkStatus(true, NetworkPlayerStatus.ACTIVATE_SILENCE);
                         StartCoroutine("StartSilenceTimer");
                     }
                 }
@@ -337,11 +346,11 @@ public class Car_DataReceiver : Car_Network_Interpolation
             case NetworkPlayerStatus.ACTIVATE_EXPLOSION:
                 {
                     {
-                        ReceiveDisableSTate(true, NetworkPlayerStatus.ACTIVATE_EXPLOSION);
+                        ReceivePlayerSTate(true, NetworkPlayerStatus.ACTIVATE_EXPLOSION);
                         //ExplosionSwitch = true;
                         //ExplosionObject.SetActive(true);
 
-                        SendNetworkDisable(true, NetworkPlayerStatus.ACTIVATE_EXPLOSION);
+                        SendNetworkStatus(true, NetworkPlayerStatus.ACTIVATE_EXPLOSION);
                     }
                 }
                 break;
@@ -374,7 +383,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 {
                     ShieldSwitch = true;
                     ShieldObject.SetActive(true);
-                    SendNetworkPowerUp(true, NetworkPlayerStatus.ACTIVATE_SHIELD);
+                    SendNetworkStatus(true, NetworkPlayerStatus.ACTIVATE_SHIELD);
                     StartCoroutine(CoolDown_Shield());
                 }
                 break;
@@ -382,7 +391,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 {
                     FlySwitch = true;
                     FlyObject.SetActive(true);
-                    SendNetworkPowerUp(true, NetworkPlayerStatus.ACTIVATE_FLY);
+                    SendNetworkStatus(true, NetworkPlayerStatus.ACTIVATE_FLY);
                     StartCoroutine(CoolDown_Fly());
                 }
                 break;
@@ -390,7 +399,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 {
                     ExpandSwitch = true;
                     ExpandObject.SetActive(true);
-                    SendNetworkPowerUp(true, NetworkPlayerStatus.ACTIVATE_EXPAND);
+                    SendNetworkStatus(true, NetworkPlayerStatus.ACTIVATE_EXPAND);
                     StartCoroutine(CoolDown_Expand());
                 }
                 break;
@@ -427,7 +436,6 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 data.SetDouble(6, Network.time);
                 data.SetDouble(7, gameSparksPacketHandler.GetGameClockINT());
 
-
                 GetRTSession.SendData(OPCODE_CLASS.MovementOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
             }
     }
@@ -442,7 +450,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
             data.SetInt(1, network_ID);
             data.SetInt(2, (int)NetworkPlayerVariableList.HEALTH);
             data.SetFloat(3, health);
-            GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
+            GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE, data);
         }
 
         if (health <= 0)
@@ -451,7 +459,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
         }
     }
 
-    public void SendNetworkPowerUp(bool _switch, NetworkPlayerStatus _status)
+    public void SendNetworkStatus(bool _switch, NetworkPlayerStatus _status)
     {
         using (RTData data = RTData.Get())
         {
@@ -460,34 +468,8 @@ public class Car_DataReceiver : Car_Network_Interpolation
             data.SetInt(3, (int)_status);
             GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
         }
-    }
-
-    public void ResetTrail(bool _switch)
-    {
-        _carMovement._trailCollision.SetEmiision(_switch);
-
-        if (TronGameManager.Instance.NetworkStart == true)
-            using (RTData data = RTData.Get())
-            {
-                data.SetInt(1, network_ID);
-                data.SetInt(2, _switch == true ? 1 : 0);
-                data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_TRAIL);
-
-                GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
-            }
-    }
-
-    public void SendNetworkDisable(bool _switch, NetworkPlayerStatus _status)
-    {
-        if (TronGameManager.Instance.NetworkStart == false)
-            return;
-        using (RTData data = RTData.Get())
-        {
-            data.SetInt(1, network_ID);
-            data.SetInt(2, _switch == true ? 1 : 0);
-            data.SetInt(3, (int)_status);
-            GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
-        }
+        if(_status == NetworkPlayerStatus.ACTIVATE_TRAIL)
+            _carMovement._trailCollision.SetEmiision(_switch);
     }
     #endregion
     //================================================================================================================================
@@ -495,8 +477,8 @@ public class Car_DataReceiver : Car_Network_Interpolation
     //                                                       RECEIVE DATA
     //
     //================================================================================================================================
-    #region RECEIVE POWERUP
-    public void ReceivePowerUpState(bool _switch, NetworkPlayerStatus _netStatus)
+    #region RECEIVE PLAYER STAT
+    public void ReceivePlayerSTate(bool _switch, NetworkPlayerStatus _netStatus)
     {
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_SHIELD)
         {
@@ -513,11 +495,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
             ExpandObject.SetActive(_switch);
             ExpandSwitch = _switch;
         }
-    }
-    #endregion
-    #region RECEIVE DISABLE
-    public void ReceiveDisableSTate(bool _switch, NetworkPlayerStatus _netStatus)
-    {
+
         if (_netStatus == NetworkPlayerStatus.ACTIVATE_STUN)
         {
             if(_switch)
@@ -585,7 +563,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
     IEnumerator delayRestartReady(bool _switch, NetworkPlayerStatus _netstatus)
     {
         yield return new WaitForSeconds(2);
-        ReceiveDisableSTate(_switch, _netstatus);
+        ReceivePlayerSTate(_switch, _netstatus);
     }
 
     #endregion
@@ -622,7 +600,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
             ifMy_Network_Player = true;
             audioListener.enabled = true;
 
-            ResetTrail(true);
+            SendNetworkStatus(true, NetworkPlayerStatus.ACTIVATE_TRAIL);
             health = 5;
 
 
@@ -854,7 +832,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
     {
         if (network_ID == gameSparksPacketHandler.GetPeerID())
         {
-            _carMovement.StartGame = _switch;
+            _carMovement.SetStartGame(_switch);
         }
     }
 }

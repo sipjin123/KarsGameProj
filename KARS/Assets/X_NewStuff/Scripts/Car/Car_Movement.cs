@@ -156,7 +156,7 @@ public class Car_Movement : MonoBehaviour
         {
             if (accelerationSpeed_Counter < accelerationSpeed_Max)
             {
-                if (MyCarDataReceiver.Network_ID == 1)
+                if (MyCarDataReceiver.GetNetwork_ID() == 1)
                 {
                     UIManager.Instance.SpeedBar_1.fillAmount = accelerationSpeed_Counter / accelerationSpeed_Max;
                     UIManager.Instance.SpeedTimeText_1.text = accelerationTimer.ToString();
@@ -348,7 +348,7 @@ public class Car_Movement : MonoBehaviour
     }
     bool NetworkCapable()
     {
-        if ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.Network_ID == GameSparkPacketHandler.Instance.GetPeerID()))
+        if ((TronGameManager.Instance.NetworkStart && MyCarDataReceiver.GetNetwork_ID() == GameSparkPacketHandler.Instance.GetPeerID()))
         {
             return true;
         }
@@ -364,9 +364,9 @@ public class Car_Movement : MonoBehaviour
 
         MyCarDataReceiver.SendNetworkDisable(false, NetworkPlayerStatus.ACTIVATE_EXPLOSION);
         MyCarDataReceiver.ReceiveDisableSTate(false, NetworkPlayerStatus.ACTIVATE_EXPLOSION);
-        if (MyCarDataReceiver.Network_ID == 1)
+        if (MyCarDataReceiver.GetNetwork_ID() == 1)
             transform.position = _tronGameManager.spawnPlayerPosition[0].position;
-        if (MyCarDataReceiver.Network_ID == 2)
+        if (MyCarDataReceiver.GetNetwork_ID() == 2)
             transform.position = _tronGameManager.spawnPlayerPosition[1].position;
         else
             transform.position = _tronGameManager.spawnPlayerPosition[0].position;

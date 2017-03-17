@@ -2837,6 +2837,7 @@ GameObject:
   - component: {fileID: 1306}
   - component: {fileID: 1754}
   - component: {fileID: 1762}
+  - component: {fileID: 281}
   m_Layer: 0
   m_Name: Main Camera2
   m_TagString: MainCamera
@@ -4880,6 +4881,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
+--- !u!81 &281
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 164}
+  m_Enabled: 1
 --- !u!1 &282
 GameObject:
   m_ObjectHideFlags: 0
@@ -5545,12 +5553,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1060}
   - component: {fileID: 1554}
-  - component: {fileID: 3481}
   - component: {fileID: 3480}
+  - component: {fileID: 3481}
   - component: {fileID: 1699}
   - component: {fileID: 1714}
   - component: {fileID: 1766}
-  - component: {fileID: 1737}
   m_Layer: 0
   m_Name: Car1
   m_TagString: Car
@@ -6516,6 +6523,7 @@ GameObject:
   - component: {fileID: 1308}
   - component: {fileID: 1756}
   - component: {fileID: 1764}
+  - component: {fileID: 1066}
   m_Layer: 0
   m_Name: Main Camera1
   m_TagString: MainCamera
@@ -11173,8 +11181,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1144}
   - component: {fileID: 1595}
-  - component: {fileID: 3896}
   - component: {fileID: 3897}
+  - component: {fileID: 3896}
   - component: {fileID: 1700}
   - component: {fileID: 1724}
   - component: {fileID: 3898}
@@ -18172,6 +18180,13 @@ Transform:
   m_Father: {fileID: 1126}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 125, y: 0, z: 0}
+--- !u!81 &1066
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 377}
+  m_Enabled: 1
 --- !u!4 &1067
 Transform:
   m_ObjectHideFlags: 0
@@ -29785,13 +29800,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 5, y: 5, z: 5}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!81 &1737
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 320}
-  m_Enabled: 1
 --- !u!82 &1738
 AudioSource:
   m_ObjectHideFlags: 0
@@ -103670,9 +103678,12 @@ MonoBehaviour:
   _objToTranslate: {fileID: 1060}
   _objToRotate: {fileID: 1167}
   m_TimestampCount: 0
-  Network_ID: 0
-  ifMy_Network_Player: 0
+  AvatarList:
+  - {fileID: 534}
+  - {fileID: 258}
+  - {fileID: 392}
   NetworkCam: {fileID: 1308}
+  audioListener: {fileID: 1066}
   ShieldObject: {fileID: 461}
   FlyObject: {fileID: 514}
   ExpandObject: {fileID: 605}
@@ -103684,11 +103695,6 @@ MonoBehaviour:
   SilenceObject: {fileID: 731}
   SilenceBlocker: {fileID: 141}
   ExplosionObject: {fileID: 507}
-  Health: 0
-  AvatarList:
-  - {fileID: 534}
-  - {fileID: 258}
-  - {fileID: 392}
   _testPanel: {fileID: 0}
 --- !u!114 &3481
 MonoBehaviour:
@@ -103696,7 +103702,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 320}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ed8b161dba46bb439c1090359211ca9, type: 3}
   m_Name: 
@@ -116500,7 +116506,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 646}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ed8b161dba46bb439c1090359211ca9, type: 3}
   m_Name: 
@@ -116539,9 +116545,12 @@ MonoBehaviour:
   _objToTranslate: {fileID: 1144}
   _objToRotate: {fileID: 1157}
   m_TimestampCount: 0
-  Network_ID: 0
-  ifMy_Network_Player: 0
+  AvatarList:
+  - {fileID: 545}
+  - {fileID: 542}
+  - {fileID: 433}
   NetworkCam: {fileID: 1306}
+  audioListener: {fileID: 281}
   ShieldObject: {fileID: 432}
   FlyObject: {fileID: 299}
   ExpandObject: {fileID: 264}
@@ -116553,11 +116562,6 @@ MonoBehaviour:
   SilenceObject: {fileID: 448}
   SilenceBlocker: {fileID: 147}
   ExplosionObject: {fileID: 24}
-  Health: 0
-  AvatarList:
-  - {fileID: 545}
-  - {fileID: 542}
-  - {fileID: 433}
   _testPanel: {fileID: 0}
 --- !u!114 &3898
 MonoBehaviour:

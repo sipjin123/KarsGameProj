@@ -103,7 +103,7 @@ public class StateManager : MonoBehaviour {
                         //_carMovement._trailCollision.SetEmiision(false);
                         //_carMovement._trailCollision.Reset_Mesh();
                         _GameSparks_DataSender.InitCam();
-                        _GameSparks_DataSender.Health = 6;
+                        _GameSparks_DataSender.SetHealth( 6);
                         _carMovement.Die();
                     }
                 }

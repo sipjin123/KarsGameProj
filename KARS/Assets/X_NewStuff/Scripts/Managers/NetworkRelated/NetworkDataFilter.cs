@@ -23,7 +23,7 @@ public class NetworkDataFilter : MonoBehaviour
         Car_DataReceiver carReceiver = new Car_DataReceiver();
         for (int i = 0; i < Network_Data_Receiver.Length; i++)
         {
-            if(Network_Data_Receiver[i].Network_ID == _netData.playerID)
+            if(Network_Data_Receiver[i].GetNetwork_ID() == _netData.playerID)
             {
                 carReceiver = Network_Data_Receiver[i];
             }
@@ -39,7 +39,7 @@ public class NetworkDataFilter : MonoBehaviour
         Car_Movement carMovement = new Car_Movement();
         for (int i = 0; i < Network_Data_Receiver.Length; i++)
         {
-            if (Network_Data_Receiver[i].Network_ID == _networkPlayerEvent.playerID)
+            if (Network_Data_Receiver[i].GetNetwork_ID() == _networkPlayerEvent.playerID)
             {
                 carReceiver = Network_Data_Receiver[i];
                 carMovement = Network_Data_Receiver[i].gameObject.GetComponent<Car_Movement>();
@@ -75,7 +75,7 @@ public class NetworkDataFilter : MonoBehaviour
         Car_DataReceiver carReceiver = new Car_DataReceiver();
         for (int i = 0; i < Network_Data_Receiver.Length; i++)
         {
-            if (Network_Data_Receiver[i].Network_ID == _networkPlayerVariables.playerID)
+            if (Network_Data_Receiver[i].GetNetwork_ID() == _networkPlayerVariables.playerID)
             {
                 carReceiver = Network_Data_Receiver[i];
             }

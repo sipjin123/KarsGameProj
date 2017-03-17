@@ -191,7 +191,7 @@ public class MissleScript : MonoBehaviour {
         try
         {
             Car_DataReceiver carReceiver = objectToHit.GetComponent<Car_DataReceiver>();
-            if (_playerController_ID != carReceiver.Network_ID)
+            if (_playerController_ID != carReceiver.GetNetwork_ID())
             {
                 if (carReceiver.GetShieldSwitch())
                 {

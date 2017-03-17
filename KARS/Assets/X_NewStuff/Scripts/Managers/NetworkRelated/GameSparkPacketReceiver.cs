@@ -168,7 +168,7 @@ public class GameSparkPacketReceiver : MonoBehaviour {
                         GameObject _obj = TronGameManager.Instance.PlayerObjects[i].gameObject;
                         Car_DataReceiver _GameSparks_DataSender = _obj.GetComponent<Car_DataReceiver>();
 
-                        if (_GameSparks_DataSender.Network_ID == receivedPlayerToMove)
+                        if (_GameSparks_DataSender.GetNetwork_ID() == receivedPlayerToMove)
                         {
                             if (hasReceived_AvatarMessage == false)
                             {

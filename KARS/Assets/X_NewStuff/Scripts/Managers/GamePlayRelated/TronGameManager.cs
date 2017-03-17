@@ -321,10 +321,13 @@ public class TronGameManager : GameStatsTweaker {
 
         UIManager.Instance.GameUpdateText.text += "\nGAME START NOW!!";
 
+        PowerUpManager.Instance.ResetMissles();
         UIManager.Instance.Set_Canvas_Countdown(false);
         UIManager.Instance.Set_Canvas_Waiting(false);
+
         if(UIManager.Instance.GetRespawnScreen())
         UIManager.Instance.Set_Canvas_GameInit(true);
+
         PlayerObjects[0].GetComponent<Car_Movement>().DisableWheels = false;
         PlayerObjects[1].GetComponent<Car_Movement>().DisableWheels = false;
     }

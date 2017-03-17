@@ -15,7 +15,6 @@ public class TronGameManager : GameStatsTweaker {
     public Transform[] spawnPlayerPosition;
 
 
-    public GameObject[] SelectedCarHighlights;
 
     private bool blockMatchFinding;
     public bool BlockMatchFinding
@@ -32,24 +31,34 @@ public class TronGameManager : GameStatsTweaker {
 
     //CHARACTER SELECT
     private int selectedSkin;
+    [SerializeField]
+    private GameObject[] SelectedCarHighlights;
     public int GetSelectedSkin()
     {
         return selectedSkin;
     }
     int carMeshIndex;
-    public GameObject[] carMeshList;
-    public GameObject[] StatList;
+    [SerializeField]
+    private GameObject[] carMeshList;
+    [SerializeField]
+    private GameObject[] StatList;
 
     //SKILLS
-    int currentSlotIndex;
-    public GameObject[] slotIndicator;
-    public GameObject[] skillSlotIndicator;
-    public Image[] selected_currentSkill_Image;
-    public Text[] selected_currentSkill_Text;
-    public GameObject SkillPanel;
     public int SkillListCount = 9;
-    public Transform SkillButtonParent;
-    public GameObject SkillButton;
+    int currentSlotIndex;
+    [SerializeField]
+    private GameObject[] slotIndicator;
+    [SerializeField]
+    private GameObject[] skillSlotIndicator;
+    [SerializeField]
+    private Image[] selected_currentSkill_Image;
+    [SerializeField]
+    private GameObject SkillPanel;
+    [SerializeField]
+    private Transform SkillButtonParent;
+    [SerializeField]
+    private GameObject SkillButton;
+    public Text[] selected_currentSkill_Text;
 
     //LOADING SCREEN
     float progressValueHolder;
@@ -319,31 +328,4 @@ public class TronGameManager : GameStatsTweaker {
         PlayerObjects[0].GetComponent<Car_Movement>().DisableWheels = false;
         PlayerObjects[1].GetComponent<Car_Movement>().DisableWheels = false;
     }
-
-    #region PUBLIC FUNCTIONS
-
-    public void Access_PlayerReset()
-    {
-        for (int i = 0; i < PlayerObjects.Length; i++)
-        {
-            PlayerObjects[i].GetComponent<Car_DataReceiver>().ClearBufferState();
-            PlayerObjects[i].SetActive(true);
-            PlayerObjects[i].GetComponent<Car_DataReceiver>().Network_ID = 0;
-            PlayerObjects[i].GetComponent<Car_DataReceiver>().NetworkCam.enabled = false;
-            PlayerObjects[i].GetComponent<Car_DataReceiver>().ifMy_Network_Player = false;
-
-            PlayerObjects[i].GetComponent<Car_DataReceiver>().ResetPowerups();
-
-            PlayerObjects[i].GetComponent<Car_Movement>().CarRotationObject.eulerAngles = Vector3.zero;
-            PlayerObjects[i].transform.eulerAngles = Vector3.zero;
-            PlayerObjects[i].transform.position = spawnPlayerPosition[i].position;
-
-
-            PlayerObjects[i].GetComponent<Car_Movement>().SetStartGame(false);
-            PlayerObjects[i].GetComponent<Car_Movement>().SetReady(false);
-            PlayerObjects[i].GetComponent<Car_Movement>().enabled = false;
-        }
-    }
-    #endregion
-
 }

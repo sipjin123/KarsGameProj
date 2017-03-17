@@ -12,6 +12,13 @@ public class GameSparkPacketReceiver : MonoBehaviour {
     #region VARIABLES
     protected bool InitiateNetwork;
 
+    //NETWORK INITIALIZERS
+    protected bool
+    hasReceived_StartMessage,
+    hasReceived_ReadyMessage,
+    hasReceived_AvatarMessage,
+    hasReceived_OnMatchFound;
+
     //GAME ID
     protected int peerID = 0;
     public int GetPeerID()
@@ -41,6 +48,12 @@ public class GameSparkPacketReceiver : MonoBehaviour {
     //GAMESPARKS
     protected GameSparksRTUnity gameSparksRTUnity;
     protected RTSessionInfo sessionInfo;
+
+    [SerializeField]
+    protected GameObject GameSparksObject;
+    [SerializeField]
+    protected GameObject CurrentGameSparksObject;
+
     public GameSparksRTUnity GetRTSession()
     {
         return gameSparksRTUnity;
@@ -301,19 +314,4 @@ public class GameSparkPacketReceiver : MonoBehaviour {
         */
     }
     #endregion
-
-
-    void Awake()
-    {
-        ResetBoolList();
-    }
-    protected bool hasReceived_StartMessage, hasReceived_ReadyMessage, hasReceived_AvatarMessage, hasReceived_OnMatchFound;
-    public void ResetBoolList()
-    {
-        hasReceived_AvatarMessage = false;
-        hasReceived_ReadyMessage = false;
-        hasReceived_StartMessage = false;
-        hasReceived_OnMatchFound = false;
-    }
-
 }

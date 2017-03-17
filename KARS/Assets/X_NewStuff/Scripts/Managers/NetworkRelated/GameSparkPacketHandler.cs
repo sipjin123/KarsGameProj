@@ -15,6 +15,7 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
     void Awake()
     {
         _instance = this;
+        AccessResetBoolList();
     }
     //=============================================================================================================================
     //GAME TIME
@@ -106,6 +107,18 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
     //=============================================================================================================================
     //PUBLIC FUNCTIONS
     #region PUBLIC FUNCTIONS
+    public void Access_ReInitializeGameSparks()
+    {
+        Destroy(CurrentGameSparksObject);
+        CurrentGameSparksObject = Instantiate(GameSparksObject, transform.position, Quaternion.identity);
+    }
+    public void AccessResetBoolList()
+    {
+        hasReceived_AvatarMessage = false;
+        hasReceived_ReadyMessage = false;
+        hasReceived_StartMessage = false;
+        hasReceived_OnMatchFound = false;
+    }
     public void Access_ResetNetwork()
     {
         InitiateNetwork = false;
@@ -132,6 +145,30 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
             _obj = GameObject.Find("Car2").GetComponent<Car_DataReceiver>();
             _obj.SetNetworkObject(_player);
             _obj.GetComponent<Car_Movement>().enabled = true;
+        }
+    }
+    public void Access_PlayerReset()
+    {
+        GameObject[] PlayerObjects = TronGameManager.Instance.PlayerObjects;
+        Transform[] spawnPlayerPosition = TronGameManager.Instance.spawnPlayerPosition;
+        for (int i = 0; i < PlayerObjects.Length; i++)
+        {
+            PlayerObjects[i].GetComponent<Car_DataReceiver>().ClearBufferState();
+            PlayerObjects[i].SetActive(true);
+            PlayerObjects[i].GetComponent<Car_DataReceiver>().Network_ID = 0;
+            PlayerObjects[i].GetComponent<Car_DataReceiver>().NetworkCam.enabled = false;
+            PlayerObjects[i].GetComponent<Car_DataReceiver>().ifMy_Network_Player = false;
+
+            PlayerObjects[i].GetComponent<Car_DataReceiver>().ResetPowerups();
+
+            PlayerObjects[i].GetComponent<Car_Movement>().CarRotationObject.eulerAngles = Vector3.zero;
+            PlayerObjects[i].transform.eulerAngles = Vector3.zero;
+            PlayerObjects[i].transform.position = spawnPlayerPosition[i].position;
+
+
+            PlayerObjects[i].GetComponent<Car_Movement>().SetStartGame(false);
+            PlayerObjects[i].GetComponent<Car_Movement>().SetReady(false);
+            PlayerObjects[i].GetComponent<Car_Movement>().enabled = false;
         }
     }
     #endregion
@@ -193,12 +230,7 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
         UIManager.Instance.GameUpdateText.text += "\n=========================================================";
         UIManager.Instance.GameUpdateText.text += "\n\t<<<OPCODE SEND: MESH";
     }
-    #endregion
-    //=============================================================================================================================
 
-
-    public GameObject GameSparksObject;
-    public GameObject CurrentGameSparksObject;
     public void Global_SendState(MENUSTATE _state)
     {
         UIManager.Instance.GameUpdateText.text += "\n\tSuppose To Do This State: " + _state;
@@ -211,11 +243,10 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
             GetRTSession().SendData(OPCODE_CLASS.MenuStateOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
         }
     }
-    public void Access_ReInitializeGameSparks()
-    {
-        Destroy(CurrentGameSparksObject);
-        CurrentGameSparksObject = Instantiate(GameSparksObject, transform.position, Quaternion.identity);
-    }
+    #endregion
+    //=============================================================================================================================
+
+
 
 
     //FOR TESTING

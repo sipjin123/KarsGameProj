@@ -147,6 +147,7 @@ public class AI_Behaviour : MonoBehaviour {
                     StartCoroutine("DElayRemoveDebuff");
                     ifstuneed = true;
                 }
+                /*
                 if (hit.GetComponent<MissleScript>()._missleType == MissleScript.MISSLE_TYPE.CONFUSE)
                 {
                     GetComponent<Car_DataReceiver>().ConfuseObject.SetActive(true);
@@ -156,18 +157,18 @@ public class AI_Behaviour : MonoBehaviour {
                 {
                     GetComponent<Car_DataReceiver>().BlindObject.SetActive(true);
                     StartCoroutine("DElayRemoveDebuff");
-                }
+                }*/
             }
         }
     }
     IEnumerator DElayRemoveDebuff()
     {
         yield return new WaitForSeconds(3);
-
+        /*
         //GetComponent<Car_DataReceiver>().StunObject.SetActive(false);
         GetComponent<Car_DataReceiver>().ConfuseObject.SetActive(false);
         GetComponent<Car_DataReceiver>().BlindObject.SetActive(false);
-        ifstuneed = false;
+        ifstuneed = false;*/
     }
 
     

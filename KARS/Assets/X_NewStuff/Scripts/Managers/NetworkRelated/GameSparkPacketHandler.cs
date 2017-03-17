@@ -155,11 +155,9 @@ public class GameSparkPacketHandler : GameSparkPacketReceiver
         {
             PlayerObjects[i].GetComponent<Car_DataReceiver>().ClearBufferState();
             PlayerObjects[i].SetActive(true);
-            PlayerObjects[i].GetComponent<Car_DataReceiver>().Network_ID = 0;
-            PlayerObjects[i].GetComponent<Car_DataReceiver>().NetworkCam.enabled = false;
-            PlayerObjects[i].GetComponent<Car_DataReceiver>().ifMy_Network_Player = false;
+            PlayerObjects[i].GetComponent<Car_DataReceiver>().Access_ResetNetwork();
 
-            PlayerObjects[i].GetComponent<Car_DataReceiver>().ResetPowerups();
+            PlayerObjects[i].GetComponent<Car_DataReceiver>().Access_ResetPowerups();
 
             PlayerObjects[i].GetComponent<Car_Movement>().CarRotationObject.eulerAngles = Vector3.zero;
             PlayerObjects[i].transform.eulerAngles = Vector3.zero;

@@ -23,11 +23,7 @@ public class NetworkDataFilter : MonoBehaviour
         Car_DataReceiver carReceiver = new Car_DataReceiver();
         for (int i = 0; i < Network_Data_Receiver.Length; i++)
         {
-<<<<<<< HEAD
             if(Network_Data_Receiver[i].GetNetwork_ID() == _netData.playerID)
-=======
-            if(Network_Data_Receiver[i].Network_ID == _netData.playerID)
->>>>>>> 3e3b2bc (Sorting files)
             {
                 carReceiver = Network_Data_Receiver[i];
             }
@@ -43,21 +39,13 @@ public class NetworkDataFilter : MonoBehaviour
         Car_Movement carMovement = new Car_Movement();
         for (int i = 0; i < Network_Data_Receiver.Length; i++)
         {
-<<<<<<< HEAD
             if (Network_Data_Receiver[i].GetNetwork_ID() == _networkPlayerEvent.playerID)
-=======
-            if (Network_Data_Receiver[i].Network_ID == _networkPlayerEvent.playerID)
->>>>>>> 3e3b2bc (Sorting files)
             {
                 carReceiver = Network_Data_Receiver[i];
                 carMovement = Network_Data_Receiver[i].gameObject.GetComponent<Car_Movement>();
             }
         }
 
-<<<<<<< HEAD
-        carReceiver.ReceivePlayerSTate(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
-        if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_TRAIL)
-=======
         if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_STUN ||
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_BLIND ||
             _networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_CONFUSE ||
@@ -77,7 +65,6 @@ public class NetworkDataFilter : MonoBehaviour
             carReceiver.ReceivePowerUpState(_networkPlayerEvent.playerStatusSwitch, _networkPlayerEvent.playerStatus);
         }
         else if (_networkPlayerEvent.playerStatus == NetworkPlayerStatus.ACTIVATE_TRAIL)
->>>>>>> 3e3b2bc (Sorting files)
         {
             carMovement._trailCollision.SetEmiision(_networkPlayerEvent.playerStatusSwitch);
         }
@@ -88,11 +75,7 @@ public class NetworkDataFilter : MonoBehaviour
         Car_DataReceiver carReceiver = new Car_DataReceiver();
         for (int i = 0; i < Network_Data_Receiver.Length; i++)
         {
-<<<<<<< HEAD
             if (Network_Data_Receiver[i].GetNetwork_ID() == _networkPlayerVariables.playerID)
-=======
-            if (Network_Data_Receiver[i].Network_ID == _networkPlayerVariables.playerID)
->>>>>>> 3e3b2bc (Sorting files)
             {
                 carReceiver = Network_Data_Receiver[i];
             }
@@ -104,14 +87,6 @@ public class NetworkDataFilter : MonoBehaviour
             int receivedPlayerID = _networkPlayerVariables.playerID;
             float receivedPlayerHealth = _networkPlayerVariables.variableValue;
             UIManager.Instance.AdjustHPBarAndText(receivedPlayerID, receivedPlayerHealth);
-<<<<<<< HEAD
-
-            if (receivedPlayerHealth <= 0)
-            {
-                GameSparkPacketHandler.Instance.Global_SendONLYState(MENUSTATE.PRE_RESULT);
-            }
-=======
->>>>>>> 3e3b2bc (Sorting files)
         }
         else if (_networkPlayerVariables.playerVariable == NetworkPlayerVariableList.TRAIL)
         {

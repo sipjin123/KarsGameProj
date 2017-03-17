@@ -7,41 +7,55 @@ using UnityEngine.UI;
 
 public class Car_DataReceiver : Car_Network_Interpolation
 {
-    bool initSkills;
     //================================================================================================================================
     #region VARIABLES
     private Car_Movement _carMovement;
     private GameSparksRTUnity GetRTSession;
 
+    [SerializeField]
+    private GameObject[] AvatarList;
+
+    //PLAYER STATS
+    float health;
+
     //NETWORK STUFF
+    private bool ifMy_Network_Player;
+    private int network_ID;
     [SerializeField]
-    public int Network_ID;
-    public bool ifMy_Network_Player;
-
+    private Camera NetworkCam;
     [SerializeField]
-    public Camera NetworkCam;
+    private AudioListener audioListener;
 
-
+    //SKILLS 
+    bool initSkills;
+    Transform[] ButtonObject = new Transform[2];
+    string[] CooldownName = new string[2];
+    float[] CooldownCap = new float[2];
+    bool[] coolDown_Switch = new bool[2];
+    float[] coolDown_Timer = new float[2];
 
     //POWER UP AND DEBUFF
-
+    #region DEBUFF AND POWERUPS
     //NITROS---------
     private bool NitroSwitch;
     public bool GetNitroSwitch() { return NitroSwitch; }
     //SHIELD---------
     private bool ShieldSwitch;
     public bool GetShieldSwitch() { return ShieldSwitch; }
-    public GameObject ShieldObject;
+    [SerializeField]
+    private GameObject ShieldObject;
 
     //FLY---------
     private bool FlySwitch;
     public bool GetFlySwitch() { return FlySwitch; }
-    public GameObject FlyObject;
+    [SerializeField]
+    private GameObject FlyObject;
 
     //EXPAND---------
     private bool ExpandSwitch;
     public bool GetExpandSwitch() { return ExpandSwitch; }
-    public GameObject ExpandObject;
+    [SerializeField]
+    private GameObject ExpandObject;
 
 
     //STUN---------
@@ -53,12 +67,15 @@ public class Car_DataReceiver : Car_Network_Interpolation
     //BLIND---------
     private bool BlindSwitch;
     public bool GetBlindSwitch() { return BlindSwitch; }
-    public GameObject BlindObjectBlocker;
-    public GameObject BlindObject;
+    [SerializeField]
+    private GameObject BlindObjectBlocker;
+    [SerializeField]
+    private GameObject BlindObject;
 
     //CONFUSE---------
     private bool ConfuseSwitch;
-    public GameObject ConfuseObject;
+    [SerializeField]
+    private GameObject ConfuseObject;
 
     //SLOW---------
     private bool SlowSwitch;
@@ -79,37 +96,34 @@ public class Car_DataReceiver : Car_Network_Interpolation
     public bool GetExplosionSwitch() { return ExplosionSwitch; }
     [SerializeField]
     private GameObject ExplosionObject;
+    #endregion
 
-
-    public float Health;
-    public GameObject[] AvatarList;
+    // PUBLIC GET/SET VARIABLES
+    public int GetNetwork_ID()
+    {
+        return network_ID;
+    }
+    public void SetHealth(float _val)
+    {
+        health = _val;
+    }
     #endregion
     //================================================================================================================================
-    #region INIT
-     void StartGame(bool _switch)
-    {
-        if (Network_ID == gameSparksPacketHandler.GetPeerID())
-        {
-            _carMovement.StartGame = _switch;
-        }
-    }
     void Awake()
     {
-
         _carMovement = GetComponent<Car_Movement>();
     }
-    #endregion
-    //================================================================================================================================
+    
     void Update()
     {
-        if (!ifMy_Network_Player && Network_ID != 0)
+        if (!ifMy_Network_Player && network_ID != 0)
         {
             UpdateFunctInterpolate();
             return;
         }
         else
         {
-            SendCarMovement(Network_ID, _objToTranslate.position, _objToRotate.eulerAngles);
+            SendCarMovement(network_ID, _objToTranslate.position, _objToRotate.eulerAngles);
 
             Test_Input();
         }
@@ -208,7 +222,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
     //                                                       LOCAL DATA
     //
     //================================================================================================================================
-    public void ResetPowerups()
+    public void Access_ResetPowerups()
     {
         StunObject.SetActive(false);
         StunSwitch = false;
@@ -239,10 +253,17 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
         NitroSwitch = false;
     }
+    public void Access_ResetNetwork()
+    {
+        NetworkCam.enabled = false;
+        network_ID = 0;
+        ifMy_Network_Player = false;
+        audioListener.enabled = false;
+    }
     #region STATUS
     public void Activate_StateFromButton(NetworkPlayerStatus _status)
     {
-        if (Network_ID == 0)
+        if (network_ID == 0)
             return;
         switch (_status)
         {
@@ -413,18 +434,18 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
     public void ReduceHealth()
     {
-        Health -= 1;
-        UIManager.Instance.AdjustHPBarAndText(Network_ID, Health);
+        health -= 1;
+        UIManager.Instance.AdjustHPBarAndText(network_ID, health);
 
         using (RTData data = RTData.Get())
         {
-            data.SetInt(1, Network_ID);
+            data.SetInt(1, network_ID);
             data.SetInt(2, (int)NetworkPlayerVariableList.HEALTH);
-            data.SetFloat(3, Health);
-            GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            data.SetFloat(3, health);
+            GetRTSession.SendData(OPCODE_CLASS.HealthOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
         }
 
-        if (Health <= 0)
+        if (health <= 0)
         {
             GameSparkPacketHandler.Instance.Global_SendState(MENUSTATE.RESULT);
         }
@@ -434,14 +455,10 @@ public class Car_DataReceiver : Car_Network_Interpolation
     {
         using (RTData data = RTData.Get())
         {
-            data.SetInt(1, Network_ID);
-            if (_switch)
-                data.SetInt(2, 1);
-            else
-                data.SetInt(2, 0);
-
+            data.SetInt(1, network_ID);
+            data.SetInt(2, _switch == true ? 1 : 0);
             data.SetInt(3, (int)_status);
-            GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
         }
     }
 
@@ -452,11 +469,11 @@ public class Car_DataReceiver : Car_Network_Interpolation
         if (TronGameManager.Instance.NetworkStart == true)
             using (RTData data = RTData.Get())
             {
-                data.SetInt(1, Network_ID);
+                data.SetInt(1, network_ID);
                 data.SetInt(2, _switch == true ? 1 : 0);
                 data.SetInt(3, (int)NetworkPlayerStatus.ACTIVATE_TRAIL);
 
-                GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+                GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
             }
     }
 
@@ -466,14 +483,10 @@ public class Car_DataReceiver : Car_Network_Interpolation
             return;
         using (RTData data = RTData.Get())
         {
-            data.SetInt(1, Network_ID);
-            if (_switch)
-                data.SetInt(2, 1);
-            else
-                data.SetInt(2, 0);
-
+            data.SetInt(1, network_ID);
+            data.SetInt(2, _switch == true ? 1 : 0);
             data.SetInt(3, (int)_status);
-            GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.UNRELIABLE_SEQUENCED, data);
+            GetRTSession.SendData(OPCODE_CLASS.StatusOpcode, GameSparksRT.DeliveryIntent.RELIABLE, data);
         }
     }
     #endregion
@@ -590,16 +603,16 @@ public class Car_DataReceiver : Car_Network_Interpolation
     #region RECEIVE NETWORK INITIALIZATION
     public void SetNetworkObject(int netID)
     {
-        Network_ID = netID;
+        network_ID = netID;
     }
 
     public void InitCam()
     {
         gameSparksPacketHandler = GameSparkPacketHandler.Instance.GetComponent<GameSparkPacketHandler>();
         GetRTSession = gameSparksPacketHandler.GetRTSession();
-        if (Network_ID == gameSparksPacketHandler.GetPeerID())
+        if (network_ID == gameSparksPacketHandler.GetPeerID())
         {
-            if (Network_ID == 0)
+            if (network_ID == 0)
             {
                 StopCoroutine("DelayREsetCam");
                 StartCoroutine("DelayREsetCam");
@@ -607,15 +620,21 @@ public class Car_DataReceiver : Car_Network_Interpolation
             }
             NetworkCam.enabled = true;
             ifMy_Network_Player = true;
+            audioListener.enabled = true;
 
             ResetTrail(true);
-            Health = 5;
+            health = 5;
 
 
-            UIManager.Instance.ActivatePlayerPanel(Network_ID);
+            UIManager.Instance.ActivatePlayerPanel(network_ID);
             
             InitSkillsFunc();
         }
+    }
+    IEnumerator DelayREsetCam()
+    {
+        yield return new WaitForSeconds(2);
+        InitCam();
     }
 
     void InitSkillsFunc()
@@ -623,8 +642,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
 
         Transform[] skillParent = new Transform[2];
         Transform skillRoster;
-
-
+        
         //DETERMINING SKILL HOLDERS
         if (GameSparkPacketHandler.Instance.GetPeerID() == 1)
         {
@@ -644,11 +662,11 @@ public class Car_DataReceiver : Car_Network_Interpolation
         {
             foreach (Transform T in skillParent[i])
             {
-                if (Network_ID == 1)
+                if (network_ID == 1)
                 {
                     T.SetParent(UIManager.Instance.Player1_SkillsRoster.transform);
                 }
-                if (Network_ID == 2)
+                if (network_ID == 2)
                 {
                     T.SetParent(UIManager.Instance.Player2_SkillsRoster.transform);
                 }
@@ -686,7 +704,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
         coolDown_Timer[_var] = 0;
         CooldownCap[_var] = CheckCoolDownCap(TronGameManager.Instance.selected_currentSkill_Text[_var].text);
 
-        UIManager.Instance.StartCooldDownForBlockers(Network_ID, _var, CooldownCap[_var], CooldownCap[_var], CooldownName[_var]);
+        UIManager.Instance.StartCooldDownForBlockers(network_ID, _var, CooldownCap[_var], CooldownCap[_var], CooldownName[_var]);
         T.SetParent(SkillParent);
         T.localScale = Vector3.one;
         T.localPosition = Vector3.zero;
@@ -719,11 +737,9 @@ public class Car_DataReceiver : Car_Network_Interpolation
         }
         return 0;
     }
-
-    IEnumerator DelayREsetCam()
+    void CDThisSkillSlot(int _val, GameObject _obj)
     {
-        yield return new WaitForSeconds(2);
-        InitCam();
+        coolDown_Switch[_val] = true;
     }
     #endregion
 
@@ -748,16 +764,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
     }
     #endregion
     //================================================================================================================================
-    public void CDThisSkillSlot(int _val , GameObject _obj)
-    {
-        coolDown_Switch[_val] = true;
-    }
-
-    Transform[] ButtonObject = new Transform[2];
-    string[] CooldownName = new string[2];
-    float[] CooldownCap = new float[2];
-    bool [] coolDown_Switch = new bool[2];
-    float []coolDown_Timer = new float[2];
+  
 
     void FixedUpdate()
     {
@@ -767,7 +774,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
             {
                 if (coolDown_Timer[q] < CooldownCap[q])
                 {
-                    UIManager.Instance.StartCooldDownForBlockers(Network_ID, q, coolDown_Timer[q], CooldownCap[q],CooldownName[q]);
+                    UIManager.Instance.StartCooldDownForBlockers(network_ID, q, coolDown_Timer[q], CooldownCap[q],CooldownName[q]);
                     coolDown_Timer[q] += Time.deltaTime;
                 }
                 else
@@ -778,15 +785,10 @@ public class Car_DataReceiver : Car_Network_Interpolation
             }
         }
     }
-
-
-
-
-
     void Process_Ready()
     {
         _carMovement.SetReady(true);
-        UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY READY THIS PLAYER: " + Network_ID;
+        UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY READY THIS PLAYER: " + network_ID;
 
         UIManager.Instance.GameUpdateText.text += "\n\t\t" + TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().GetReady() + " - "
                                                          + TronGameManager.Instance.PlayerObjects[1].GetComponent<Car_Movement>().GetReady();
@@ -810,7 +812,6 @@ public class Car_DataReceiver : Car_Network_Interpolation
             */
         }
     }
-
     void Process_Start()
     {
         
@@ -824,7 +825,7 @@ public class Car_DataReceiver : Car_Network_Interpolation
         try
         {
             _carMovement.SetStartGame(true);
-            if (Network_ID == 2)
+            if (network_ID == 2)
             {
                 UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: SUCCESSFULLY START THIS PLAYER";
                 UIManager.Instance.GameUpdateText.text += "\n\t\t" + TronGameManager.Instance.PlayerObjects[0].GetComponent<Car_Movement>().GetReady() + " - "
@@ -847,6 +848,13 @@ public class Car_DataReceiver : Car_Network_Interpolation
                 StartCoroutine(delayRestartReady(_switch, _netStatus));
                 UIManager.Instance.GameUpdateText.text += "\n\tCAR_RECEIVER: FAILED TO START, RETRYING";
                 */
+        }
+    }
+    void StartGame(bool _switch)
+    {
+        if (network_ID == gameSparksPacketHandler.GetPeerID())
+        {
+            _carMovement.StartGame = _switch;
         }
     }
 }
